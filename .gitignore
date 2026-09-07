@@ -1,0 +1,30 @@
+# Dependências e caches
+node_modules/
+.pnp
+.pnp.js
+npm-debug.log*
+
+# Builds e artefatos de compilação
+dist/
+build/
+.next/
+out/
+
+# Variáveis de ambiente e segredos
+.env
+.env.local
+.env.*.local
+
+# Banco de dados e Docker local
+pgdata/
+
+# IDEs e Sistema
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Firmware (PlatformIO / Arduino)
+.pio/
+*.bin
+*.hex
