@@ -1,0 +1,123 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum UserRole {
+  ADMIN
+  VET
+  REC
+}
+
+enum HospitalizationStatus {
+  ACTIVE
+  DISCHARGED
+  TRANSFERRED
+}
+
+enum PrescriptionStatus {
+  PENDING
+  APPLIED
+  CANCELLED
+}
+
+enum AdministrationRoute {
+  ORAL
+  SUBCUTANEOUS
+  INTRAVENOUS
+  INTRAMUSCULAR
+  TOPICAL
+  INHALATION
+}
+
+model User {
+  id           String        @id @default(uuid())
+  name         String        @db.VarChar(120)
+  email        String        @unique @db.VarChar(150)
+  passwordHash String        @map("password_hash") @db.VarChar(255)
+  role         UserRole      @default(VET)
+  badgeUid     String?       @unique @map("badge_uid") @db.VarChar(32)
+  active       Boolean       @default(true)
+  auditLogs    AuditLog[]
+  createdAt    DateTime      @default(now()) @map("created_at")
+
+  @@map("users")
+}
+
+model Patient {
+  id               String            @id @default(uuid())
+  name             String            @db.VarChar(80)
+  species          String            @db.VarChar(50)
+  breed            String?           @db.VarChar(50)
+  weightKg         Decimal?          @map("weight_kg") @db.Decimal(5, 2)
+  photoUrl         String?           @map("photo_url")
+  guardianName     String?           @map("guardian_name") @db.VarChar(120)
+  guardianPhone    String?           @map("guardian_phone") @db.VarChar(20)
+  allergies        String?
+  isFasting        Boolean           @default(false) @map("is_fasting")
+  behaviorNotes    String?           @map("behavior_notes")
+  hospitalizations Hospitalization[]
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
+
+  @@map("patients")
+}
+
+model NfcTag {
+  id              String           @id @default(uuid())
+  tagUid          String           @unique @map("tag_uid") @db.VarChar(32)
+  publicCode      String           @unique @map("public_code") @db.VarChar(64)
+  active          Boolean          @default(true)
+  hospitalization Hospitalization?
+  createdAt       DateTime         @default(now()) @map("created_at")
+
+  @@map("nfc_tags")
+}
+
+model Hospitalization {
+  id               String                @id @default(uuid())
+  patientId        String                @map("patient_id")
+  patient          Patient               @relation(fields: [patientId], references: [id])
+  nfcTagId         String?               @unique @map("nfc_tag_id")
+  nfcTag           NfcTag?               @relation(fields: [nfcTagId], references: [id], onDelete: SetNull)
+  kennelIdentifier String                @map("kennel_identifier") @db.VarChar(30)
+  admissionReason  String?               @map("admission_reason")
+  status           HospitalizationStatus @default(ACTIVE)
+  admissionDate    DateTime              @default(now()) @map("admission_date")
+  dischargeDate    DateTime?             @map("discharge_date")
+  prescriptions    Prescription[]
+
+  @@map("hospitalizations")
+}
+
+model Prescription {
+  id                String              @id @default(uuid())
+  hospitalizationId String              @map("hospitalization_id")
+  hospitalization   Hospitalization     @relation(fields: [hospitalizationId], references: [id], onDelete: Cascade)
+  medication        String              @db.VarChar(100)
+  dosage            String              @db.VarChar(50)
+  route             AdministrationRoute
+  scheduledTime     DateTime            @map("scheduled_time")
+  status            PrescriptionStatus  @default(PENDING)
+  notes             String?
+  auditLogs         AuditLog[]
+  createdAt         DateTime            @default(now()) @map("created_at")
+
+  @@map("prescriptions")
+}
+
+model AuditLog {
+  id             String       @id @default(uuid())
+  prescriptionId String       @map("prescription_id")
+  prescription   Prescription @relation(fields: [prescriptionId], references: [id])
+  userId         String       @map("user_id")
+  user           User         @relation(fields: [userId], references: [id])
+  executedAt     DateTime     @default(now()) @map("executed_at")
+  bedsideNotes   String?      @map("bedside_notes")
+
+  @@map("audit_logs")
+}
