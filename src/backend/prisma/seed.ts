@@ -3,6 +3,14 @@ import { PrismaClient, UserRole, HospitalizationStatus, PrescriptionStatus, Admi
 const prisma = new PrismaClient();
 
 async function main() {
+  // Limpa as tabelas existentes para permitir execuções repetidas (idempotência)
+  await prisma.auditLog.deleteMany();
+  await prisma.prescription.deleteMany();
+  await prisma.hospitalization.deleteMany();
+  await prisma.patient.deleteMany();
+  await prisma.nfcTag.deleteMany();
+  await prisma.user.deleteMany();
+
   // 1. Cria usuário veterinário
   const vet = await prisma.user.upsert({
     where: { email: 'madalena@nfcarevet.com' },
@@ -69,7 +77,9 @@ async function main() {
     },
   });
 
-  console.log(`Seed concluído com sucesso: Paciente ${patient.name} internado na tag ${tag.publicCode}`);
+  console.log(
+    `Seed concluído por ${vet.name}: Paciente ${patient.name} internado na tag ${tag.publicCode} (ID: ${hospitalization.id})`,
+  );
 }
 
 main()
