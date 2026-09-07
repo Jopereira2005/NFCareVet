@@ -3,12 +3,12 @@ import { JwtService } from '@nestjs/jwt';
 import { UnauthorizedException, ForbiddenException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { AuthService } from './auth.service';
-import { PrismaService } from '../../database/prisma.service';
+import { UsersRepository } from '../users/repositories/users.repository';
 import { UserRole } from '@prisma/client';
 
 describe('AuthService', () => {
   let service: AuthService;
-  let prismaService: any;
+  let usersRepository: any;
   let jwtService: any;
 
   const mockUser = {
@@ -22,10 +22,10 @@ describe('AuthService', () => {
   };
 
   beforeEach(async () => {
-    prismaService = {
-      user: {
-        findUnique: jest.fn(),
-      },
+    usersRepository = {
+      findByEmail: jest.fn(),
+      findByBadgeUid: jest.fn(),
+      findById: jest.fn(),
     };
 
     jwtService = {
@@ -35,7 +35,7 @@ describe('AuthService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
-        { provide: PrismaService, useValue: prismaService },
+        { provide: UsersRepository, useValue: usersRepository },
         { provide: JwtService, useValue: jwtService },
       ],
     }).compile();
@@ -49,7 +49,7 @@ describe('AuthService', () => {
 
   describe('login', () => {
     it('should return accessToken and user data on valid email and password', async () => {
-      prismaService.user.findUnique.mockResolvedValue(mockUser);
+      usersRepository.findByEmail.mockResolvedValue(mockUser);
       jest.spyOn(bcrypt, 'compare').mockImplementation(async () => true);
 
       const result = await service.login({
@@ -63,7 +63,7 @@ describe('AuthService', () => {
     });
 
     it('should throw UnauthorizedException if user is not found', async () => {
-      prismaService.user.findUnique.mockResolvedValue(null);
+      usersRepository.findByEmail.mockResolvedValue(null);
 
       await expect(
         service.login({
@@ -74,7 +74,7 @@ describe('AuthService', () => {
     });
 
     it('should throw ForbiddenException if user is inactive', async () => {
-      prismaService.user.findUnique.mockResolvedValue({
+      usersRepository.findByEmail.mockResolvedValue({
         ...mockUser,
         active: false,
       });
@@ -90,7 +90,7 @@ describe('AuthService', () => {
 
   describe('badgeLogin', () => {
     it('should return accessToken on valid NFC badge login', async () => {
-      prismaService.user.findUnique.mockResolvedValue(mockUser);
+      usersRepository.findByBadgeUid.mockResolvedValue(mockUser);
 
       const result = await service.badgeLogin({
         badgeUid: 'NFC-BADGE-12345',
@@ -101,7 +101,7 @@ describe('AuthService', () => {
     });
 
     it('should throw UnauthorizedException if badge UID is not registered', async () => {
-      prismaService.user.findUnique.mockResolvedValue(null);
+      usersRepository.findByBadgeUid.mockResolvedValue(null);
 
       await expect(
         service.badgeLogin({ badgeUid: 'UNKNOWN_BADGE' }),

@@ -1,8 +1,17 @@
-import { PrismaClient, UserRole, HospitalizationStatus, PrescriptionStatus, AdministrationRoute } from '@prisma/client';
+import {
+  PrismaClient,
+  UserRole,
+  HospitalizationStatus,
+  PrescriptionStatus,
+  AdministrationRoute,
+} from '@prisma/client';
+import * as bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
 async function main() {
+  console.log('Iniciando seed de dados do NFCareVet...');
+
   // Limpa as tabelas existentes para permitir execuções repetidas (idempotência)
   await prisma.auditLog.deleteMany();
   await prisma.prescription.deleteMany();
@@ -11,29 +20,56 @@ async function main() {
   await prisma.nfcTag.deleteMany();
   await prisma.user.deleteMany();
 
-  // 1. Cria usuário veterinário
-  const vet = await prisma.user.upsert({
-    where: { email: 'madalena@nfcarevet.com' },
-    update: {},
-    create: {
-      name: 'Dra. Madalena Silva',
-      email: 'madalena@nfcarevet.com',
-      passwordHash: '$2b$10$fictitiousHashForDevOnly',
-      role: UserRole.VET,
+  // Gera hashes reais de senha via bcryptjs
+  const defaultPasswordHash = await bcrypt.hash('admin123', 10);
+  const vetPasswordHash = await bcrypt.hash('vet12345', 10);
+  const recPasswordHash = await bcrypt.hash('rec12345', 10);
+
+  // 1. Seed do Usuário Administrador (Master/SysAdmin)
+  const adminUser = await prisma.user.create({
+    data: {
+      name: 'Administrador NFCareVet',
+      email: 'admin@nfcarevet.com',
+      passwordHash: defaultPasswordHash,
+      role: UserRole.ADMIN,
+      badgeUid: 'BADGE-ADMIN-001',
+      active: true,
     },
   });
 
-  // 2. Cria tag NFC de inventário
-  const tag = await prisma.nfcTag.upsert({
-    where: { tagUid: '04A23B89C16080' },
-    update: {},
-    create: {
+  // 2. Seed do Usuário Veterinário
+  const vetUser = await prisma.user.create({
+    data: {
+      name: 'Dra. Madalena Silva',
+      email: 'madalena@nfcarevet.com',
+      passwordHash: vetPasswordHash,
+      role: UserRole.VET,
+      badgeUid: 'BADGE-VET-001',
+      active: true,
+    },
+  });
+
+  // 3. Seed do Usuário Recepcionista
+  const recUser = await prisma.user.create({
+    data: {
+      name: 'Carlos Recepção',
+      email: 'recepcao@nfcarevet.com',
+      passwordHash: recPasswordHash,
+      role: UserRole.REC,
+      badgeUid: 'BADGE-REC-001',
+      active: true,
+    },
+  });
+
+  // 4. Cria tag NFC de inventário
+  const tag = await prisma.nfcTag.create({
+    data: {
       tagUid: '04A23B89C16080',
       publicCode: 'tag-thor-01',
     },
   });
 
-  // 3. Cria paciente com alertas clínicos
+  // 5. Cria paciente com alertas clínicos
   const patient = await prisma.patient.create({
     data: {
       name: 'Thor',
@@ -48,7 +84,7 @@ async function main() {
     },
   });
 
-  // 4. Cria a internação ativa vinculando o pet à baia e à tag
+  // 6. Cria a internação ativa vinculando o pet à baia e à tag
   const hospitalization = await prisma.hospitalization.create({
     data: {
       patientId: patient.id,
@@ -77,14 +113,14 @@ async function main() {
     },
   });
 
-  console.log(
-    `Seed concluído por ${vet.name}: Paciente ${patient.name} internado na tag ${tag.publicCode} (ID: ${hospitalization.id})`,
-  );
+  console.log('Seed concluído com sucesso!');
+  console.log(`- Usuários cadastrados: ADMIN (${adminUser.email}), VET (${vetUser.email}), REC (${recUser.email})`);
+  console.log(`- Paciente internado: ${patient.name} na tag ${tag.publicCode} (Internação ID: ${hospitalization.id})`);
 }
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error('Erro ao executar o seed:', e);
     process.exit(1);
   })
   .finally(async () => {

@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
-import { PrismaService } from '../../database/prisma.service';
+import { UsersRepository } from '../users/repositories/users.repository';
 import { LoginDto } from './dto/login.dto';
 import { BadgeLoginDto } from './dto/badge-login.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
@@ -14,14 +14,12 @@ import { JwtPayload } from '../../common/interfaces/jwt-payload.interface';
 @Injectable()
 export class AuthService {
   constructor(
-    private prisma: PrismaService,
-    private jwtService: JwtService,
+    private readonly usersRepository: UsersRepository,
+    private readonly jwtService: JwtService,
   ) {}
 
   async login(loginDto: LoginDto): Promise<AuthResponseDto> {
-    const user = await this.prisma.user.findUnique({
-      where: { email: loginDto.email.toLowerCase() },
-    });
+    const user = await this.usersRepository.findByEmail(loginDto.email);
 
     if (!user) {
       throw new UnauthorizedException('Credenciais inválidas.');
@@ -44,9 +42,9 @@ export class AuthService {
   }
 
   async badgeLogin(badgeLoginDto: BadgeLoginDto): Promise<AuthResponseDto> {
-    const user = await this.prisma.user.findUnique({
-      where: { badgeUid: badgeLoginDto.badgeUid },
-    });
+    const user = await this.usersRepository.findByBadgeUid(
+      badgeLoginDto.badgeUid,
+    );
 
     if (!user) {
       throw new UnauthorizedException(
