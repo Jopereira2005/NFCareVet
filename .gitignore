@@ -1,56 +1,52 @@
-# Dependências e caches
+# 1. Dependências e gerenciadores de pacotes
 node_modules/
 .pnp
 .pnp.js
 npm-debug.log*
-pnpm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
-logs/
-*.log
+.pnpm-debug.log*
 
-# Builds e artefatos de compilação
+# 2. Builds, bundles e artefatos de compilação
 dist/
 build/
-.next/
 out/
+.next/
+.turbo/
+*.tsbuildinfo
+
+# 3. Variáveis de ambiente e credenciais
+.env
+.env.*
+!.env.example
+
+# 4. Dados locais do PostgreSQL e Docker
+pgdata/
+
+# 5. Testes e cobertura
 coverage/
 .nyc_output/
 
-# Variáveis de ambiente e segredos
-.env
-.env.local
-.env.*.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Banco de dados e Docker local
-pgdata/
-
-# IDEs e Sistema
-.vscode/
+# 6. IDEs e editores de código
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
 .idea/
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# 7. Arquivos de sistema operacional
 .DS_Store
 Thumbs.db
+ehthumbs.db
+desktop.ini
 
-# Arquivos temporários e runtime
-.temp/
-.tmp/
-pids/
-*.pid
-*.seed
-*.pid.lock
-report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
-
-# Firmware (PlatformIO / Arduino)
+# 8. Firmware / Hardware (PlatformIO, Arduino, C++)
 .pio/
 *.bin
 *.hex
+*.elf
