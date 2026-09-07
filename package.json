@@ -8,11 +8,13 @@
   ],
   "scripts": {
     "dev:backend": "npm run start:dev --workspace=backend",
-    "dev:web": "npm run dev --workspace=frontend",
+    "dev:frontend": "npm run dev --workspace=frontend",
     "build": "npm run build --workspaces",
     "db:up": "docker compose up -d",
     "db:down": "docker compose down",
+    "db:generate": "npm run prisma generate --workspace=backend",
     "db:migrate": "npm run prisma migrate dev --workspace=backend",
+    "db:seed": "npm run prisma db seed --workspace=backend",
     "db:studio": "npm run prisma studio --workspace=backend"
   }
 }
