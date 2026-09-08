@@ -4,9 +4,10 @@ import { APP_GUARD } from '@nestjs/core';
 import { PrismaModule } from './database/prisma.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
+import { BedsideModule } from './modules/bedside/bedside.module';
+import { HealthModule } from './modules/health/health.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
-import { BedsideExampleController } from './modules/auth/bedside-example.controller';
 
 @Module({
   imports: [
@@ -16,8 +17,10 @@ import { BedsideExampleController } from './modules/auth/bedside-example.control
     PrismaModule,
     UsersModule,
     AuthModule,
+    BedsideModule,
+    HealthModule,
   ],
-  controllers: [BedsideExampleController],
+  controllers: [],
   providers: [
     {
       provide: APP_GUARD,
