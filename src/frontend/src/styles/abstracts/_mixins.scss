@@ -1,0 +1,62 @@
+@use 'variables' as *;
+
+
+@mixin respond-to($breakpoint) {
+  @if $breakpoint == 'sm' {
+    @media (min-width: 640px) { @content; }
+  }
+  @else if $breakpoint == 'md' {
+    @media (min-width: 768px) { @content; }
+  }
+  @else if $breakpoint == 'lg' {
+    @media (min-width: 1024px) { @content; }
+  }
+  @else if $breakpoint == 'xl' {
+    @media (min-width: 1280px) { @content; }
+  }
+  @else if $breakpoint == 'xxl' {
+    @media (min-width: 1536px) { @content; }
+  }
+}
+
+@mixin flex($direction: row, $justify: center, $align: center) {
+  display: flex;
+  flex-direction: $direction;
+  justify-content: $justify;
+  align-items: $align;
+}
+
+
+@mixin text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin text-truncate-lines($lines: 2) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+
+@mixin transition($properties...) {
+  @if length($properties) == 0 {
+    transition: all $transition-speed $transition-timing;
+  } @else {
+    $transitions: ();
+    @each $prop in $properties {
+      $transitions: append($transitions, #{$prop} $transition-speed $transition-timing, comma);
+    }
+    transition: $transitions;
+  }
+}
+
+@mixin hover {
+  @media (hover: hover) {
+    &:hover {
+      @content;
+    }
+  }
+}

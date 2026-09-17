@@ -1,0 +1,78 @@
+// -----------------------------------------------------------------------------
+// BRAND & STYLE - Clinical Mint & Care (Simplified)
+// -----------------------------------------------------------------------------
+
+// ==========================================
+// CORE COLORS
+// ==========================================
+$light-color: #ffffff;
+$dark-color: #00362A;
+
+$background-color: #f8faf8;
+
+$gray-scale-light: #ECEEEC;
+$gray-scale-medium: #707975;
+$gray-scale-dark: #404945;
+
+$primary-color: #134E3F;
+$secondary-color: #006D40;
+$tertiary-color: #7FE9AC;
+$quaternary-color: #99D2BE;
+
+
+// ==========================================
+// STATUS COLORS
+// ==========================================
+$danger-color: #ba1a1a;
+$warning-color: #f59e0b;
+$success-color: #10b981;
+$info-color: #0284c7;
+
+// ==========================================
+// TYPOGRAPHY (1rem = 10px scaling)
+// ==========================================
+$font-family-base: 'Manrope', system-ui, sans-serif;
+$font-family-mono: 'JetBrains Mono', monospace;
+
+// ==========================================
+// TEXT SIZES (1rem = 10px scaling)
+// ==========================================
+$text-xs: 1.2rem;
+$text-md: 1.6rem;
+$text-sm: 1.4rem;
+$text-lg: 1.8rem;
+$text-xl: 2.4rem;
+$text-xxl: 3.2rem;
+
+$font-regular: 400;
+$font-semibold: 600;
+$font-bold: 700;
+
+// ==========================================
+// SPACING (1rem = 10px scaling)
+// ==========================================
+$space-xs: 0.4rem;
+$space-sm: 0.8rem;
+$space-md: 1.2rem;
+$space-lg: 1.6rem;
+$space-xl: 2.4rem;
+
+// ==========================================
+// BORDER RADIUS
+// ==========================================
+$radius-sm: 0.4rem;
+$radius-md: 0.8rem;
+$radius-lg: 1.6rem;
+$radius-full: 9999px;
+
+// ==========================================
+// ELEVATION / SHADOWS
+// ==========================================
+$shadow-sm: 0 2px 8px -2px rgba(19, 78, 63, 0.04), 0 1px 3px 0 rgba(19, 78, 63, 0.02);
+$shadow-md: 0 8px 24px -4px rgba(19, 78, 63, 0.08), 0 2px 6px -1px rgba(19, 78, 63, 0.03);
+
+// ==========================================
+// ANIMATIONS
+// ==========================================
+$transition-speed: 0.2s;
+$transition-timing: ease-in-out;

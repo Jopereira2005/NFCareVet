@@ -1,0 +1,26 @@
+@use '../abstracts/variables' as *;
+@use '../abstracts/mixins' as *;
+@use 'sass:color';
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: $font-family-base;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: $space-md;
+  color: $on-background;
+}
+
+p {
+  margin-bottom: $space-md;
+  color: $on-surface-variant;
+}
+
+a {
+  color: $primary-color;
+  text-decoration: none;
+  @include transition(color);
+
+  @include hover {
+    color: color.scale($primary-color, $lightness: -15%);
+  }
+}
