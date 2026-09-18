@@ -1,0 +1,43 @@
+export enum UserRole {
+  ADMIN = 'ADMIN',
+  VET = 'VET',
+  REC = 'REC',
+}
+
+export enum HospitalizationStatus {
+  ACTIVE = 'ACTIVE',
+  DISCHARGED = 'DISCHARGED',
+  TRANSFERRED = 'TRANSFERRED',
+}
+
+export enum PrescriptionItemType {
+  MEDICATION = 'MEDICATION',
+  PROCEDURE = 'PROCEDURE',
+  VITAL_CHECK = 'VITAL_CHECK',
+  EXAM = 'EXAM',
+}
+
+export enum PrescriptionStatus {
+  PENDING = 'PENDING',
+  APPLIED = 'APPLIED',
+  CANCELLED = 'CANCELLED',
+}
+
+export enum AdministrationRoute {
+  ORAL = 'ORAL',
+  SUBCUTANEOUS = 'SUBCUTANEOUS',
+  INTRAVENOUS = 'INTRAVENOUS',
+  INTRAMUSCULAR = 'INTRAMUSCULAR',
+  TOPICAL = 'TOPICAL',
+  INHALATION = 'INHALATION',
+}
+
+export enum EventType {
+  MEDICATION_APPLICATION = 'MEDICATION_APPLICATION',
+  VITAL_SIGNS = 'VITAL_SIGNS',
+  PROCEDURE = 'PROCEDURE',
+  EXAM = 'EXAM',
+  FEEDING = 'FEEDING',
+  ELIMINATION = 'ELIMINATION',
+  OBSERVATION = 'OBSERVATION',
+}
