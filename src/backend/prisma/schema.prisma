@@ -5,8 +5,11 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../node_modules/@prisma/client"
 }
+
+// ==========================================
+// ENUMS
+// ==========================================
 
 enum UserRole {
   ADMIN
@@ -18,6 +21,13 @@ enum HospitalizationStatus {
   ACTIVE
   DISCHARGED
   TRANSFERRED
+}
+
+enum PrescriptionItemType {
+  MEDICATION
+  PROCEDURE
+  VITAL_CHECK
+  EXAM
 }
 
 enum PrescriptionStatus {
@@ -35,37 +45,80 @@ enum AdministrationRoute {
   INHALATION
 }
 
+enum EventType {
+  MEDICATION_APPLICATION
+  VITAL_SIGNS
+  PROCEDURE
+  EXAM
+  FEEDING
+  ELIMINATION
+  OBSERVATION
+}
+
+// ==========================================
+// TABELAS
+// ==========================================
+
 model User {
-  id           String        @id @default(uuid())
-  name         String        @db.VarChar(120)
-  email        String        @unique @db.VarChar(150)
-  passwordHash String        @map("password_hash") @db.VarChar(255)
-  role         UserRole      @default(VET)
-  badgeUid     String?       @unique @map("badge_uid") @db.VarChar(32)
-  active       Boolean       @default(true)
-  auditLogs    AuditLog[]
-  createdAt    DateTime      @default(now()) @map("created_at")
+  id             String          @id @default(uuid())
+  name           String          @db.VarChar(120)
+  email          String          @unique @db.VarChar(150)
+  passwordHash   String          @map("password_hash") @db.VarChar(255)
+  role           UserRole        @default(VET)
+  badgeUid       String?         @unique @map("badge_uid") @db.VarChar(32)
+  active         Boolean         @default(true)
+  createdAt      DateTime        @default(now()) @map("created_at")
+
+  prescriptions  Prescription[]  @relation("PrescribedByUser")
+  clinicalEvents ClinicalEvent[] @relation("ExecutedByUser")
 
   @@map("users")
 }
 
+model Guardian {
+  id        String    @id @default(uuid())
+  name      String    @db.VarChar(80)
+  cpf       String?   @unique @db.VarChar(20)
+  email     String?   @db.VarChar(80)
+  phone     String    @db.VarChar(20)
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
+
+  patients  Patient[]
+
+  @@map("guardians")
+}
+
 model Patient {
   id               String            @id @default(uuid())
+  guardianId       String            @map("guardian_id")
+  guardian         Guardian          @relation(fields: [guardianId], references: [id], onDelete: Restrict)
   name             String            @db.VarChar(80)
   species          String            @db.VarChar(50)
   breed            String?           @db.VarChar(50)
   weightKg         Decimal?          @map("weight_kg") @db.Decimal(5, 2)
   photoUrl         String?           @map("photo_url")
-  guardianName     String?           @map("guardian_name") @db.VarChar(120)
-  guardianPhone    String?           @map("guardian_phone") @db.VarChar(20)
   allergies        String?
   isFasting        Boolean           @default(false) @map("is_fasting")
   behaviorNotes    String?           @map("behavior_notes")
-  hospitalizations Hospitalization[]
   createdAt        DateTime          @default(now()) @map("created_at")
   updatedAt        DateTime          @updatedAt @map("updated_at")
 
+  hospitalizations Hospitalization[]
+
   @@map("patients")
+}
+
+model Kennel {
+  id               String            @id @default(uuid())
+  name             String            @unique @db.VarChar(50)
+  notes            String?           @db.VarChar(100)
+  isActive         Boolean           @default(true) @map("is_active")
+  createdAt        DateTime          @default(now()) @map("created_at")
+
+  hospitalizations Hospitalization[]
+
+  @@map("kennels")
 }
 
 model NfcTag {
@@ -73,8 +126,9 @@ model NfcTag {
   tagUid          String           @unique @map("tag_uid") @db.VarChar(32)
   publicCode      String           @unique @map("public_code") @db.VarChar(64)
   active          Boolean          @default(true)
-  hospitalization Hospitalization?
   createdAt       DateTime         @default(now()) @map("created_at")
+
+  hospitalization Hospitalization?
 
   @@map("nfc_tags")
 }
@@ -82,43 +136,69 @@ model NfcTag {
 model Hospitalization {
   id               String                @id @default(uuid())
   patientId        String                @map("patient_id")
-  patient          Patient               @relation(fields: [patientId], references: [id])
+  patient          Patient               @relation(fields: [patientId], references: [id], onDelete: Restrict)
+  kennelId         String                @map("kennel_id")
+  kennel           Kennel                @relation(fields: [kennelId], references: [id], onDelete: Restrict)
   nfcTagId         String?               @unique @map("nfc_tag_id")
   nfcTag           NfcTag?               @relation(fields: [nfcTagId], references: [id], onDelete: SetNull)
-  kennelIdentifier String                @map("kennel_identifier") @db.VarChar(30)
   admissionReason  String?               @map("admission_reason")
   status           HospitalizationStatus @default(ACTIVE)
   admissionDate    DateTime              @default(now()) @map("admission_date")
   dischargeDate    DateTime?             @map("discharge_date")
+
   prescriptions    Prescription[]
+  clinicalEvents   ClinicalEvent[]
 
   @@map("hospitalizations")
 }
 
 model Prescription {
-  id                String              @id @default(uuid())
-  hospitalizationId String              @map("hospitalization_id")
-  hospitalization   Hospitalization     @relation(fields: [hospitalizationId], references: [id], onDelete: Cascade)
-  medication        String              @db.VarChar(100)
-  dosage            String              @db.VarChar(50)
-  route             AdministrationRoute
-  scheduledTime     DateTime            @map("scheduled_time")
-  status            PrescriptionStatus  @default(PENDING)
-  notes             String?
-  auditLogs         AuditLog[]
-  createdAt         DateTime            @default(now()) @map("created_at")
+  id                     String             @id @default(uuid())
+  hospitalizationId      String             @map("hospitalization_id")
+  hospitalization        Hospitalization    @relation(fields: [hospitalizationId], references: [id], onDelete: Cascade)
+  prescribedById         String             @map("prescribed_by_id")
+  prescribedBy           User               @relation("PrescribedByUser", fields: [prescribedById], references: [id], onDelete: Restrict)
+  generalRecommendations String?            @map("general_recommendations")
+  isActive               Boolean            @default(true) @map("is_active")
+  validUntil             DateTime?          @map("valid_until")
+  createdAt              DateTime           @default(now()) @map("created_at")
+
+  items                  PrescriptionItem[]
 
   @@map("prescriptions")
 }
 
-model AuditLog {
-  id             String       @id @default(uuid())
-  prescriptionId String       @map("prescription_id")
-  prescription   Prescription @relation(fields: [prescriptionId], references: [id])
-  userId         String       @map("user_id")
-  user           User         @relation(fields: [userId], references: [id])
-  executedAt     DateTime     @default(now()) @map("executed_at")
-  bedsideNotes   String?      @map("bedside_notes")
+model PrescriptionItem {
+  id             String               @id @default(uuid())
+  prescriptionId String               @map("prescription_id")
+  prescription   Prescription         @relation(fields: [prescriptionId], references: [id], onDelete: Cascade)
+  itemType       PrescriptionItemType @default(MEDICATION) @map("item_type")
+  title          String               @db.VarChar(120)
+  dosage         String?              @db.VarChar(50)
+  route          AdministrationRoute?
+  scheduledTime  DateTime             @map("scheduled_time")
+  status         PrescriptionStatus   @default(PENDING)
+  instructions   String?
+  createdAt      DateTime             @default(now()) @map("created_at")
 
-  @@map("audit_logs")
+  clinicalEvents ClinicalEvent[]
+
+  @@map("prescription_items")
+}
+
+model ClinicalEvent {
+  id                 String            @id @default(uuid())
+  hospitalizationId  String            @map("hospitalization_id")
+  hospitalization    Hospitalization   @relation(fields: [hospitalizationId], references: [id], onDelete: Cascade)
+  prescriptionItemId String?           @map("prescription_item_id")
+  prescriptionItem   PrescriptionItem? @relation(fields: [prescriptionItemId], references: [id], onDelete: SetNull)
+  userId             String            @map("user_id")
+  user               User              @relation("ExecutedByUser", fields: [userId], references: [id], onDelete: Restrict)
+  eventType          EventType         @map("event_type")
+  title              String            @db.VarChar(120)
+  description        String?
+  metrics            Json?
+  recordedAt         DateTime          @default(now()) @map("recorded_at")
+
+  @@map("clinical_events")
 }

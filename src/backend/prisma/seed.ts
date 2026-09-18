@@ -3,7 +3,9 @@ import {
   UserRole,
   HospitalizationStatus,
   PrescriptionStatus,
+  PrescriptionItemType,
   AdministrationRoute,
+  EventType,
 } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 
@@ -12,20 +14,23 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('Iniciando seed de dados do NFCareVet...');
 
-  // Limpa as tabelas existentes para permitir execuções repetidas (idempotência)
-  await prisma.auditLog.deleteMany();
+  // Limpa as tabelas na ordem correta devido a FK constraints
+  await prisma.clinicalEvent.deleteMany();
+  await prisma.prescriptionItem.deleteMany();
   await prisma.prescription.deleteMany();
   await prisma.hospitalization.deleteMany();
-  await prisma.patient.deleteMany();
   await prisma.nfcTag.deleteMany();
+  await prisma.patient.deleteMany();
+  await prisma.guardian.deleteMany();
+  await prisma.kennel.deleteMany();
   await prisma.user.deleteMany();
 
-  // Gera hashes reais de senha via bcryptjs
+  // Hashes de senha
   const defaultPasswordHash = await bcrypt.hash('admin123', 10);
   const vetPasswordHash = await bcrypt.hash('vet12345', 10);
   const recPasswordHash = await bcrypt.hash('rec12345', 10);
 
-  // 1. Seed do Usuário Administrador (Master/SysAdmin)
+  // 1. Usuários
   const adminUser = await prisma.user.create({
     data: {
       name: 'Administrador NFCareVet',
@@ -37,7 +42,6 @@ async function main() {
     },
   });
 
-  // 2. Seed do Usuário Veterinário
   const vetUser = await prisma.user.create({
     data: {
       name: 'Dra. Madalena Silva',
@@ -49,7 +53,6 @@ async function main() {
     },
   });
 
-  // 3. Seed do Usuário Recepcionista
   const recUser = await prisma.user.create({
     data: {
       name: 'Carlos Recepção',
@@ -61,17 +64,20 @@ async function main() {
     },
   });
 
-  // 4. Cria tag NFC de inventário
-  const tag = await prisma.nfcTag.create({
+  // 2. Tutor (Guardian)
+  const guardian = await prisma.guardian.create({
     data: {
-      tagUid: '04A23B89C16080',
-      publicCode: 'tag-thor-01',
+      name: 'Carlos Eduardo',
+      cpf: '123.456.789-00',
+      email: 'carlos@gmail.com',
+      phone: '15999998888',
     },
   });
 
-  // 5. Cria paciente com alertas clínicos
+  // 3. Paciente (Patient)
   const patient = await prisma.patient.create({
     data: {
+      guardianId: guardian.id,
       name: 'Thor',
       species: 'Canina',
       breed: 'Golden Retriever',
@@ -79,43 +85,92 @@ async function main() {
       allergies: 'Alérgico a Dipirona',
       isFasting: true,
       behaviorNotes: 'Dócil, mas assustado com manipulação de patas',
-      guardianName: 'Carlos Eduardo',
-      guardianPhone: '15999998888',
     },
   });
 
-  // 6. Cria a internação ativa vinculando o pet à baia e à tag
+  // 4. Kennel (Baia)
+  const kennel = await prisma.kennel.create({
+    data: {
+      name: 'Baia 02 - Canil Médio',
+      notes: 'Baia com aquecimento e colchão ortopédico',
+      isActive: true,
+    },
+  });
+
+  // 5. Tag NFC
+  const tag = await prisma.nfcTag.create({
+    data: {
+      tagUid: '04A23B89C16080',
+      publicCode: 'tag-thor-01',
+      active: true,
+    },
+  });
+
+  // 6. Internação
   const hospitalization = await prisma.hospitalization.create({
     data: {
       patientId: patient.id,
+      kennelId: kennel.id,
       nfcTagId: tag.id,
-      kennelIdentifier: 'Baia 02 - Canil Médio',
       admissionReason: 'Pós-operatório ortopédico',
       status: HospitalizationStatus.ACTIVE,
-      prescriptions: {
+    },
+  });
+
+  // 7. Prescrição Medica e Itens
+  const prescription = await prisma.prescription.create({
+    data: {
+      hospitalizationId: hospitalization.id,
+      prescribedById: vetUser.id,
+      generalRecommendations: 'Manter paciente sob repouso e monitorar temperatura corporal.',
+      isActive: true,
+      items: {
         create: [
           {
-            medication: 'Cefalotina',
+            itemType: PrescriptionItemType.MEDICATION,
+            title: 'Cefalotina',
             dosage: '30 mg/kg (IV)',
             route: AdministrationRoute.INTRAVENOUS,
-            scheduledTime: new Date(Date.now() + 1000 * 60 * 30), // Daqui 30 min
+            scheduledTime: new Date(Date.now() + 1000 * 60 * 30), // 30 min
             status: PrescriptionStatus.PENDING,
+            instructions: 'Aplicação intravenosa lenta.',
           },
           {
-            medication: 'Tramadol',
+            itemType: PrescriptionItemType.MEDICATION,
+            title: 'Tramadol',
             dosage: '3 mg/kg (SC)',
             route: AdministrationRoute.SUBCUTANEOUS,
-            scheduledTime: new Date(Date.now() + 1000 * 60 * 120), // Daqui 2h
+            scheduledTime: new Date(Date.now() + 1000 * 60 * 120), // 2h
             status: PrescriptionStatus.PENDING,
+            instructions: 'Aplicação via subcutânea.',
+          },
+          {
+            itemType: PrescriptionItemType.VITAL_CHECK,
+            title: 'Checagem de Sinais Vitais',
+            scheduledTime: new Date(Date.now() + 1000 * 60 * 15), // 15 min
+            status: PrescriptionStatus.PENDING,
+            instructions: 'Aferir FC, FR, Tª e TPC.',
           },
         ],
       },
     },
   });
 
+  // 8. Evento Clínico Inicial
+  await prisma.clinicalEvent.create({
+    data: {
+      hospitalizationId: hospitalization.id,
+      userId: vetUser.id,
+      eventType: EventType.OBSERVATION,
+      title: 'Admissão na Baia',
+      description: 'Paciente alocado na baia após cirurgia ortopédica. Sinais vitais estáveis.',
+      metrics: { temperature: 38.5, heartRate: 110 },
+    },
+  });
+
   console.log('Seed concluído com sucesso!');
-  console.log(`- Usuários cadastrados: ADMIN (${adminUser.email}), VET (${vetUser.email}), REC (${recUser.email})`);
-  console.log(`- Paciente internado: ${patient.name} na tag ${tag.publicCode} (Internação ID: ${hospitalization.id})`);
+  console.log(`- Usuários: ADMIN (${adminUser.email}), VET (${vetUser.email}), REC (${recUser.email})`);
+  console.log(`- Paciente internado: ${patient.name} (Tutor: ${guardian.name}) na baia "${kennel.name}" com NFC ${tag.publicCode}`);
 }
 
 main()

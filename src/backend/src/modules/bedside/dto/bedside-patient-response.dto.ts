@@ -1,3 +1,11 @@
+export class BedsideGuardianDto {
+  id: string;
+  name: string;
+  phone: string;
+  email?: string | null;
+  cpf?: string | null;
+}
+
 export class BedsidePatientDto {
   id: string;
   name: string;
@@ -8,4 +16,5 @@ export class BedsidePatientDto {
   allergies?: string | null;
   isFasting: boolean;
   behaviorNotes?: string | null;
+  guardian: BedsideGuardianDto;
 }

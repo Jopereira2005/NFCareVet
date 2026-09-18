@@ -15,11 +15,15 @@ export class BedsideService {
       throw new NotFoundException('Nenhuma internação ativa encontrada para este identificador NFC.');
     }
 
-    const { patient, prescriptions, kennelIdentifier, id: hospitalizationId } = tag.hospitalization;
+    const { patient, kennel, prescriptions, clinicalEvents, id: hospitalizationId } = tag.hospitalization;
 
     return {
       hospitalizationId,
-      kennelIdentifier,
+      kennel: {
+        id: kennel.id,
+        name: kennel.name,
+        notes: kennel.notes,
+      },
       patient: {
         id: patient.id,
         name: patient.name,
@@ -30,36 +34,46 @@ export class BedsideService {
         allergies: patient.allergies,
         isFasting: patient.isFasting,
         behaviorNotes: patient.behaviorNotes,
+        guardian: {
+          id: patient.guardian.id,
+          name: patient.guardian.name,
+          phone: patient.guardian.phone,
+          email: patient.guardian.email,
+          cpf: patient.guardian.cpf,
+        },
       },
       prescriptions,
+      clinicalEvents,
     };
   }
 
   async applyMedication(
-    prescriptionId: string,
+    itemId: string,
     userId: string,
     bedsideNotes?: string,
+    metrics?: Record<string, any>,
   ): Promise<ApplyMedicationResponseDto> {
-    const prescription = await this.bedsideRepository.findPrescriptionById(prescriptionId);
+    const item = await this.bedsideRepository.findPrescriptionItemById(itemId);
 
-    if (!prescription) {
-      throw new NotFoundException('Prescrição não encontrada.');
+    if (!item) {
+      throw new NotFoundException('Item de prescrição não encontrado.');
     }
 
-    if (prescription.status === PrescriptionStatus.APPLIED) {
-      throw new BadRequestException('Esta dose já foi registrada como aplicada.');
+    if (item.status === PrescriptionStatus.APPLIED) {
+      throw new BadRequestException('Este item de prescrição já foi registrado como aplicado.');
     }
 
-    const { updatedPrescription, auditLog } = await this.bedsideRepository.applyMedication(
-      prescriptionId,
+    const { updatedItem, clinicalEvent } = await this.bedsideRepository.applyPrescriptionItem(
+      itemId,
       userId,
       bedsideNotes,
+      metrics,
     );
 
     return {
       message: 'Procedimento registrado com sucesso',
-      prescription: updatedPrescription,
-      auditLog,
+      prescriptionItem: updatedItem,
+      clinicalEvent,
     };
   }
 }

@@ -20,16 +20,32 @@ export class BedsideController {
   }
 
   @Roles(UserRole.ADMIN, UserRole.VET)
-  @Post('prescriptions/:id/apply')
-  async applyMedication(
-    @Param('id') prescriptionId: string,
+  @Post('items/:id/apply')
+  async applyItem(
+    @Param('id') itemId: string,
     @CurrentUser('userId') userId: string,
     @Body() applyMedicationDto: ApplyMedicationDto,
   ): Promise<ApplyMedicationResponseDto> {
     return this.bedsideService.applyMedication(
-      prescriptionId,
+      itemId,
       userId,
       applyMedicationDto?.bedsideNotes,
+      applyMedicationDto?.metrics,
+    );
+  }
+
+  @Roles(UserRole.ADMIN, UserRole.VET)
+  @Post('prescriptions/:id/apply')
+  async applyMedication(
+    @Param('id') itemId: string,
+    @CurrentUser('userId') userId: string,
+    @Body() applyMedicationDto: ApplyMedicationDto,
+  ): Promise<ApplyMedicationResponseDto> {
+    return this.bedsideService.applyMedication(
+      itemId,
+      userId,
+      applyMedicationDto?.bedsideNotes,
+      applyMedicationDto?.metrics,
     );
   }
 }
