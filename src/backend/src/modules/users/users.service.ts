@@ -128,7 +128,6 @@ export class UsersService {
       throw new NotFoundException(`Usuário com ID "${id}" não encontrado.`);
     }
 
-    // Desativação lógica (soft delete) para preservar histórico e audit logs beira-baia
     await this.usersRepository.update(id, { active: false });
     return {
       message: `Usuário "${existingUser.name}" desativado com sucesso.`,
