@@ -10,6 +10,7 @@ export interface IPatient {
   photoUrl?: string | null;
   allergies?: string | null;
   isFasting: boolean;
+  isCastrated: boolean;
   behaviorNotes?: string | null;
   createdAt: Date | string;
   updatedAt: Date | string;
@@ -26,6 +27,7 @@ export interface ICreatePatientPayload {
   photoUrl?: string;
   allergies?: string;
   isFasting?: boolean;
+  isCastrated?: boolean;
   behaviorNotes?: string;
 }
 
@@ -38,5 +40,6 @@ export interface IUpdatePatientPayload {
   photoUrl?: string;
   allergies?: string;
   isFasting?: boolean;
+  isCastrated?: boolean;
   behaviorNotes?: string;
 }

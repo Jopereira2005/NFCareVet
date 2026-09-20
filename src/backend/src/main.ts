@@ -37,6 +37,7 @@ async function bootstrap() {
     .addTag('Autenticação', 'Endpoints de login convencional e autenticação rápida por crachá NFC')
     .addTag('Beira de Leito (Bedside)', 'Consultas rápidas por tag NFC de leito e checagem/aplicação de medicações')
     .addTag('Tags NFC', 'Gestão e provisionamento de tags NFC do leito hospitalar')
+    .addTag('Internações (Hospitalizations)', 'Gestão de internações de pacientes, leitos e vínculo de tags NFC')
     .addTag('Usuários', 'Gerenciamento de colaboradores e permissões (Exclusivo ADMIN)')
     .addTag('Health & Diagnóstico', 'Monitoramento de integridade e testes de autorização RBAC')
     .build();

@@ -100,6 +100,7 @@ model Patient {
   photoUrl         String?           @map("photo_url")
   allergies        String?
   isFasting        Boolean           @default(false) @map("is_fasting")
+  isCastrated      Boolean           @default(false) @map("is_castrated")
   behaviorNotes    String?           @map("behavior_notes")
   createdAt        DateTime          @default(now()) @map("created_at")
   updatedAt        DateTime          @updatedAt @map("updated_at")

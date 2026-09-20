@@ -38,3 +38,12 @@ export interface IUpdateHospitalizationPayload {
   status?: HospitalizationStatus;
   dischargeDate?: Date | string | null;
 }
+
+export interface ILinkTagPayload {
+  tagIdentifier: string;
+}
+
+export interface IUnlinkTagPayload {
+  reason?: string;
+}
+

@@ -19,6 +19,7 @@ export interface IBedsidePatient {
   photoUrl?: string | null;
   allergies?: string | null;
   isFasting: boolean;
+  isCastrated: boolean;
   behaviorNotes?: string | null;
   guardian: IBedsideGuardian;
 }

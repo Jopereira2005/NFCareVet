@@ -7,6 +7,7 @@ import { UsersModule } from './modules/users/users.module';
 import { BedsideModule } from './modules/bedside/bedside.module';
 import { HealthModule } from './modules/health/health.module';
 import { NfcTagsModule } from './modules/nfc-tags/nfc-tags.module';
+import { HospitalizationsModule } from './modules/hospitalizations/hospitalizations.module';
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 
@@ -21,6 +22,7 @@ import { RolesGuard } from './common/guards/roles.guard';
     BedsideModule,
     HealthModule,
     NfcTagsModule,
+    HospitalizationsModule,
   ],
   controllers: [],
   providers: [

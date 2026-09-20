@@ -33,6 +33,7 @@ export class BedsideService {
         photoUrl: patient.photoUrl,
         allergies: patient.allergies,
         isFasting: patient.isFasting,
+        isCastrated: patient.isCastrated,
         behaviorNotes: patient.behaviorNotes,
         guardian: {
           id: patient.guardian.id,

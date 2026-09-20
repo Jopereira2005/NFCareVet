@@ -46,6 +46,9 @@ export class BedsidePatientDto {
   @ApiProperty({ example: false, description: 'Indica se o paciente deve permanecer em jejum' })
   isFasting: boolean;
 
+  @ApiProperty({ example: true, description: 'Indica se o paciente é castrado' })
+  isCastrated: boolean;
+
   @ApiPropertyOptional({
     example: 'Muito dócil, aceita medicação em sachê.',
     nullable: true,

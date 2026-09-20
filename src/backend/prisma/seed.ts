@@ -84,6 +84,7 @@ async function main() {
       weightKg: 32.5,
       allergies: 'Alérgico a Dipirona',
       isFasting: true,
+      isCastrated: true,
       behaviorNotes: 'Dócil, mas assustado com manipulação de patas',
     },
   });
