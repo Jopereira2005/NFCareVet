@@ -5,17 +5,23 @@ import {
   ConflictException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { EventType } from '@prisma/client';
+import { EventType, HospitalizationStatus, Patient } from '@prisma/client';
+import { DischargeReason } from '@nfcarevet/common';
 import {
   HospitalizationsRepository,
   HospitalizationWithRelations,
 } from './hospitalizations.repository';
+import { CreateHospitalizationDto } from './dto/create-hospitalization.dto';
+import { TransferKennelDto } from './dto/transfer-kennel.dto';
 import { LinkTagDto } from './dto/link-tag.dto';
 import { UnlinkTagDto } from './dto/unlink-tag.dto';
+import { DischargeDto } from './dto/discharge.dto';
 import {
   HospitalizationResponseDto,
   LinkTagResponseDto,
   UnlinkTagResponseDto,
+  TransferKennelResponseDto,
+  DischargeResponseDto,
 } from './dto/hospitalization-response.dto';
 
 @Injectable()
@@ -24,6 +30,190 @@ export class HospitalizationsService {
     private readonly repository: HospitalizationsRepository,
     private readonly configService: ConfigService,
   ) {}
+
+  async create(
+    dto: CreateHospitalizationDto,
+    currentUserId: string,
+  ): Promise<HospitalizationResponseDto> {
+    const patient = await this.repository.findPatientById(dto.patientId);
+    if (!patient) {
+      throw new NotFoundException(
+        `Paciente com ID "${dto.patientId}" não encontrado.`,
+      );
+    }
+
+    const activePatientHosp = await this.repository.findActiveByPatientId(
+      dto.patientId,
+    );
+    if (activePatientHosp) {
+      throw new ConflictException(
+        `O paciente "${patient.name}" já possui uma internação ativa em andamento.`,
+      );
+    }
+
+    const kennel = await this.repository.findKennelById(dto.kennelId);
+    if (!kennel) {
+      throw new NotFoundException(
+        `Baia/Canil com ID "${dto.kennelId}" não encontrada.`,
+      );
+    }
+    if (!kennel.isActive) {
+      throw new BadRequestException(
+        `A baia "${kennel.name}" está inativa e não pode receber novas internações.`,
+      );
+    }
+
+    const activeKennelHosp = await this.repository.findActiveByKennelId(
+      dto.kennelId,
+    );
+    if (activeKennelHosp) {
+      const occupantName =
+        activeKennelHosp.patient?.name || activeKennelHosp.id;
+      throw new ConflictException(
+        `A baia "${kennel.name}" já está ocupada pelo paciente "${occupantName}".`,
+      );
+    }
+
+    const responsibleVetId = dto.responsibleVetId || currentUserId;
+    const vet = await this.repository.findUserById(responsibleVetId);
+    if (!vet) {
+      throw new NotFoundException(
+        `Veterinário responsável com ID "${responsibleVetId}" não encontrado.`,
+      );
+    }
+
+    let tagIdToLink: string | null = null;
+    let tagInfo: { tagUid: string; publicCode: string } | null = null;
+
+    if (dto.tagIdentifier) {
+      const tag = await this.repository.findTagByIdentifier(dto.tagIdentifier);
+      if (!tag) {
+        throw new NotFoundException(
+          `Tag NFC com identificador "${dto.tagIdentifier}" não encontrada no inventário.`,
+        );
+      }
+      if (!tag.active) {
+        throw new BadRequestException(
+          `A tag NFC [${tag.tagUid}] está inativada no inventário e não pode ser vinculada.`,
+        );
+      }
+      if (
+        tag.hospitalization &&
+        tag.hospitalization.status === HospitalizationStatus.ACTIVE
+      ) {
+        const linkedPatient =
+          tag.hospitalization.patient?.name || tag.hospitalization.id;
+        throw new ConflictException(
+          `A tag NFC [${tag.tagUid}] já está vinculada ao paciente "${linkedPatient}".`,
+        );
+      }
+      tagIdToLink = tag.id;
+      tagInfo = { tagUid: tag.tagUid, publicCode: tag.publicCode };
+    }
+
+    const tagDesc = tagInfo ? ` Tag NFC [${tagInfo.tagUid}] associada.` : '';
+    const created = await this.repository.createHospitalization(
+      {
+        patientId: dto.patientId,
+        kennelId: dto.kennelId,
+        admissionReason: dto.admissionReason,
+        nfcTagId: tagIdToLink,
+      },
+      {
+        userId: responsibleVetId,
+        eventType: EventType.OBSERVATION,
+        title: 'Admissão Hospitalar (Check-in)',
+        description: `Paciente ${patient.name} admitido na baia "${kennel.name}". Motivo: ${dto.admissionReason}. Diagnóstico preliminar: ${dto.preliminaryDiagnosis}.${tagDesc}`,
+        metrics: {
+          admissionReason: dto.admissionReason,
+          preliminaryDiagnosis: dto.preliminaryDiagnosis,
+          kennelName: kennel.name,
+          responsibleVetId,
+          tagUid: tagInfo?.tagUid,
+          publicCode: tagInfo?.publicCode,
+        },
+      },
+    );
+
+    return this.toResponseDto(created);
+  }
+
+  async transferKennel(
+    hospitalizationId: string,
+    dto: TransferKennelDto,
+    userId: string,
+  ): Promise<TransferKennelResponseDto> {
+    const hospitalization = await this.repository.findById(hospitalizationId);
+
+    if (!hospitalization) {
+      throw new NotFoundException(
+        `Internação com ID "${hospitalizationId}" não encontrada.`,
+      );
+    }
+
+    if (hospitalization.status !== HospitalizationStatus.ACTIVE) {
+      throw new BadRequestException(
+        'Não é possível transferir de baia uma internação que não está ativa.',
+      );
+    }
+
+    if (hospitalization.kennelId === dto.targetKennelId) {
+      throw new BadRequestException(
+        'O paciente já se encontra alojado nesta baia/canil.',
+      );
+    }
+
+    const targetKennel = await this.repository.findKennelById(dto.targetKennelId);
+    if (!targetKennel) {
+      throw new NotFoundException(
+        `Baia/Canil de destino com ID "${dto.targetKennelId}" não encontrada.`,
+      );
+    }
+    if (!targetKennel.isActive) {
+      throw new BadRequestException(
+        `A baia de destino "${targetKennel.name}" está inativa.`,
+      );
+    }
+
+    const activeHospInTarget = await this.repository.findActiveByKennelId(
+      dto.targetKennelId,
+    );
+    if (activeHospInTarget) {
+      const currentPatientName =
+        activeHospInTarget.patient?.name || activeHospInTarget.id;
+      throw new ConflictException(
+        `A baia de destino "${targetKennel.name}" já está ocupada pelo paciente "${currentPatientName}".`,
+      );
+    }
+
+    const fromKennelName = hospitalization.kennel?.name || 'Baia anterior';
+    const reasonText = dto.reason ? ` Motivo: ${dto.reason}` : '';
+
+    const updated = await this.repository.transferKennel(
+      hospitalization.id,
+      dto.targetKennelId,
+      {
+        userId,
+        eventType: EventType.OBSERVATION,
+        title: 'Transferência de Baia/Leito',
+        description: `Paciente ${hospitalization.patient.name} transferido da baia "${fromKennelName}" para "${targetKennel.name}".${reasonText}`,
+        metrics: {
+          fromKennelId: hospitalization.kennelId,
+          fromKennelName,
+          toKennelId: targetKennel.id,
+          toKennelName: targetKennel.name,
+          reason: dto.reason,
+        },
+      },
+    );
+
+    return {
+      message: `Paciente transferido com sucesso para a baia "${targetKennel.name}".`,
+      fromKennelId: hospitalization.kennelId,
+      toKennelId: targetKennel.id,
+      hospitalization: this.toResponseDto(updated),
+    };
+  }
 
   async linkTag(
     hospitalizationId: string,
@@ -38,7 +228,7 @@ export class HospitalizationsService {
       );
     }
 
-    if (hospitalization.status !== 'ACTIVE') {
+    if (hospitalization.status !== HospitalizationStatus.ACTIVE) {
       throw new BadRequestException(
         'Não é possível vincular uma tag NFC a uma internação que não está ativa.',
       );
@@ -61,7 +251,7 @@ export class HospitalizationsService {
     if (
       tag.hospitalization &&
       tag.hospitalization.id !== hospitalizationId &&
-      tag.hospitalization.status === 'ACTIVE'
+      tag.hospitalization.status === HospitalizationStatus.ACTIVE
     ) {
       const patientName =
         tag.hospitalization.patient?.name || tag.hospitalization.id;
@@ -123,7 +313,7 @@ export class HospitalizationsService {
       );
     }
 
-    if (hospitalization.status !== 'ACTIVE') {
+    if (hospitalization.status !== HospitalizationStatus.ACTIVE) {
       throw new BadRequestException(
         'Não é possível desvincular uma tag NFC de uma internação que não está ativa.',
       );
@@ -175,8 +365,115 @@ export class HospitalizationsService {
     return this.unlinkTag(hospitalization.id, dto, userId);
   }
 
+  async discharge(
+    hospitalizationId: string,
+    dto: DischargeDto,
+    userId: string,
+  ): Promise<DischargeResponseDto> {
+    const hospitalization = await this.repository.findById(hospitalizationId);
+
+    if (!hospitalization) {
+      throw new NotFoundException(
+        `Internação com ID "${hospitalizationId}" não encontrada.`,
+      );
+    }
+
+    if (hospitalization.status !== HospitalizationStatus.ACTIVE) {
+      throw new BadRequestException(
+        'Esta internação já foi finalizada ou não está ativa.',
+      );
+    }
+
+    const freedTag = hospitalization.nfcTag;
+    const dischargeDate = new Date();
+
+    const targetStatus =
+      dto?.dischargeReason === DischargeReason.EXTERNAL_TRANSFER
+        ? HospitalizationStatus.TRANSFERRED
+        : HospitalizationStatus.DISCHARGED;
+
+    const descriptionParts: string[] = [
+      `Encerramento de internação concedido ao paciente ${hospitalization.patient.name}.`,
+    ];
+    if (dto?.dischargeReason) {
+      descriptionParts.push(`Motivo da alta: ${dto.dischargeReason}`);
+    }
+    if (dto?.dischargeNotes) {
+      descriptionParts.push(`Evolução/Instruções: ${dto.dischargeNotes}`);
+    }
+    if (dto?.medicalRecommendations) {
+      descriptionParts.push(`Recomendações ao tutor: ${dto.medicalRecommendations}`);
+    }
+    if (freedTag) {
+      descriptionParts.push(`Tag NFC [${freedTag.tagUid}] desvinculada e liberada no inventário.`);
+    }
+
+    const updated = await this.repository.discharge(
+      hospitalization.id,
+      targetStatus,
+      dischargeDate,
+      {
+        userId,
+        eventType: EventType.OBSERVATION,
+        title:
+          targetStatus === HospitalizationStatus.TRANSFERRED
+            ? 'Transferência Externa Hospitalar'
+            : 'Alta Médica Hospitalar',
+        description: descriptionParts.join(' | '),
+        metrics: {
+          dischargeReason: dto?.dischargeReason,
+          dischargeNotes: dto?.dischargeNotes,
+          medicalRecommendations: dto?.medicalRecommendations,
+          freedTagUid: freedTag?.tagUid,
+          freedPublicCode: freedTag?.publicCode,
+        },
+      },
+    );
+
+    return {
+      message: 'Alta hospitalar realizada com sucesso.',
+      hospitalizationId: updated.id,
+      status: updated.status,
+      dischargeReason: dto?.dischargeReason || null,
+      patient: this.toResponseDto(updated).patient,
+      dischargeDate: updated.dischargeDate ?? dischargeDate,
+      freedTagUid: freedTag?.tagUid || null,
+      freedPublicCode: freedTag?.publicCode || null,
+    };
+  }
+
+  async dischargeByPatient(
+    patientId: string,
+    dto: DischargeDto,
+    userId: string,
+  ): Promise<DischargeResponseDto> {
+    const hospitalization = await this.repository.findActiveByPatientId(patientId);
+
+    if (!hospitalization) {
+      throw new NotFoundException(
+        `Nenhuma internação ativa encontrada para o paciente com ID "${patientId}".`,
+      );
+    }
+
+    return this.discharge(hospitalization.id, dto, userId);
+  }
+
   async findAllActive(): Promise<HospitalizationResponseDto[]> {
     const list = await this.repository.findAllActive();
+    return list.map((item) => this.toResponseDto(item));
+  }
+
+  async findHistoryByPatient(
+    patientId: string,
+  ): Promise<HospitalizationResponseDto[]> {
+    const patient = await this.repository.findPatientById(patientId);
+    if (!patient) {
+      throw new NotFoundException(
+        `Paciente com ID "${patientId}" não encontrado.`,
+      );
+    }
+
+    const list = await this.repository.findHistoryByPatientId(patientId);
     return list.map((item) => this.toResponseDto(item));
   }
 
@@ -202,6 +499,24 @@ export class HospitalizationsService {
     return this.toResponseDto(hospitalization);
   }
 
+  private generateClinicalAlerts(patient: Patient): string[] {
+    const alerts: string[] = [];
+
+    if (patient.isFasting) {
+      alerts.push('JEJUM OBRIGATÓRIO');
+    }
+
+    if (patient.allergies && patient.allergies.trim().length > 0) {
+      alerts.push(`ALERGIA: ${patient.allergies.trim()}`);
+    }
+
+    if (patient.behaviorNotes && patient.behaviorNotes.trim().length > 0) {
+      alerts.push(`COMPORTAMENTO: ${patient.behaviorNotes.trim()}`);
+    }
+
+    return alerts;
+  }
+
   private toResponseDto(
     item: HospitalizationWithRelations,
   ): HospitalizationResponseDto {
@@ -209,6 +524,15 @@ export class HospitalizationsService {
       'APP_BASE_URL',
       'https://app.suaclinica.com',
     );
+
+    const guardian = item.patient.guardian
+      ? {
+          id: item.patient.guardian.id,
+          name: item.patient.guardian.name,
+          phone: item.patient.guardian.phone,
+          email: item.patient.guardian.email || null,
+        }
+      : null;
 
     return {
       id: item.id,
@@ -219,6 +543,7 @@ export class HospitalizationsService {
       status: item.status,
       admissionDate: item.admissionDate,
       dischargeDate: item.dischargeDate,
+      clinicalAlerts: this.generateClinicalAlerts(item.patient),
       patient: {
         id: item.patient.id,
         name: item.patient.name,
@@ -227,6 +552,9 @@ export class HospitalizationsService {
         weightKg: item.patient.weightKg,
         isFasting: item.patient.isFasting,
         isCastrated: item.patient.isCastrated,
+        allergies: item.patient.allergies,
+        behaviorNotes: item.patient.behaviorNotes,
+        guardian,
       },
       kennel: {
         id: item.kennel.id,
@@ -242,6 +570,16 @@ export class HospitalizationsService {
             targetUrl: `${appBaseUrl}/bedside/${item.nfcTag.publicCode}`,
           }
         : null,
+      clinicalEvents: item.clinicalEvents
+        ? item.clinicalEvents.map((evt) => ({
+            id: evt.id,
+            eventType: evt.eventType,
+            title: evt.title,
+            description: evt.description,
+            metrics: evt.metrics,
+            recordedAt: evt.recordedAt,
+          }))
+        : undefined,
     };
   }
 }

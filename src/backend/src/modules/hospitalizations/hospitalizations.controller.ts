@@ -18,17 +18,23 @@ import {
   ApiNotFoundResponse,
   ApiConflictResponse,
   ApiUnauthorizedResponse,
+  ApiForbiddenResponse,
 } from '@nestjs/swagger';
 import { UserRole } from '@prisma/client';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { HospitalizationsService } from './hospitalizations.service';
+import { CreateHospitalizationDto } from './dto/create-hospitalization.dto';
+import { TransferKennelDto } from './dto/transfer-kennel.dto';
 import { LinkTagDto } from './dto/link-tag.dto';
 import { UnlinkTagDto } from './dto/unlink-tag.dto';
+import { DischargeDto } from './dto/discharge.dto';
 import {
   HospitalizationResponseDto,
   LinkTagResponseDto,
   UnlinkTagResponseDto,
+  TransferKennelResponseDto,
+  DischargeResponseDto,
 } from './dto/hospitalization-response.dto';
 
 @ApiTags('Internações (Hospitalizations)')
@@ -38,7 +44,76 @@ import {
 export class HospitalizationsController {
   constructor(private readonly service: HospitalizationsService) {}
 
+  @Post()
+  @Roles(UserRole.ADMIN, UserRole.VET)
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({
+    summary: 'Admissão Hospitalar (Check-in)',
+    description:
+      'Cria uma nova internação vinculando obrigatoriamente patientId, kennelId, motivo da admissão (admissionReason), diagnóstico preliminar e o veterinário responsável. Suporta vincular opcionalmente no mesmo ato uma tag NFC física disponível no inventário.',
+  })
+  @ApiCreatedResponse({
+    description: 'Admissão hospitalar realizada com sucesso.',
+    type: HospitalizationResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description: 'Campos obrigatórios inválidos, baia inativa ou tag inativada.',
+  })
+  @ApiNotFoundResponse({
+    description: 'Paciente, baia, tag NFC ou veterinário responsável não encontrado.',
+  })
+  @ApiConflictResponse({
+    description: 'Paciente já internado, baia já ocupada ou tag já em uso por outro paciente.',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Não autenticado.',
+  })
+  @ApiForbiddenResponse({
+    description: 'Acesso restrito a Médicos Veterinários (VET) ou Administradores (ADMIN).',
+  })
+  async create(
+    @Body() dto: CreateHospitalizationDto,
+    @CurrentUser('userId') userId: string,
+  ): Promise<HospitalizationResponseDto> {
+    return this.service.create(dto, userId);
+  }
+
+  @Post(':id/transfer-kennel')
+  @Roles(UserRole.ADMIN, UserRole.VET)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Transferência de Leito / Baia',
+    description:
+      'Movimenta o paciente internado para outro canil/leito disponível. Registra a transição gerando automaticamente um evento clínico de movimentação interna com data/hora e usuário executor.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'UUID da internação ativa',
+    example: 'uuid-hosp-1',
+  })
+  @ApiOkResponse({
+    description: 'Transferência de leito realizada com sucesso.',
+    type: TransferKennelResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description: 'Internação não ativa, baia de destino inativa ou paciente já alocado na mesma baia.',
+  })
+  @ApiNotFoundResponse({
+    description: 'Internação ou baia de destino não encontrada.',
+  })
+  @ApiConflictResponse({
+    description: 'A baia de destino já está ocupada por outro paciente ativo.',
+  })
+  async transferKennel(
+    @Param('id') id: string,
+    @Body() dto: TransferKennelDto,
+    @CurrentUser('userId') userId: string,
+  ): Promise<TransferKennelResponseDto> {
+    return this.service.transferKennel(id, dto, userId);
+  }
+
   @Post(':id/link-tag')
+  @Roles(UserRole.ADMIN, UserRole.VET)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Vincular tag NFC à internação',
@@ -63,9 +138,6 @@ export class HospitalizationsController {
   @ApiConflictResponse({
     description: 'Tag já vinculada a outra internação ativa.',
   })
-  @ApiUnauthorizedResponse({
-    description: 'Não autenticado.',
-  })
   async linkTag(
     @Param('id') id: string,
     @Body() dto: LinkTagDto,
@@ -75,6 +147,7 @@ export class HospitalizationsController {
   }
 
   @Post(':id/unlink-tag')
+  @Roles(UserRole.ADMIN, UserRole.VET)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Desvincular tag NFC da internação',
@@ -105,6 +178,7 @@ export class HospitalizationsController {
   }
 
   @Post('patient/:patientId/link-tag')
+  @Roles(UserRole.ADMIN, UserRole.VET)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Vincular tag NFC diretamente ao paciente',
@@ -129,6 +203,7 @@ export class HospitalizationsController {
   }
 
   @Post('patient/:patientId/unlink-tag')
+  @Roles(UserRole.ADMIN, UserRole.VET)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Desvincular tag NFC diretamente do paciente',
@@ -152,14 +227,73 @@ export class HospitalizationsController {
     return this.service.unlinkTagFromPatient(patientId, dto, userId);
   }
 
-  @Get('active')
+  @Post(':id/discharge')
+  @Roles(UserRole.ADMIN, UserRole.VET)
+  @HttpCode(HttpStatus.OK)
   @ApiOperation({
-    summary: 'Listar internações ativas',
+    summary: 'Alta Hospitalar / Check-out',
     description:
-      'Retorna todas as internações em andamento com dados do paciente, baia e tag NFC.',
+      'Conclui a internação com data de encerramento, motivo da alta (alta médica, transferência externa ou óbito) e instruções pós-alta. Libera automaticamente o leito e remove o vínculo ativo da nfcTagId para reutilização imediata.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'UUID da internação',
+    example: 'uuid-hosp-1',
   })
   @ApiOkResponse({
-    description: 'Lista de internações ativas.',
+    description: 'Alta hospitalar realizada com sucesso.',
+    type: DischargeResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description: 'Internação não está ativa ou já finalizada.',
+  })
+  @ApiNotFoundResponse({
+    description: 'Internação não encontrada.',
+  })
+  async discharge(
+    @Param('id') id: string,
+    @Body() dto: DischargeDto,
+    @CurrentUser('userId') userId: string,
+  ): Promise<DischargeResponseDto> {
+    return this.service.discharge(id, dto, userId);
+  }
+
+  @Post('patient/:patientId/discharge')
+  @Roles(UserRole.ADMIN, UserRole.VET)
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Dar alta médica por ID do paciente',
+    description:
+      'Localiza a internação ativa do paciente especificado e realiza o procedimento de alta médica hospitalar.',
+  })
+  @ApiParam({
+    name: 'patientId',
+    description: 'UUID do paciente',
+    example: 'uuid-patient-1',
+  })
+  @ApiOkResponse({
+    description: 'Alta hospitalar realizada com sucesso.',
+    type: DischargeResponseDto,
+  })
+  @ApiNotFoundResponse({
+    description: 'Nenhuma internação ativa encontrada para o paciente.',
+  })
+  async dischargeByPatient(
+    @Param('patientId') patientId: string,
+    @Body() dto: DischargeDto,
+    @CurrentUser('userId') userId: string,
+  ): Promise<DischargeResponseDto> {
+    return this.service.dischargeByPatient(patientId, dto, userId);
+  }
+
+  @Get('active')
+  @ApiOperation({
+    summary: 'Listar internações ativas (Painel Principal)',
+    description:
+      'Retorna a relação de todos os animais internados, com baia alocada, tag NFC associada, dados do tutor e alertas clínicos rápidos (jejum, alergias e comportamento).',
+  })
+  @ApiOkResponse({
+    description: 'Lista de internações ativas para o painel.',
     type: [HospitalizationResponseDto],
   })
   async findAllActive(): Promise<HospitalizationResponseDto[]> {
@@ -186,10 +320,34 @@ export class HospitalizationsController {
     return this.service.findActiveByPatient(patientId);
   }
 
+  @Get('patient/:patientId/history')
+  @ApiOperation({
+    summary: 'Histórico de internações do paciente',
+    description:
+      'Histórico completo de internações passadas do animal com linha do tempo de eventos clínicos para suporte a diagnósticos futuros.',
+  })
+  @ApiParam({
+    name: 'patientId',
+    description: 'UUID do paciente',
+    example: 'uuid-patient-1',
+  })
+  @ApiOkResponse({
+    description: 'Histórico de internações do paciente ordenadas pela mais recente.',
+    type: [HospitalizationResponseDto],
+  })
+  @ApiNotFoundResponse({
+    description: 'Paciente não encontrado.',
+  })
+  async findHistoryByPatient(
+    @Param('patientId') patientId: string,
+  ): Promise<HospitalizationResponseDto[]> {
+    return this.service.findHistoryByPatient(patientId);
+  }
+
   @Get(':id')
   @ApiOperation({
     summary: 'Buscar internação por ID',
-    description: 'Retorna os detalhes de uma internação específica.',
+    description: 'Retorna os detalhes de uma internação específica com eventos clínicos e alertas.',
   })
   @ApiParam({
     name: 'id',

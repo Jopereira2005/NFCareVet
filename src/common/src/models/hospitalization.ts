@@ -1,4 +1,4 @@
-import { HospitalizationStatus } from '../enums/index.js';
+import { HospitalizationStatus, DischargeReason } from '../enums/index.js';
 import { IPatient } from './patient.js';
 import { IKennel } from './kennel.js';
 import { INfcTag } from './nfc-tag.js';
@@ -25,8 +25,11 @@ export interface IHospitalization {
 export interface ICreateHospitalizationPayload {
   patientId: string;
   kennelId: string;
+  admissionReason: string;
+  preliminaryDiagnosis?: string;
+  responsibleVetId?: string;
+  tagIdentifier?: string;
   nfcTagId?: string;
-  admissionReason?: string;
   status?: HospitalizationStatus;
   admissionDate?: Date | string;
 }
@@ -39,6 +42,11 @@ export interface IUpdateHospitalizationPayload {
   dischargeDate?: Date | string | null;
 }
 
+export interface ITransferKennelPayload {
+  targetKennelId: string;
+  reason?: string;
+}
+
 export interface ILinkTagPayload {
   tagIdentifier: string;
 }
@@ -46,4 +54,11 @@ export interface ILinkTagPayload {
 export interface IUnlinkTagPayload {
   reason?: string;
 }
+
+export interface IDischargeHospitalizationPayload {
+  dischargeReason?: DischargeReason | string;
+  dischargeNotes?: string;
+  medicalRecommendations?: string;
+}
+
 
