@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+  Logger,
+} from '@nestjs/common';
 import { BedsideRepository } from './bedside.repository';
 import { PrescriptionStatus } from '@prisma/client';
 import { QuickRecordResponseDto } from './dto/quick-record-response.dto';
@@ -6,16 +11,25 @@ import { ApplyMedicationResponseDto } from './dto/apply-medication-response.dto'
 
 @Injectable()
 export class BedsideService {
+  private readonly logger = new Logger(BedsideService.name);
+
   constructor(private readonly bedsideRepository: BedsideRepository) {}
 
   async getQuickRecordByTag(publicCode: string): Promise<QuickRecordResponseDto> {
     const tag = await this.bedsideRepository.findTagWithActiveHospitalization(publicCode);
 
     if (!tag || !tag.hospitalization) {
+      this.logger.warn(
+        `[BEDSIDE] Consulta rápida falhou: nenhuma internação ativa vinculada à tag [${publicCode}].`,
+      );
       throw new NotFoundException('Nenhuma internação ativa encontrada para este identificador NFC.');
     }
 
     const { patient, kennel, prescriptions, clinicalEvents, id: hospitalizationId } = tag.hospitalization;
+
+    this.logger.log(
+      `[BEDSIDE] Prontuário rápido consultado com sucesso: publicCode=${publicCode}, internacaoId=${hospitalizationId}, paciente=${patient.name}`,
+    );
 
     return {
       hospitalizationId,
@@ -57,24 +71,43 @@ export class BedsideService {
     const item = await this.bedsideRepository.findPrescriptionItemById(itemId);
 
     if (!item) {
+      this.logger.warn(`[BEDSIDE] Falha ao aplicar: item de prescrição [${itemId}] não encontrado.`);
       throw new NotFoundException('Item de prescrição não encontrado.');
     }
 
     if (item.status === PrescriptionStatus.APPLIED) {
+      this.logger.warn(
+        `[BEDSIDE] Falha ao aplicar: item [${itemId}] já foi registrado como aplicado anteriormente.`,
+      );
       throw new BadRequestException('Este item de prescrição já foi registrado como aplicado.');
     }
 
-    const { updatedItem, clinicalEvent } = await this.bedsideRepository.applyPrescriptionItem(
-      itemId,
-      userId,
-      bedsideNotes,
-      metrics,
-    );
+    try {
+      const { updatedItem, clinicalEvent } = await this.bedsideRepository.applyPrescriptionItem(
+        itemId,
+        userId,
+        bedsideNotes,
+        metrics,
+      );
 
-    return {
-      message: 'Procedimento registrado com sucesso',
-      prescriptionItem: updatedItem,
-      clinicalEvent,
-    };
+      this.logger.log(
+        `[BEDSIDE] Medicação aplicada com sucesso: itemId=${itemId}, executorUserId=${userId}, clinicalEventId=${clinicalEvent.id}`,
+      );
+
+      return {
+        message: 'Procedimento registrado com sucesso',
+        prescriptionItem: updatedItem,
+        clinicalEvent,
+      };
+    } catch (error) {
+      if (error instanceof NotFoundException || error instanceof BadRequestException) {
+        throw error;
+      }
+      this.logger.error(
+        `[BEDSIDE] Erro inesperado ao registrar medicação [${itemId}]: ${error instanceof Error ? error.message : error}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+      throw error;
+    }
   }
 }

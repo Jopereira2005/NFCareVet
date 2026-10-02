@@ -2,6 +2,7 @@ import {
   Injectable,
   ConflictException,
   NotFoundException,
+  Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { randomUUID } from 'crypto';
@@ -12,6 +13,8 @@ import { NfcTag } from '@prisma/client';
 
 @Injectable()
 export class NfcTagsService {
+  private readonly logger = new Logger(NfcTagsService.name);
+
   constructor(
     private readonly nfcTagsRepository: NfcTagsRepository,
     private readonly configService: ConfigService,
@@ -21,19 +24,35 @@ export class NfcTagsService {
     const existingTag = await this.nfcTagsRepository.findByTagUid(dto.tagUid);
 
     if (existingTag) {
+      this.logger.warn(
+        `[NFC] Falha ao cadastrar tag: Tag física [${dto.tagUid}] já cadastrada no inventário.`,
+      );
       throw new ConflictException(
         `Tag física [${dto.tagUid}] já cadastrada no inventário.`,
       );
     }
 
-    const publicCode = `tag-${randomUUID()}`;
-    const newTag = await this.nfcTagsRepository.create({
-      tagUid: dto.tagUid,
-      publicCode,
-      active: true,
-    });
+    try {
+      const publicCode = `tag-${randomUUID()}`;
+      const newTag = await this.nfcTagsRepository.create({
+        tagUid: dto.tagUid,
+        publicCode,
+        active: true,
+      });
 
-    return this.toResponseDto(newTag);
+      this.logger.log(
+        `[NFC] Tag cadastrada com sucesso: id=${newTag.id}, tagUid=${newTag.tagUid}, publicCode=${newTag.publicCode}`,
+      );
+
+      return this.toResponseDto(newTag);
+    } catch (error) {
+      if (error instanceof ConflictException) throw error;
+      this.logger.error(
+        `[NFC] Erro inesperado ao cadastrar tag [${dto.tagUid}]: ${error instanceof Error ? error.message : error}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+      throw error;
+    }
   }
 
   async findAll(): Promise<NfcTagResponseDto[]> {
@@ -52,19 +71,35 @@ export class NfcTagsService {
     const tag = await this.findTagByIdentifier(identifier);
 
     if (tag.hospitalization && tag.hospitalization.status === 'ACTIVE') {
+      this.logger.warn(
+        `[NFC] Falha ao inativar tag [${tag.tagUid}]: vinculada à internação ativa [hospitalizationId=${tag.hospitalization.id}].`,
+      );
       throw new ConflictException(
         `Não é possível inativar a tag [${tag.tagUid}], pois ela está atualmente vinculada a uma internação ativa.`,
       );
     }
 
-    const updatedTag = await this.nfcTagsRepository.update(tag.id, {
-      active: false,
-    });
+    try {
+      const updatedTag = await this.nfcTagsRepository.update(tag.id, {
+        active: false,
+      });
 
-    return {
-      message: `Tag NFC [${tag.tagUid}] inativada com sucesso.`,
-      tag: this.toResponseDto(updatedTag),
-    };
+      this.logger.log(
+        `[NFC] Tag inativada com sucesso: id=${updatedTag.id}, tagUid=${updatedTag.tagUid}`,
+      );
+
+      return {
+        message: `Tag NFC [${tag.tagUid}] inativada com sucesso.`,
+        tag: this.toResponseDto(updatedTag),
+      };
+    } catch (error) {
+      if (error instanceof ConflictException) throw error;
+      this.logger.error(
+        `[NFC] Erro inesperado ao inativar tag [${tag.tagUid}]: ${error instanceof Error ? error.message : error}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+      throw error;
+    }
   }
 
   async activateTag(
@@ -72,30 +107,58 @@ export class NfcTagsService {
   ): Promise<{ message: string; tag: NfcTagResponseDto }> {
     const tag = await this.findTagByIdentifier(identifier);
 
-    const updatedTag = await this.nfcTagsRepository.update(tag.id, {
-      active: true,
-    });
+    try {
+      const updatedTag = await this.nfcTagsRepository.update(tag.id, {
+        active: true,
+      });
 
-    return {
-      message: `Tag NFC [${tag.tagUid}] reativada com sucesso.`,
-      tag: this.toResponseDto(updatedTag),
-    };
+      this.logger.log(
+        `[NFC] Tag reativada com sucesso: id=${updatedTag.id}, tagUid=${updatedTag.tagUid}`,
+      );
+
+      return {
+        message: `Tag NFC [${tag.tagUid}] reativada com sucesso.`,
+        tag: this.toResponseDto(updatedTag),
+      };
+    } catch (error) {
+      this.logger.error(
+        `[NFC] Erro inesperado ao reativar tag [${tag.tagUid}]: ${error instanceof Error ? error.message : error}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+      throw error;
+    }
   }
 
   async removeTag(identifier: string): Promise<{ message: string }> {
     const tag = await this.findTagByIdentifier(identifier);
 
     if (tag.hospitalization && tag.hospitalization.status === 'ACTIVE') {
+      this.logger.warn(
+        `[NFC] Falha ao remover tag [${tag.tagUid}]: vinculada à internação ativa [hospitalizationId=${tag.hospitalization.id}].`,
+      );
       throw new ConflictException(
         `Não é possível remover a tag [${tag.tagUid}], pois ela está atualmente vinculada a uma internação ativa.`,
       );
     }
 
-    await this.nfcTagsRepository.delete(tag.id);
+    try {
+      await this.nfcTagsRepository.delete(tag.id);
 
-    return {
-      message: `Tag NFC [${tag.tagUid}] removida com sucesso do inventário.`,
-    };
+      this.logger.log(
+        `[NFC] Tag removida com sucesso do inventário: id=${tag.id}, tagUid=${tag.tagUid}`,
+      );
+
+      return {
+        message: `Tag NFC [${tag.tagUid}] removida com sucesso do inventário.`,
+      };
+    } catch (error) {
+      if (error instanceof ConflictException) throw error;
+      this.logger.error(
+        `[NFC] Erro inesperado ao remover tag [${tag.tagUid}]: ${error instanceof Error ? error.message : error}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+      throw error;
+    }
   }
 
   private async findTagByIdentifier(identifier: string) {
@@ -105,6 +168,9 @@ export class NfcTagsService {
       (await this.nfcTagsRepository.findByPublicCode(identifier));
 
     if (!tag) {
+      this.logger.warn(
+        `[NFC] Falha na busca: Tag NFC com identificador [${identifier}] não encontrada.`,
+      );
       throw new NotFoundException(
         `Tag NFC com identificador "${identifier}" não encontrada no inventário.`,
       );
