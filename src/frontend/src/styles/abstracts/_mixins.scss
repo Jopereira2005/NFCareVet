@@ -1,4 +1,5 @@
 @use 'variables' as *;
+@use 'sass:list';
 
 
 @mixin respond-to($breakpoint) {
@@ -42,12 +43,12 @@
 
 
 @mixin transition($properties...) {
-  @if length($properties) == 0 {
+  @if list.length($properties) == 0 {
     transition: all $transition-speed $transition-timing;
   } @else {
     $transitions: ();
     @each $prop in $properties {
-      $transitions: append($transitions, #{$prop} $transition-speed $transition-timing, comma);
+      $transitions: list.append($transitions, #{$prop} $transition-speed $transition-timing, comma);
     }
     transition: $transitions;
   }

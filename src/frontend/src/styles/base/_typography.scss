@@ -7,12 +7,12 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
   line-height: 1.2;
   margin-bottom: $space-md;
-  color: $on-background;
+  color: $dark-color;
 }
 
 p {
   margin-bottom: $space-md;
-  color: $on-surface-variant;
+  color: $gray-scale-medium;
 }
 
 a {

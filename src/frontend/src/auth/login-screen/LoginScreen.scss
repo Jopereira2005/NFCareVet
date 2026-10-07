@@ -1,0 +1,128 @@
+@use '../../styles/abstracts/variables' as *;
+@use '../../styles/abstracts/mixins' as *;
+
+.login-page {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  background: $gray-scale-light;
+}
+
+.login-card {
+  width: min(100%, 39rem);
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: 5.6rem 1.8rem 3.2rem;
+  background: $background-color;
+  display: flex;
+  flex-direction: column;
+}
+
+.login-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.login-brand__mark {
+  width: 17rem;
+  height: 17.5rem;
+  object-fit: contain;
+  margin-bottom: 0.4rem;
+}
+
+.login-brand__name {
+  margin: 0;
+  color: $primary-color;
+  font-size: 2.8rem;
+  font-weight: $font-bold;
+  letter-spacing: -0.06em;
+  line-height: 1.15;
+}
+
+.login-brand__name span {
+  color: $tertiary-color;
+}
+
+.login-brand__tagline {
+  margin: 0.4rem 0 0;
+  color: $gray-scale-dark;
+  font-size: $text-sm;
+}
+
+.login-form {
+  display: grid;
+  gap: 1.2rem;
+}
+
+.field {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.field__label-row {
+  color: $gray-scale-dark;
+  font-size: $text-xs;
+}
+
+.field__label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.field__label-row label {
+  font-weight: $font-regular;
+}
+
+.field__label-row a {
+  color: $secondary-color;
+  font-weight: $font-semibold;
+}
+
+.login-divider {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 2.4rem 0 2.6rem;
+  color: $gray-scale-medium;
+  font-size: $text-xs;
+  white-space: nowrap;
+}
+
+.login-divider::before,
+.login-divider::after {
+  content: '';
+  height: 1px;
+  flex: 1;
+  background: $gray-scale-light;
+}
+
+.login-form > .ui-button--primary {
+  margin-top: 0.2rem;
+}
+
+.field__label-row a:focus-visible {
+  outline: 0.3rem solid $secondary-color;
+  outline-offset: 0.2rem;
+}
+
+@include respond-to('sm') {
+  .login-page {
+    padding: 2.4rem;
+  }
+
+  .login-card {
+    min-height: min(80rem, calc(100vh - 4.8rem));
+    min-width: min(80rem, calc(100svw - 4.8rem));
+    padding: 5.6rem 1.8rem 3.2rem;
+    border: 1px solid $gray-scale-light;
+    border-radius: 1rem;
+    box-shadow: $shadow-md;
+  }
+}
