@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { ArrowRight, Eye, EyeOff, LockKeyhole, Nfc, UserRound } from 'lucide-react';
 
 import { Button, Checkbox, Input } from '@/@core/components';
-import brandMark from '@/assets/nfcarevet-brand-mark.png';
+import { Logo } from '@/assets/Logo.tsx';
 
 import './LoginScreen.scss';
 
@@ -17,7 +17,7 @@ export default function LoginScreen() {
     <main className="login-page">
       <section className="login-card" aria-label="Login NFCareVet">
         <header className="login-header">
-          <img className="login-brand__mark" src={brandMark} alt="" />
+          <Logo className="login-brand__mark"/>
           <h1 className="login-brand__name">
             NFCare<span>Vet</span>
           </h1>
