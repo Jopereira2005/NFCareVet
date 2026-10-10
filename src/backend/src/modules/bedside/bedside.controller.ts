@@ -18,30 +18,30 @@ import { ApplyMedicationResponseDto } from './dto/apply-medication-response.dto'
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 
-@ApiTags('Beira de Leito (Bedside)')
+@ApiTags('Beira de Leito / Leitor NFC (Bedside)')
 @ApiBearerAuth('JWT-auth')
 @Controller('bedside')
 export class BedsideController {
   constructor(private readonly bedsideService: BedsideService) {}
 
   @Roles(UserRole.ADMIN, UserRole.VET, UserRole.REC)
-  @Get(':publicCode')
+  @Get(':identifier')
   @ApiOperation({
-    summary: 'Consultar prontuário rápido por código NFC',
+    summary: 'Modo Consulta: Consultar prontuário da coleira NFC',
     description:
-      'Recupera as informações do paciente internado, canil/leito associado, prescrições ativas e histórico clínico a partir do código público da tag NFC escaneada.',
+      'Recupera o prontuário completo do paciente internado a partir da leitura da coleira NFC do animal. Aceita tanto o UID físico de hardware (ex: 04A23B89C16080) quanto o publicCode ou UUID.',
   })
   @ApiParam({
-    name: 'publicCode',
-    example: 'K-01-A9F3',
-    description: 'Código público/slug associado à tag NFC do leito hospitalar',
+    name: 'identifier',
+    example: '04A23B89C16080',
+    description: 'UID físico do chip NFC da coleira ou código público gerado',
   })
   @ApiOkResponse({
-    description: 'Prontuário rápido retornado com sucesso.',
+    description: 'Prontuário completo retornado com sucesso.',
     type: QuickRecordResponseDto,
   })
   @ApiNotFoundResponse({
-    description: 'Tag NFC não encontrada ou nenhuma internação ativa vinculada ao leito.',
+    description: 'Coleira NFC não encontrada ou nenhuma internação ativa vinculada.',
   })
   @ApiUnauthorizedResponse({
     description: 'Não autenticado (token JWT ausente ou expirado).',
@@ -50,9 +50,9 @@ export class BedsideController {
     description: 'Perfil de usuário não autorizado (requer ADMIN, VET ou REC).',
   })
   async getQuickRecord(
-    @Param('publicCode') publicCode: string,
+    @Param('identifier') identifier: string,
   ): Promise<QuickRecordResponseDto> {
-    return this.bedsideService.getQuickRecordByTag(publicCode);
+    return this.bedsideService.getQuickRecordByTag(identifier);
   }
 
   @Roles(UserRole.ADMIN, UserRole.VET)

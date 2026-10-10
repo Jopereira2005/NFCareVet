@@ -5,10 +5,9 @@ import {
   Logger,
 } from '@nestjs/common';
 import { BedsideRepository } from './bedside.repository';
-import { PrescriptionStatus } from '@prisma/client';
+import { PrescriptionStatus, Patient } from '@prisma/client';
 import { QuickRecordResponseDto } from './dto/quick-record-response.dto';
 import { ApplyMedicationResponseDto } from './dto/apply-medication-response.dto';
-
 import { calculateAgeDisplay } from '../../common/utils/date.utils';
 
 @Injectable()
@@ -17,24 +16,44 @@ export class BedsideService {
 
   constructor(private readonly bedsideRepository: BedsideRepository) {}
 
-  async getQuickRecordByTag(publicCode: string): Promise<QuickRecordResponseDto> {
-    const tag = await this.bedsideRepository.findTagWithActiveHospitalization(publicCode);
+  async getQuickRecordByTag(identifier: string): Promise<QuickRecordResponseDto> {
+    const tag = await this.bedsideRepository.findTagWithActiveHospitalization(identifier);
 
     if (!tag || !tag.hospitalization) {
       this.logger.warn(
-        `[BEDSIDE] Consulta rápida falhou: nenhuma internação ativa vinculada à tag [${publicCode}].`,
+        `[BEDSIDE] Consulta rápida falhou: nenhuma internação ativa vinculada à coleira NFC [${identifier}].`,
       );
-      throw new NotFoundException('Nenhuma internação ativa encontrada para este identificador NFC.');
+      throw new NotFoundException(
+        `Nenhuma internação ativa encontrada para a coleira NFC informada ("${identifier}").`,
+      );
     }
 
-    const { patient, kennel, prescriptions, clinicalEvents, id: hospitalizationId } = tag.hospitalization;
+    const {
+      patient,
+      kennel,
+      prescriptions,
+      clinicalEvents,
+      id: hospitalizationId,
+      admissionReason,
+      admissionDate,
+    } = tag.hospitalization;
+
+    const latestVitalSignsEvent = await this.bedsideRepository.findLatestVitalSigns(hospitalizationId);
 
     this.logger.log(
-      `[BEDSIDE] Prontuário rápido consultado com sucesso: publicCode=${publicCode}, internacaoId=${hospitalizationId}, paciente=${patient.name}`,
+      `[BEDSIDE] Prontuário consultado via coleira NFC: identifier=${identifier}, internacaoId=${hospitalizationId}, paciente=${patient.name}`,
     );
 
     return {
       hospitalizationId,
+      admissionReason,
+      admissionDate,
+      clinicalAlerts: this.generateClinicalAlerts(patient),
+      nfcTag: {
+        id: tag.id,
+        tagUid: tag.tagUid,
+        publicCode: tag.publicCode,
+      },
       kennel: {
         id: kennel.id,
         name: kennel.name,
@@ -62,6 +81,13 @@ export class BedsideService {
           cpf: patient.guardian.cpf,
         },
       },
+      latestVitalSigns: latestVitalSignsEvent
+        ? {
+            ...(latestVitalSignsEvent.metrics as any),
+            recordedAt: latestVitalSignsEvent.recordedAt,
+            measuredBy: latestVitalSignsEvent.user?.name,
+          }
+        : null,
       prescriptions,
       clinicalEvents,
     };
@@ -114,5 +140,27 @@ export class BedsideService {
       );
       throw error;
     }
+  }
+
+  private generateClinicalAlerts(patient: Patient): string[] {
+    const alerts: string[] = [];
+
+    if (patient.isFasting) {
+      alerts.push('JEJUM OBRIGATÓRIO');
+    }
+
+    if (patient.bloodType && patient.bloodType.trim().length > 0) {
+      alerts.push(`TIPO SANGUÍNEO: ${patient.bloodType.trim()}`);
+    }
+
+    if (patient.allergies && patient.allergies.trim().length > 0) {
+      alerts.push(`ALERGIA: ${patient.allergies.trim()}`);
+    }
+
+    if (patient.behaviorNotes && patient.behaviorNotes.trim().length > 0) {
+      alerts.push(`COMPORTAMENTO: ${patient.behaviorNotes.trim()}`);
+    }
+
+    return alerts;
   }
 }

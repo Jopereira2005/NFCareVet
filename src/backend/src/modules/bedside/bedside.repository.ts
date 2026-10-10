@@ -12,41 +12,71 @@ import {
 export class BedsideRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findTagWithActiveHospitalization(publicCode: string) {
-    return this.prisma.nfcTag.findUnique({
-      where: { publicCode },
-      include: {
-        hospitalization: {
-          where: { status: 'ACTIVE' },
-          include: {
-            patient: {
-              include: {
-                guardian: true,
+  async findTagWithActiveHospitalization(identifier: string) {
+    const includeHospitalization = {
+      hospitalization: {
+        where: { status: 'ACTIVE' as const },
+        include: {
+          patient: {
+            include: {
+              guardian: true,
+            },
+          },
+          kennel: true,
+          prescriptions: {
+            where: { isActive: true },
+            include: {
+              prescribedBy: {
+                select: { id: true, name: true, email: true },
+              },
+              items: {
+                orderBy: { scheduledTime: 'asc' as const },
               },
             },
-            kennel: true,
-            prescriptions: {
-              where: { isActive: true },
-              include: {
-                prescribedBy: {
-                  select: { id: true, name: true, email: true },
-                },
-                items: {
-                  orderBy: { scheduledTime: 'asc' },
-                },
-              },
-            },
-            clinicalEvents: {
-              take: 10,
-              orderBy: { recordedAt: 'desc' },
-              include: {
-                user: {
-                  select: { id: true, name: true },
-                },
+          },
+          clinicalEvents: {
+            take: 15,
+            orderBy: { recordedAt: 'desc' as const },
+            include: {
+              user: {
+                select: { id: true, name: true, role: true },
               },
             },
           },
         },
+      },
+    };
+
+    let tag = await this.prisma.nfcTag.findUnique({
+      where: { publicCode: identifier },
+      include: includeHospitalization,
+    });
+
+    if (tag) return tag;
+
+    const sanitizedUid = identifier.replace(/[:\s-]/g, '').toUpperCase();
+    tag = await this.prisma.nfcTag.findUnique({
+      where: { tagUid: sanitizedUid },
+      include: includeHospitalization,
+    });
+
+    if (tag) return tag;
+
+    return this.prisma.nfcTag.findUnique({
+      where: { id: identifier },
+      include: includeHospitalization,
+    });
+  }
+
+  async findLatestVitalSigns(hospitalizationId: string) {
+    return this.prisma.clinicalEvent.findFirst({
+      where: {
+        hospitalizationId,
+        eventType: EventType.VITAL_SIGNS,
+      },
+      orderBy: { recordedAt: 'desc' },
+      include: {
+        user: { select: { id: true, name: true, role: true } },
       },
     });
   }
