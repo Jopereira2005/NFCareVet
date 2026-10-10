@@ -31,6 +31,15 @@ export class HospitalizationPatientSummaryDto {
   @ApiPropertyOptional({ example: 32.5 })
   weightKg?: any;
 
+  @ApiPropertyOptional({ example: '2021-04-12T00:00:00.000Z', description: 'Data de nascimento do paciente' })
+  birthDate?: Date | null;
+
+  @ApiPropertyOptional({ example: '3 anos e 6 meses', description: 'Idade calculada dinamicamente' })
+  ageDisplay?: string | null;
+
+  @ApiPropertyOptional({ example: 'DEA 1.1+', description: 'Tipo sanguíneo do paciente' })
+  bloodType?: string | null;
+
   @ApiProperty({ example: false, description: 'Indica se o paciente deve permanecer em jejum' })
   isFasting: boolean;
 

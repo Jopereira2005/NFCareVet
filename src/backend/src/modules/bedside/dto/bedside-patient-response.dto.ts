@@ -33,6 +33,15 @@ export class BedsidePatientDto {
   @ApiPropertyOptional({ example: 32.5, nullable: true, description: 'Peso aferido em kg' })
   weightKg?: number | any | null;
 
+  @ApiPropertyOptional({ example: '2021-04-12T00:00:00.000Z', nullable: true, description: 'Data de nascimento do paciente' })
+  birthDate?: Date | null;
+
+  @ApiPropertyOptional({ example: '3 anos e 6 meses', nullable: true, description: 'Idade calculada dinamicamente' })
+  ageDisplay?: string | null;
+
+  @ApiPropertyOptional({ example: 'DEA 1.1+', nullable: true, description: 'Tipo sanguíneo do paciente' })
+  bloodType?: string | null;
+
   @ApiPropertyOptional({
     example: 'https://images.unsplash.com/photo-1552053831-71594a27632d',
     nullable: true,

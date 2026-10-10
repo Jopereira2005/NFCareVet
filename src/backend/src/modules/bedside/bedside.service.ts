@@ -9,6 +9,8 @@ import { PrescriptionStatus } from '@prisma/client';
 import { QuickRecordResponseDto } from './dto/quick-record-response.dto';
 import { ApplyMedicationResponseDto } from './dto/apply-medication-response.dto';
 
+import { calculateAgeDisplay } from '../../common/utils/date.utils';
+
 @Injectable()
 export class BedsideService {
   private readonly logger = new Logger(BedsideService.name);
@@ -43,6 +45,9 @@ export class BedsideService {
         name: patient.name,
         species: patient.species,
         breed: patient.breed,
+        birthDate: patient.birthDate,
+        ageDisplay: calculateAgeDisplay(patient.birthDate),
+        bloodType: patient.bloodType,
         weightKg: patient.weightKg,
         photoUrl: patient.photoUrl,
         allergies: patient.allergies,

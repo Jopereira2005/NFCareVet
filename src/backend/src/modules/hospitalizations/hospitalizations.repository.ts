@@ -369,4 +369,214 @@ export class HospitalizationsRepository {
       return updated;
     });
   }
+
+  async getTimeline(
+    hospitalizationId: string,
+    options: {
+      skip: number;
+      take: number;
+      eventType?: EventType;
+      startDate?: Date;
+      endDate?: Date;
+    },
+  ) {
+    const where: any = {
+      hospitalizationId,
+    };
+
+    if (options.eventType) {
+      where.eventType = options.eventType;
+    }
+
+    if (options.startDate || options.endDate) {
+      where.recordedAt = {};
+      if (options.startDate) where.recordedAt.gte = options.startDate;
+      if (options.endDate) where.recordedAt.lte = options.endDate;
+    }
+
+    const [items, total] = await Promise.all([
+      this.prisma.clinicalEvent.findMany({
+        where,
+        skip: options.skip,
+        take: options.take,
+        orderBy: { recordedAt: 'desc' },
+        include: {
+          user: {
+            select: { id: true, name: true, role: true },
+          },
+        },
+      }),
+      this.prisma.clinicalEvent.count({ where }),
+    ]);
+
+    return { items, total };
+  }
+
+  async getPatientTimeline(
+    patientId: string,
+    options: {
+      skip: number;
+      take: number;
+      eventType?: EventType;
+      startDate?: Date;
+      endDate?: Date;
+    },
+  ) {
+    const where: any = {
+      hospitalization: {
+        patientId,
+      },
+    };
+
+    if (options.eventType) {
+      where.eventType = options.eventType;
+    }
+
+    if (options.startDate || options.endDate) {
+      where.recordedAt = {};
+      if (options.startDate) where.recordedAt.gte = options.startDate;
+      if (options.endDate) where.recordedAt.lte = options.endDate;
+    }
+
+    const [items, total] = await Promise.all([
+      this.prisma.clinicalEvent.findMany({
+        where,
+        skip: options.skip,
+        take: options.take,
+        orderBy: { recordedAt: 'desc' },
+        include: {
+          user: {
+            select: { id: true, name: true, role: true },
+          },
+        },
+      }),
+      this.prisma.clinicalEvent.count({ where }),
+    ]);
+
+    return { items, total };
+  }
+
+  async getLatestVitalSigns(hospitalizationId: string) {
+    return this.prisma.clinicalEvent.findFirst({
+      where: {
+        hospitalizationId,
+        eventType: EventType.VITAL_SIGNS,
+      },
+      orderBy: { recordedAt: 'desc' },
+      include: {
+        user: { select: { id: true, name: true, role: true } },
+      },
+    });
+  }
+
+  async getLatestVitalSignsByPatient(patientId: string) {
+    return this.prisma.clinicalEvent.findFirst({
+      where: {
+        hospitalization: { patientId },
+        eventType: EventType.VITAL_SIGNS,
+      },
+      orderBy: { recordedAt: 'desc' },
+      include: {
+        user: { select: { id: true, name: true, role: true } },
+      },
+    });
+  }
+
+  async getTemporalSummary() {
+    const now = new Date();
+
+    const startOfToday = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      0,
+      0,
+      0,
+      0,
+    );
+
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - 7);
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const startOfMonth = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      1,
+      0,
+      0,
+      0,
+      0,
+    );
+
+    const [
+      admissionsToday,
+      dischargesToday,
+      activeToday,
+      admissionsWeek,
+      dischargesWeek,
+      admissionsMonth,
+      dischargesMonth,
+      currentlyActive,
+      totalKennels,
+    ] = await Promise.all([
+      this.prisma.hospitalization.count({
+        where: { admissionDate: { gte: startOfToday } },
+      }),
+      this.prisma.hospitalization.count({
+        where: { dischargeDate: { gte: startOfToday } },
+      }),
+      this.prisma.hospitalization.count({
+        where: {
+          OR: [
+            { status: HospitalizationStatus.ACTIVE },
+            { dischargeDate: { gte: startOfToday } },
+          ],
+        },
+      }),
+      this.prisma.hospitalization.count({
+        where: { admissionDate: { gte: startOfWeek } },
+      }),
+      this.prisma.hospitalization.count({
+        where: { dischargeDate: { gte: startOfWeek } },
+      }),
+      this.prisma.hospitalization.count({
+        where: { admissionDate: { gte: startOfMonth } },
+      }),
+      this.prisma.hospitalization.count({
+        where: { dischargeDate: { gte: startOfMonth } },
+      }),
+      this.prisma.hospitalization.count({
+        where: { status: HospitalizationStatus.ACTIVE },
+      }),
+      this.prisma.kennel.count({
+        where: { isActive: true },
+      }),
+    ]);
+
+    const occupancyRatePercentage =
+      totalKennels > 0
+        ? parseFloat(((currentlyActive / totalKennels) * 100).toFixed(1))
+        : 0;
+
+    return {
+      today: {
+        admittedCount: admissionsToday,
+        dischargedCount: dischargesToday,
+        activeCount: activeToday,
+      },
+      thisWeek: {
+        admittedCount: admissionsWeek,
+        dischargedCount: dischargesWeek,
+      },
+      thisMonth: {
+        admittedCount: admissionsMonth,
+        dischargedCount: dischargesMonth,
+      },
+      currentlyActive,
+      totalKennels,
+      occupancyRatePercentage,
+    };
+  }
 }
+

@@ -23,6 +23,10 @@ import {
   TransferKennelResponseDto,
   DischargeResponseDto,
 } from './dto/hospitalization-response.dto';
+import { TimelineQueryDto } from './dto/timeline-query.dto';
+import { PaginatedTimelineResponseDto } from './dto/timeline-response.dto';
+import { TemporalSummaryResponseDto } from './dto/temporal-summary-response.dto';
+import { calculateAgeDisplay } from '../../common/utils/date.utils';
 
 @Injectable()
 export class HospitalizationsService {
@@ -499,11 +503,147 @@ export class HospitalizationsService {
     return this.toResponseDto(hospitalization);
   }
 
+  async getTimeline(
+    hospitalizationId: string,
+    query: TimelineQueryDto,
+  ): Promise<PaginatedTimelineResponseDto> {
+    const hospitalization = await this.repository.findById(hospitalizationId);
+    if (!hospitalization) {
+      throw new NotFoundException(
+        `Internação com ID "${hospitalizationId}" não encontrada.`,
+      );
+    }
+
+    const page = query.page && query.page > 0 ? query.page : 1;
+    const limit = query.limit && query.limit > 0 ? query.limit : 10;
+    const skip = (page - 1) * limit;
+
+    const startDate = query.startDate ? new Date(query.startDate) : undefined;
+    const endDate = query.endDate ? new Date(query.endDate) : undefined;
+
+    const [{ items, total }, latestVitalSignsEvent] = await Promise.all([
+      this.repository.getTimeline(hospitalizationId, {
+        skip,
+        take: limit,
+        eventType: query.eventType,
+        startDate,
+        endDate,
+      }),
+      this.repository.getLatestVitalSigns(hospitalizationId),
+    ]);
+
+    const totalPages = Math.ceil(total / limit) || 1;
+
+    return {
+      items: items.map((evt) => ({
+        id: evt.id,
+        hospitalizationId: evt.hospitalizationId,
+        eventType: evt.eventType,
+        title: evt.title,
+        description: evt.description,
+        metrics: evt.metrics as any,
+        recordedAt: evt.recordedAt,
+        executor: {
+          id: evt.user.id,
+          name: evt.user.name,
+          role: evt.user.role,
+        },
+      })),
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
+      latestVitalSigns: latestVitalSignsEvent
+        ? {
+            ...(latestVitalSignsEvent.metrics as any),
+            recordedAt: latestVitalSignsEvent.recordedAt,
+            measuredBy: latestVitalSignsEvent.user.name,
+          }
+        : null,
+    };
+  }
+
+  async getPatientTimeline(
+    patientId: string,
+    query: TimelineQueryDto,
+  ): Promise<PaginatedTimelineResponseDto> {
+    const patient = await this.repository.findPatientById(patientId);
+    if (!patient) {
+      throw new NotFoundException(
+        `Paciente com ID "${patientId}" não encontrado.`,
+      );
+    }
+
+    const page = query.page && query.page > 0 ? query.page : 1;
+    const limit = query.limit && query.limit > 0 ? query.limit : 10;
+    const skip = (page - 1) * limit;
+
+    const startDate = query.startDate ? new Date(query.startDate) : undefined;
+    const endDate = query.endDate ? new Date(query.endDate) : undefined;
+
+    const [{ items, total }, latestVitalSignsEvent] = await Promise.all([
+      this.repository.getPatientTimeline(patientId, {
+        skip,
+        take: limit,
+        eventType: query.eventType,
+        startDate,
+        endDate,
+      }),
+      this.repository.getLatestVitalSignsByPatient(patientId),
+    ]);
+
+    const totalPages = Math.ceil(total / limit) || 1;
+
+    return {
+      items: items.map((evt) => ({
+        id: evt.id,
+        hospitalizationId: evt.hospitalizationId,
+        eventType: evt.eventType,
+        title: evt.title,
+        description: evt.description,
+        metrics: evt.metrics as any,
+        recordedAt: evt.recordedAt,
+        executor: {
+          id: evt.user.id,
+          name: evt.user.name,
+          role: evt.user.role,
+        },
+      })),
+      meta: {
+        total,
+        page,
+        limit,
+        totalPages,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
+      latestVitalSigns: latestVitalSignsEvent
+        ? {
+            ...(latestVitalSignsEvent.metrics as any),
+            recordedAt: latestVitalSignsEvent.recordedAt,
+            measuredBy: latestVitalSignsEvent.user.name,
+          }
+        : null,
+    };
+  }
+
+  async getTemporalSummary(): Promise<TemporalSummaryResponseDto> {
+    return this.repository.getTemporalSummary();
+  }
+
   private generateClinicalAlerts(patient: Patient): string[] {
     const alerts: string[] = [];
 
     if (patient.isFasting) {
       alerts.push('JEJUM OBRIGATÓRIO');
+    }
+
+    if (patient.bloodType && patient.bloodType.trim().length > 0) {
+      alerts.push(`TIPO SANGUÍNEO: ${patient.bloodType.trim()}`);
     }
 
     if (patient.allergies && patient.allergies.trim().length > 0) {
@@ -549,6 +689,9 @@ export class HospitalizationsService {
         name: item.patient.name,
         species: item.patient.species,
         breed: item.patient.breed,
+        birthDate: item.patient.birthDate,
+        ageDisplay: calculateAgeDisplay(item.patient.birthDate),
+        bloodType: item.patient.bloodType,
         weightKg: item.patient.weightKg,
         isFasting: item.patient.isFasting,
         isCastrated: item.patient.isCastrated,

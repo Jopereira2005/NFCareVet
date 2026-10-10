@@ -6,6 +6,8 @@ export interface IPatient {
   name: string;
   species: string;
   breed?: string | null;
+  birthDate?: Date | string | null;
+  bloodType?: string | null;
   weightKg?: number | string | null;
   photoUrl?: string | null;
   allergies?: string | null;
@@ -23,6 +25,8 @@ export interface ICreatePatientPayload {
   name: string;
   species: string;
   breed?: string;
+  birthDate?: Date | string;
+  bloodType?: string;
   weightKg?: number;
   photoUrl?: string;
   allergies?: string;
@@ -36,6 +40,8 @@ export interface IUpdatePatientPayload {
   name?: string;
   species?: string;
   breed?: string;
+  birthDate?: Date | string | null;
+  bloodType?: string | null;
   weightKg?: number;
   photoUrl?: string;
   allergies?: string;
@@ -43,3 +49,4 @@ export interface IUpdatePatientPayload {
   isCastrated?: boolean;
   behaviorNotes?: string;
 }
+

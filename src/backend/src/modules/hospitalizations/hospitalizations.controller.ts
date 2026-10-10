@@ -4,6 +4,7 @@ import {
   Post,
   Param,
   Body,
+  Query,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
@@ -36,6 +37,9 @@ import {
   TransferKennelResponseDto,
   DischargeResponseDto,
 } from './dto/hospitalization-response.dto';
+import { TimelineQueryDto } from './dto/timeline-query.dto';
+import { PaginatedTimelineResponseDto } from './dto/timeline-response.dto';
+import { TemporalSummaryResponseDto } from './dto/temporal-summary-response.dto';
 
 @ApiTags('Internações (Hospitalizations)')
 @ApiBearerAuth('JWT-auth')
@@ -300,6 +304,20 @@ export class HospitalizationsController {
     return this.service.findAllActive();
   }
 
+  @Get('stats/summary')
+  @ApiOperation({
+    summary: 'Resumo temporal de atendimentos (Hoje, Semana, Mês)',
+    description:
+      'Retorna indicadores consolidados da clínica veterinária com total de admissões e altas agrupados por Hoje, Últimos 7 dias e Mês corrente, além da ocupação hospitalar em tempo real.',
+  })
+  @ApiOkResponse({
+    description: 'Resumo temporal de atendimentos e ocupação.',
+    type: TemporalSummaryResponseDto,
+  })
+  async getTemporalSummary(): Promise<TemporalSummaryResponseDto> {
+    return this.service.getTemporalSummary();
+  }
+
   @Get('patient/:patientId/active')
   @ApiOperation({
     summary: 'Buscar internação ativa de um paciente',
@@ -318,6 +336,31 @@ export class HospitalizationsController {
     @Param('patientId') patientId: string,
   ): Promise<HospitalizationResponseDto> {
     return this.service.findActiveByPatient(patientId);
+  }
+
+  @Get('patient/:patientId/timeline')
+  @ApiOperation({
+    summary: 'Linha do tempo e histórico clínico do paciente',
+    description:
+      'Retorna a linha do tempo cronológica paginada de todos os eventos clínicos e aferições de sinais vitais do paciente.',
+  })
+  @ApiParam({
+    name: 'patientId',
+    description: 'UUID do paciente',
+    example: 'uuid-patient-1',
+  })
+  @ApiOkResponse({
+    description: 'Linha do tempo paginada do paciente com última aferição de sinais vitais.',
+    type: PaginatedTimelineResponseDto,
+  })
+  @ApiNotFoundResponse({
+    description: 'Paciente não encontrado.',
+  })
+  async getPatientTimeline(
+    @Param('patientId') patientId: string,
+    @Query() query: TimelineQueryDto,
+  ): Promise<PaginatedTimelineResponseDto> {
+    return this.service.getPatientTimeline(patientId, query);
   }
 
   @Get('patient/:patientId/history')
@@ -342,6 +385,31 @@ export class HospitalizationsController {
     @Param('patientId') patientId: string,
   ): Promise<HospitalizationResponseDto[]> {
     return this.service.findHistoryByPatient(patientId);
+  }
+
+  @Get(':id/timeline')
+  @ApiOperation({
+    summary: 'Linha do tempo clínica da internação (Sinais Vitais e Cuidados)',
+    description:
+      'Retorna o histórico cronológico paginado de eventos clínicos (aferições de sinais vitais, alimentação, medicações e intercorrências) de uma internação específica.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'UUID da internação',
+    example: 'uuid-hosp-1',
+  })
+  @ApiOkResponse({
+    description: 'Linha do tempo paginada da internação.',
+    type: PaginatedTimelineResponseDto,
+  })
+  @ApiNotFoundResponse({
+    description: 'Internação não encontrada.',
+  })
+  async getTimeline(
+    @Param('id') id: string,
+    @Query() query: TimelineQueryDto,
+  ): Promise<PaginatedTimelineResponseDto> {
+    return this.service.getTimeline(id, query);
   }
 
   @Get(':id')

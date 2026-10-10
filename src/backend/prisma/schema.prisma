@@ -98,6 +98,8 @@ model Patient {
   breed            String?           @db.VarChar(50)
   weightKg         Decimal?          @map("weight_kg") @db.Decimal(5, 2)
   photoUrl         String?           @map("photo_url")
+  birthDate        DateTime?         @map("birth_date")
+  bloodType        String?           @map("blood_type") @db.VarChar(20)
   allergies        String?
   isFasting        Boolean           @default(false) @map("is_fasting")
   isCastrated      Boolean           @default(false) @map("is_castrated")
