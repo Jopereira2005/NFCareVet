@@ -14,6 +14,7 @@ import { UserRole } from '@prisma/client';
 import { BedsideService } from './bedside.service';
 import { ApplyMedicationDto } from './dto/apply-medication.dto';
 import { QuickRecordResponseDto } from './dto/quick-record-response.dto';
+import { FullRecordResponseDto } from './dto/full-record-response.dto';
 import { ApplyMedicationResponseDto } from './dto/apply-medication-response.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
@@ -25,11 +26,11 @@ export class BedsideController {
   constructor(private readonly bedsideService: BedsideService) {}
 
   @Roles(UserRole.ADMIN, UserRole.VET, UserRole.REC)
-  @Get(':identifier')
+  @Get(':identifier/full')
   @ApiOperation({
-    summary: 'Modo Consulta: Consultar prontuário da coleira NFC',
+    summary: 'Modo Consulta: Consultar prontuário COMPLETO da coleira NFC',
     description:
-      'Recupera o prontuário completo do paciente internado a partir da leitura da coleira NFC do animal. Aceita tanto o UID físico de hardware (ex: 04A23B89C16080) quanto o publicCode ou UUID.',
+      'Recupera a ficha clínica aprofundada do paciente internado a partir da leitura da coleira NFC do animal. Inclui todos os protocolos de prescrições ativas na íntegra, linha do tempo detalhada e histórico de cuidados.',
   })
   @ApiParam({
     name: 'identifier',
@@ -38,6 +39,37 @@ export class BedsideController {
   })
   @ApiOkResponse({
     description: 'Prontuário completo retornado com sucesso.',
+    type: FullRecordResponseDto,
+  })
+  @ApiNotFoundResponse({
+    description: 'Coleira NFC não encontrada ou nenhuma internação ativa vinculada.',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Não autenticado (token JWT ausente ou expirado).',
+  })
+  @ApiForbiddenResponse({
+    description: 'Perfil de usuário não autorizado (requer ADMIN, VET ou REC).',
+  })
+  async getFullRecord(
+    @Param('identifier') identifier: string,
+  ): Promise<FullRecordResponseDto> {
+    return this.bedsideService.getFullRecordByTag(identifier);
+  }
+
+  @Roles(UserRole.ADMIN, UserRole.VET, UserRole.REC)
+  @Get(':identifier')
+  @ApiOperation({
+    summary: 'Modo Consulta: Consultar prontuário RÁPIDO (Breve) da coleira NFC',
+    description:
+      'Resposta leve e instantânea para leitura no celular à beira do leito. Retorna alertas clínicos visuais (jejum, tipo sanguíneo, alergias), baia alocada, última medição de sinais vitais e tarefas/medicações pendentes do plantão atual.',
+  })
+  @ApiParam({
+    name: 'identifier',
+    example: '04A23B89C16080',
+    description: 'UID físico do chip NFC da coleira ou código público gerado',
+  })
+  @ApiOkResponse({
+    description: 'Prontuário rápido retornado com sucesso.',
     type: QuickRecordResponseDto,
   })
   @ApiNotFoundResponse({
@@ -52,7 +84,7 @@ export class BedsideController {
   async getQuickRecord(
     @Param('identifier') identifier: string,
   ): Promise<QuickRecordResponseDto> {
-    return this.bedsideService.getQuickRecordByTag(identifier);
+    return this.bedsideService.getBriefRecordByTag(identifier);
   }
 
   @Roles(UserRole.ADMIN, UserRole.VET)
@@ -117,9 +149,6 @@ export class BedsideController {
   })
   @ApiNotFoundResponse({
     description: 'Item da prescrição não encontrado.',
-  })
-  @ApiUnauthorizedResponse({
-    description: 'Não autenticado.',
   })
   @ApiForbiddenResponse({
     description: 'Apenas VET ou ADMIN.',

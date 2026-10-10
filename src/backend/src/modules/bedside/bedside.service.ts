@@ -6,7 +6,11 @@ import {
 } from '@nestjs/common';
 import { BedsideRepository } from './bedside.repository';
 import { PrescriptionStatus, Patient } from '@prisma/client';
-import { QuickRecordResponseDto } from './dto/quick-record-response.dto';
+import {
+  QuickRecordResponseDto,
+  BedsidePendingTaskDto,
+} from './dto/quick-record-response.dto';
+import { FullRecordResponseDto } from './dto/full-record-response.dto';
 import { ApplyMedicationResponseDto } from './dto/apply-medication-response.dto';
 import { calculateAgeDisplay } from '../../common/utils/date.utils';
 
@@ -16,8 +20,8 @@ export class BedsideService {
 
   constructor(private readonly bedsideRepository: BedsideRepository) {}
 
-  async getQuickRecordByTag(identifier: string): Promise<QuickRecordResponseDto> {
-    const tag = await this.bedsideRepository.findTagWithActiveHospitalization(identifier);
+  async getBriefRecordByTag(identifier: string): Promise<QuickRecordResponseDto> {
+    const tag = await this.bedsideRepository.findBriefRecordByTag(identifier);
 
     if (!tag || !tag.hospitalization) {
       this.logger.warn(
@@ -32,16 +36,43 @@ export class BedsideService {
       patient,
       kennel,
       prescriptions,
-      clinicalEvents,
       id: hospitalizationId,
       admissionReason,
       admissionDate,
     } = tag.hospitalization;
 
-    const latestVitalSignsEvent = await this.bedsideRepository.findLatestVitalSigns(hospitalizationId);
+    const latestVitalSignsEvent =
+      await this.bedsideRepository.findLatestVitalSigns(hospitalizationId);
+
+    const now = new Date();
+    const pendingTasks: BedsidePendingTaskDto[] = [];
+
+    if (prescriptions && prescriptions.length > 0) {
+      for (const prescription of prescriptions) {
+        if (prescription.items) {
+          for (const item of prescription.items) {
+            pendingTasks.push({
+              id: item.id,
+              itemType: item.itemType,
+              title: item.title,
+              dosage: item.dosage,
+              route: item.route,
+              scheduledTime: item.scheduledTime,
+              isOverdue: new Date(item.scheduledTime) < now,
+              instructions: item.instructions,
+            });
+          }
+        }
+      }
+    }
+
+    pendingTasks.sort(
+      (a, b) =>
+        new Date(a.scheduledTime).getTime() - new Date(b.scheduledTime).getTime(),
+    );
 
     this.logger.log(
-      `[BEDSIDE] Prontuário consultado via coleira NFC: identifier=${identifier}, internacaoId=${hospitalizationId}, paciente=${patient.name}`,
+      `[BEDSIDE] Prontuário breve consultado via coleira NFC: identifier=${identifier}, internacaoId=${hospitalizationId}, paciente=${patient.name}`,
     );
 
     return {
@@ -88,9 +119,120 @@ export class BedsideService {
             measuredBy: latestVitalSignsEvent.user?.name,
           }
         : null,
+      pendingTasks,
+    };
+  }
+
+  async getFullRecordByTag(identifier: string): Promise<FullRecordResponseDto> {
+    const tag = await this.bedsideRepository.findFullRecordByTag(identifier);
+
+    if (!tag || !tag.hospitalization) {
+      this.logger.warn(
+        `[BEDSIDE] Consulta de prontuário completo falhou: nenhuma internação ativa vinculada à coleira NFC [${identifier}].`,
+      );
+      throw new NotFoundException(
+        `Nenhuma internação ativa encontrada para a coleira NFC informada ("${identifier}").`,
+      );
+    }
+
+    const {
+      patient,
+      kennel,
       prescriptions,
       clinicalEvents,
+      id: hospitalizationId,
+      admissionReason,
+      admissionDate,
+    } = tag.hospitalization;
+
+    const latestVitalSignsEvent =
+      await this.bedsideRepository.findLatestVitalSigns(hospitalizationId);
+
+    const now = new Date();
+    const pendingTasks: BedsidePendingTaskDto[] = [];
+
+    if (prescriptions && prescriptions.length > 0) {
+      for (const prescription of prescriptions) {
+        if (prescription.items) {
+          for (const item of prescription.items) {
+            if (item.status === 'PENDING') {
+              pendingTasks.push({
+                id: item.id,
+                itemType: item.itemType,
+                title: item.title,
+                dosage: item.dosage,
+                route: item.route,
+                scheduledTime: item.scheduledTime,
+                isOverdue: new Date(item.scheduledTime) < now,
+                instructions: item.instructions,
+              });
+            }
+          }
+        }
+      }
+    }
+
+    pendingTasks.sort(
+      (a, b) =>
+        new Date(a.scheduledTime).getTime() - new Date(b.scheduledTime).getTime(),
+    );
+
+    this.logger.log(
+      `[BEDSIDE] Prontuário COMPLETO consultado via coleira NFC: identifier=${identifier}, internacaoId=${hospitalizationId}, paciente=${patient.name}`,
+    );
+
+    return {
+      hospitalizationId,
+      admissionReason,
+      admissionDate,
+      clinicalAlerts: this.generateClinicalAlerts(patient),
+      nfcTag: {
+        id: tag.id,
+        tagUid: tag.tagUid,
+        publicCode: tag.publicCode,
+      },
+      kennel: {
+        id: kennel.id,
+        name: kennel.name,
+        notes: kennel.notes,
+      },
+      patient: {
+        id: patient.id,
+        name: patient.name,
+        species: patient.species,
+        breed: patient.breed,
+        birthDate: patient.birthDate,
+        ageDisplay: calculateAgeDisplay(patient.birthDate),
+        bloodType: patient.bloodType,
+        weightKg: patient.weightKg,
+        photoUrl: patient.photoUrl,
+        allergies: patient.allergies,
+        isFasting: patient.isFasting,
+        isCastrated: patient.isCastrated,
+        behaviorNotes: patient.behaviorNotes,
+        guardian: {
+          id: patient.guardian.id,
+          name: patient.guardian.name,
+          phone: patient.guardian.phone,
+          email: patient.guardian.email,
+          cpf: patient.guardian.cpf,
+        },
+      },
+      latestVitalSigns: latestVitalSignsEvent
+        ? {
+            ...(latestVitalSignsEvent.metrics as any),
+            recordedAt: latestVitalSignsEvent.recordedAt,
+            measuredBy: latestVitalSignsEvent.user?.name,
+          }
+        : null,
+      pendingTasks,
+      prescriptions: prescriptions || [],
+      clinicalEvents: clinicalEvents || [],
     };
+  }
+
+  async getQuickRecordByTag(identifier: string): Promise<QuickRecordResponseDto> {
+    return this.getBriefRecordByTag(identifier);
   }
 
   async applyMedication(

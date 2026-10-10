@@ -12,8 +12,53 @@ import {
 export class BedsideRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findTagWithActiveHospitalization(identifier: string) {
-    const includeHospitalization = {
+  async findBriefRecordByTag(identifier: string) {
+    const includeBriefHospitalization = {
+      hospitalization: {
+        where: { status: 'ACTIVE' as const },
+        include: {
+          patient: {
+            include: {
+              guardian: true,
+            },
+          },
+          kennel: true,
+          prescriptions: {
+            where: { isActive: true },
+            include: {
+              items: {
+                where: { status: 'PENDING' as const },
+                orderBy: { scheduledTime: 'asc' as const },
+              },
+            },
+          },
+        },
+      },
+    };
+
+    let tag = await this.prisma.nfcTag.findUnique({
+      where: { publicCode: identifier },
+      include: includeBriefHospitalization,
+    });
+
+    if (tag) return tag;
+
+    const sanitizedUid = identifier.replace(/[:\s-]/g, '').toUpperCase();
+    tag = await this.prisma.nfcTag.findUnique({
+      where: { tagUid: sanitizedUid },
+      include: includeBriefHospitalization,
+    });
+
+    if (tag) return tag;
+
+    return this.prisma.nfcTag.findUnique({
+      where: { id: identifier },
+      include: includeBriefHospitalization,
+    });
+  }
+
+  async findFullRecordByTag(identifier: string) {
+    const includeFullHospitalization = {
       hospitalization: {
         where: { status: 'ACTIVE' as const },
         include: {
@@ -35,7 +80,7 @@ export class BedsideRepository {
             },
           },
           clinicalEvents: {
-            take: 15,
+            take: 50,
             orderBy: { recordedAt: 'desc' as const },
             include: {
               user: {
@@ -49,7 +94,7 @@ export class BedsideRepository {
 
     let tag = await this.prisma.nfcTag.findUnique({
       where: { publicCode: identifier },
-      include: includeHospitalization,
+      include: includeFullHospitalization,
     });
 
     if (tag) return tag;
@@ -57,15 +102,19 @@ export class BedsideRepository {
     const sanitizedUid = identifier.replace(/[:\s-]/g, '').toUpperCase();
     tag = await this.prisma.nfcTag.findUnique({
       where: { tagUid: sanitizedUid },
-      include: includeHospitalization,
+      include: includeFullHospitalization,
     });
 
     if (tag) return tag;
 
     return this.prisma.nfcTag.findUnique({
       where: { id: identifier },
-      include: includeHospitalization,
+      include: includeFullHospitalization,
     });
+  }
+
+  async findTagWithActiveHospitalization(identifier: string) {
+    return this.findFullRecordByTag(identifier);
   }
 
   async findLatestVitalSigns(hospitalizationId: string) {
