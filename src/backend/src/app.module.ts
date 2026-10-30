@@ -11,6 +11,7 @@ import { HospitalizationsModule } from './modules/hospitalizations/hospitalizati
 import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { PrescriptionsModule } from './modules/prescriptions/prescriptions.module';
+import { PatientsModule } from './modules/patients/patients.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { PrescriptionsModule } from './modules/prescriptions/prescriptions.modul
     NfcTagsModule,
     HospitalizationsModule,
     PrescriptionsModule,
+    PatientsModule,
   ],
   controllers: [],
   providers: [

@@ -55,6 +55,11 @@ enum EventType {
   OBSERVATION
 }
 
+enum PatientSex {
+  MALE
+  FEMALE
+}
+
 // ==========================================
 // TABELAS
 // ==========================================
@@ -96,6 +101,7 @@ model Patient {
   name             String            @db.VarChar(80)
   species          String            @db.VarChar(50)
   breed            String?           @db.VarChar(50)
+  sex              PatientSex?
   weightKg         Decimal?          @map("weight_kg") @db.Decimal(5, 2)
   photoUrl         String?           @map("photo_url")
   birthDate        DateTime?         @map("birth_date")

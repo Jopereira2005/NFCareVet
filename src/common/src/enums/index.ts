@@ -49,3 +49,9 @@ export enum DischargeReason {
   OTHER = 'OTHER',
 }
 
+export enum PatientSex {
+  MALE = 'MALE',
+  FEMALE = 'FEMALE',
+}
+
+

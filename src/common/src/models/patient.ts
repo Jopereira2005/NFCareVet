@@ -1,4 +1,7 @@
+import { PatientSex } from '../enums/index.js';
 import { IGuardian } from './guardian.js';
+
+export type PatientSexValue = `${PatientSex}` | PatientSex;
 
 export interface IPatient {
   id: string;
@@ -6,6 +9,7 @@ export interface IPatient {
   name: string;
   species: string;
   breed?: string | null;
+  sex?: PatientSexValue | null;
   birthDate?: Date | string | null;
   bloodType?: string | null;
   weightKg?: number | string | null;
@@ -25,6 +29,7 @@ export interface ICreatePatientPayload {
   name: string;
   species: string;
   breed?: string;
+  sex?: PatientSexValue;
   birthDate?: Date | string;
   bloodType?: string;
   weightKg?: number;
@@ -40,6 +45,7 @@ export interface IUpdatePatientPayload {
   name?: string;
   species?: string;
   breed?: string;
+  sex?: PatientSexValue | null;
   birthDate?: Date | string | null;
   bloodType?: string | null;
   weightKg?: number;
