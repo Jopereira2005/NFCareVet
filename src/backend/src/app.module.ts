@@ -13,6 +13,7 @@ import { RolesGuard } from './common/guards/roles.guard';
 import { PrescriptionsModule } from './modules/prescriptions/prescriptions.module';
 import { PatientsModule } from './modules/patients/patients.module';
 import { GuardiansModule } from './modules/guardians/guardians.module';
+import { KennelsModule } from './modules/kennels/kennels.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { GuardiansModule } from './modules/guardians/guardians.module';
     PrescriptionsModule,
     PatientsModule,
     GuardiansModule,
+    KennelsModule,
   ],
   controllers: [],
   providers: [
