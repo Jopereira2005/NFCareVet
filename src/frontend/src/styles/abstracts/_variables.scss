@@ -37,6 +37,8 @@ $font-family-mono: 'JetBrains Mono', monospace;
 // ==========================================
 // TEXT SIZES (1rem = 10px scaling)
 // ==========================================
+$text-xxxs: 1rem;
+$text-xxs: 1.1rem;
 $text-xs: 1.2rem;
 $text-md: 1.6rem;
 $text-sm: 1.4rem;
@@ -45,12 +47,14 @@ $text-xl: 2.4rem;
 $text-xxl: 3.2rem;
 
 $font-regular: 400;
+$font-medium: 500;
 $font-semibold: 600;
 $font-bold: 700;
 
 // ==========================================
 // SPACING (1rem = 10px scaling)
 // ==========================================
+$space-xxs: 0.2rem;
 $space-xs: 0.4rem;
 $space-sm: 0.8rem;
 $space-md: 1.2rem;
@@ -58,21 +62,39 @@ $space-lg: 1.6rem;
 $space-xl: 2.4rem;
 
 // ==========================================
+// LAYOUT
+// ==========================================
+$page-gutter: 2rem;
+$header-height: 6.4rem;
+$navbar-height: 6.4rem;
+$content-max-width: 60rem;
+
+// ==========================================
 // BORDER RADIUS
 // ==========================================
 $radius-sm: 0.4rem;
 $radius-md: 0.8rem;
+$radius-base: 1.2rem;
 $radius-lg: 1.6rem;
 $radius-full: 9999px;
 
 // ==========================================
 // ELEVATION / SHADOWS
 // ==========================================
+$shadow-xs: 0 1px 1px rgba(0, 0, 0, 0.05);
 $shadow-sm: 0 2px 8px -2px rgba(19, 78, 63, 0.04), 0 1px 3px 0 rgba(19, 78, 63, 0.02);
 $shadow-md: 0 8px 24px -4px rgba(19, 78, 63, 0.08), 0 2px 6px -1px rgba(19, 78, 63, 0.03);
+$shadow-header: 0 2px 6px rgba(19, 78, 63, 0.1);
+$shadow-navbar: 0 -4px 10px rgba(19, 78, 63, 0.05);
 
 // ==========================================
 // ANIMATIONS
 // ==========================================
 $transition-speed: 0.2s;
 $transition-timing: ease-in-out;
+
+// ==========================================
+// FOCUS
+// ==========================================
+$focus-ring-width: 0.3rem;
+$focus-ring-offset: 0.2rem;

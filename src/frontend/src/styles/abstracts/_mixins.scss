@@ -61,3 +61,47 @@
     }
   }
 }
+
+// Keyboard focus outline, applied only for :focus-visible
+@mixin focus-ring($color: $secondary-color, $offset: $focus-ring-offset) {
+  &:focus-visible {
+    outline: $focus-ring-width solid $color;
+    outline-offset: $offset;
+  }
+}
+
+// Sizes the svg icons inside the element (Lucide or custom SVG components)
+@mixin icon-size($size) {
+  svg {
+    flex-shrink: 0;
+    width: $size;
+    height: $size;
+  }
+}
+
+// Strips native button styles so a <button> can look like anything
+@mixin reset-button {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  cursor: pointer;
+}
+
+// Round icon container, e.g. avatars' badges and action shortcuts
+@mixin circle($size) {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: $size;
+  height: $size;
+  border-radius: $radius-full;
+}
+
+// Soft background + strong foreground of the same color (status tags, priority pills)
+@mixin tinted($color, $alpha: 0.2) {
+  background: rgba($color, $alpha);
+  color: $color;
+}
