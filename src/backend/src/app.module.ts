@@ -12,6 +12,7 @@ import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
 import { RolesGuard } from './common/guards/roles.guard';
 import { PrescriptionsModule } from './modules/prescriptions/prescriptions.module';
 import { PatientsModule } from './modules/patients/patients.module';
+import { GuardiansModule } from './modules/guardians/guardians.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { PatientsModule } from './modules/patients/patients.module';
     HospitalizationsModule,
     PrescriptionsModule,
     PatientsModule,
+    GuardiansModule,
   ],
   controllers: [],
   providers: [

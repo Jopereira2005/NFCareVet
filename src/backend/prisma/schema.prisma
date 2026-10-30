@@ -82,10 +82,11 @@ model User {
 
 model Guardian {
   id        String    @id @default(uuid())
-  name      String    @db.VarChar(80)
+  name      String    @db.VarChar(100)
   cpf       String?   @unique @db.VarChar(20)
-  email     String?   @db.VarChar(80)
+  email     String?   @db.VarChar(120)
   phone     String    @db.VarChar(20)
+  address   String?   @db.VarChar(200)
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @default(now()) @updatedAt @map("updated_at")
 

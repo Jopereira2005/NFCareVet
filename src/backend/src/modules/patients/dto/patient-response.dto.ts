@@ -17,6 +17,12 @@ export class PatientGuardianDto {
   @ApiProperty({ example: '(15) 99123-4567' })
   phone: string;
 
+  @ApiPropertyOptional({
+    example: 'Rua das Palmeiras, 450 - Sorocaba/SP',
+    nullable: true,
+  })
+  address?: string | null;
+
   @ApiProperty({ example: '2026-09-18T12:00:00.000Z' })
   createdAt: Date;
 

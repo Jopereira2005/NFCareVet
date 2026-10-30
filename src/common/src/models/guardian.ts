@@ -4,6 +4,8 @@ export interface IGuardian {
   cpf?: string | null;
   email?: string | null;
   phone: string;
+  address?: string | null;
+  isActive?: boolean;
   createdAt: Date | string;
   updatedAt: Date | string;
 }
@@ -13,6 +15,7 @@ export interface ICreateGuardianPayload {
   phone: string;
   cpf?: string;
   email?: string;
+  address?: string;
 }
 
 export interface IUpdateGuardianPayload {
@@ -20,4 +23,5 @@ export interface IUpdateGuardianPayload {
   phone?: string;
   cpf?: string;
   email?: string;
+  address?: string;
 }

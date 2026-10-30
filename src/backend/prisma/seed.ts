@@ -143,6 +143,7 @@ async function main() {
       cpf: '123.456.789-01',
       email: 'carlos.santos@email.com',
       phone: '(15) 99123-4567',
+      address: 'Rua das Palmeiras, 450 - Apto 82, Campolim - Sorocaba/SP',
     },
   });
 
@@ -152,6 +153,7 @@ async function main() {
       cpf: '234.567.890-12',
       email: 'mariana.costa@email.com',
       phone: '(15) 98111-2233',
+      address: 'Av. Brasil, 1200 - Jardim América, Sorocaba/SP',
     },
   });
 
@@ -161,6 +163,7 @@ async function main() {
       cpf: '345.678.901-23',
       email: 'roberto.alves@email.com',
       phone: '(15) 97222-3344',
+      address: 'Rua Sete de Setembro, 310 - Centro, Sorocaba/SP',
     },
   });
 
@@ -170,6 +173,7 @@ async function main() {
       cpf: '456.789.012-34',
       email: 'juliana.martins@email.com',
       phone: '(15) 96333-4455',
+      address: 'Rua Santa Clara, 88 - Mangal, Sorocaba/SP',
     },
   });
 
@@ -179,6 +183,7 @@ async function main() {
       cpf: '567.890.123-45',
       email: 'fernando.rocha@email.com',
       phone: '(15) 95444-5566',
+      address: 'Av. General Carneiro, 950 - Cerrado, Sorocaba/SP',
     },
   });
 

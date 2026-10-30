@@ -183,6 +183,7 @@ export class PatientsService {
             cpf: patient.guardian.cpf,
             email: patient.guardian.email,
             phone: patient.guardian.phone,
+            address: patient.guardian.address,
             createdAt: patient.guardian.createdAt,
             updatedAt: patient.guardian.updatedAt,
           }

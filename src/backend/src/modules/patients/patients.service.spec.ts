@@ -17,6 +17,7 @@ describe('PatientsService', () => {
     cpf: '123.456.789-01',
     email: 'carlos@email.com',
     phone: '(15) 99123-4567',
+    address: 'Rua das Palmeiras, 450',
     createdAt: now,
     updatedAt: now,
   };
