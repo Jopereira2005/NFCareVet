@@ -49,7 +49,9 @@ export const prescriptionService = {
       return mockResponse(items);
     }
 
-    const { data } = await httpClient.get<PendingScheduleItem[]>('/prescriptions/schedule/pending', { params });
+    const { data } = await httpClient.get<PendingScheduleItem[]>('/prescriptions/schedule/pending', {
+      params: { ...params, ...(onlyMine !== undefined ? { onlyMine } : {}) },
+    });
     return data;
   },
 

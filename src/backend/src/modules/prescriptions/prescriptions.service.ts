@@ -4,6 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { CreatePrescriptionDto } from './dto/create-prescription.dto';
+import { UpdatePrescriptionItemDto } from './dto/update-prescription.dto';
 import { CancelPrescriptionItemDto } from './dto/cancel-prescription-item.dto';
 import { DeactivatePrescriptionDto } from './dto/deactivate-prescription.dto';
 import { PendingScheduleQueryDto } from './dto/pending-schedule-query.dto';
@@ -23,7 +24,9 @@ import { HospitalizationsRepository } from '../hospitalizations/hospitalizations
 import {
   HospitalizationStatus,
   PrescriptionStatus,
+  PrescriptionItemType,
   EventType,
+  Prisma,
 } from '@prisma/client';
 import { UserRole } from '@nfcarevet/common';
 import { UsersRepository } from '../users/repositories/users.repository';
@@ -97,6 +100,69 @@ export class PrescriptionsService {
     }
 
     return this.toResponseDto(prescription);
+  }
+
+  async updateItem(
+    itemId: string,
+    dto: UpdatePrescriptionItemDto,
+  ): Promise<PrescriptionItemResponseDto> {
+    const item = await this.prescriptionsRepository.findItemById(itemId);
+
+    if (!item) {
+      throw new NotFoundException(
+        `Item de prescrição com ID "${itemId}" não encontrado.`,
+      );
+    }
+
+    if (item.status !== PrescriptionStatus.PENDING) {
+      throw new BadRequestException(
+        'Apenas itens de prescrição pendentes podem ser editados.',
+      );
+    }
+
+    const effectiveType = dto.itemType ?? item.itemType;
+    const isMedication = effectiveType === PrescriptionItemType.MEDICATION;
+    const isFullFormPayload =
+      dto.title !== undefined &&
+      dto.itemType !== undefined &&
+      dto.scheduledTime !== undefined;
+
+    const data: Prisma.PrescriptionItemUpdateInput = {};
+
+    if (dto.itemType !== undefined) {
+      data.itemType = dto.itemType;
+    }
+
+    if (dto.title !== undefined) {
+      data.title = dto.title.trim();
+    }
+
+    if (!isMedication) {
+      data.dosage = null;
+      data.route = null;
+    } else {
+      if (dto.dosage !== undefined) {
+        data.dosage = dto.dosage.trim() || null;
+      }
+      if (dto.route !== undefined) {
+        data.route = dto.route || null;
+      }
+    }
+
+    if (dto.scheduledTime !== undefined) {
+      data.scheduledTime = new Date(dto.scheduledTime);
+    }
+
+    if (dto.instructions !== undefined || isFullFormPayload) {
+      data.instructions = dto.instructions?.trim() || null;
+    }
+
+    const updated = await this.prescriptionsRepository.updatePrescriptionItem(
+      itemId,
+      data,
+    );
+
+    return this.toItemResponseDto(updated);
   }
 
   async cancelItem(
@@ -176,9 +242,12 @@ export class PrescriptionsService {
 
   async findPendingSchedule(
     query: PendingScheduleQueryDto,
+    currentUserId?: string,
   ): Promise<PendingScheduleItemResponseDto[]> {
-    const rawItems =
-      await this.prescriptionsRepository.findPendingSchedule(query);
+    const rawItems = await this.prescriptionsRepository.findPendingSchedule({
+      ...query,
+      prescribedById: query.onlyMine ? currentUserId : undefined,
+    });
 
     const now = new Date();
 
@@ -196,6 +265,12 @@ export class PrescriptionsService {
         kennel: raw.prescription.hospitalization.kennel,
         isOverdue,
         minutesOverdue,
+        assignee: raw.prescription.prescribedBy
+          ? {
+              id: raw.prescription.prescribedBy.id,
+              name: raw.prescription.prescribedBy.name,
+            }
+          : null,
       };
     });
   }

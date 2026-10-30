@@ -5,11 +5,6 @@ import {
   PrescriptionStatus,
   UserRole,
 } from '@prisma/client';
-import {
-  IUserSummary,
-  IPrescriptionItem,
-  IPrescription,
-} from '@nfcarevet/common';
 
 export class PrescriptionUserSummaryDto {
   @ApiProperty({ example: 'uuid-user-1' })
@@ -23,6 +18,14 @@ export class PrescriptionUserSummaryDto {
 
   @ApiProperty({ enum: UserRole, example: UserRole.VET })
   role: UserRole;
+}
+
+export class PrescriptionAssigneeSummaryDto {
+  @ApiProperty({ example: 'uuid-user-1' })
+  id: string;
+
+  @ApiProperty({ example: 'Dra. Camila Santos' })
+  name: string;
 }
 
 export class PrescriptionItemResponseDto {
@@ -203,4 +206,11 @@ export class PendingScheduleItemResponseDto {
     example: 25,
   })
   minutesOverdue?: number;
+
+  @ApiPropertyOptional({
+    description: 'Profissional responsável pela prescrição do item',
+    type: () => PrescriptionAssigneeSummaryDto,
+    nullable: true,
+  })
+  assignee?: PrescriptionAssigneeSummaryDto | null;
 }

@@ -9,6 +9,7 @@ import {
   ClinicalEvent,
   EventType,
   HospitalizationStatus,
+  Prisma,
 } from '@prisma/client';
 
 export type HospitalizationWithRelations = Hospitalization & {
@@ -404,6 +405,24 @@ export class HospitalizationsRepository {
           user: {
             select: { id: true, name: true, role: true },
           },
+          hospitalization: {
+            select: {
+              patient: {
+                select: { id: true, name: true },
+              },
+            },
+          },
+          prescriptionItem: {
+            select: {
+              prescription: {
+                select: {
+                  prescribedBy: {
+                    select: { id: true, name: true },
+                  },
+                },
+              },
+            },
+          },
         },
       }),
       this.prisma.clinicalEvent.count({ where }),
@@ -448,12 +467,137 @@ export class HospitalizationsRepository {
           user: {
             select: { id: true, name: true, role: true },
           },
+          hospitalization: {
+            select: {
+              patient: {
+                select: { id: true, name: true },
+              },
+            },
+          },
+          prescriptionItem: {
+            select: {
+              prescription: {
+                select: {
+                  prescribedBy: {
+                    select: { id: true, name: true },
+                  },
+                },
+              },
+            },
+          },
         },
       }),
       this.prisma.clinicalEvent.count({ where }),
     ]);
 
     return { items, total };
+  }
+
+  async findClinicalEventsByExecutor(userId: string, limit = 50) {
+    return this.prisma.clinicalEvent.findMany({
+      where: { userId },
+      take: limit,
+      orderBy: { recordedAt: 'desc' },
+      include: {
+        user: {
+          select: { id: true, name: true, role: true },
+        },
+        hospitalization: {
+          select: {
+            patient: {
+              select: { id: true, name: true },
+            },
+          },
+        },
+        prescriptionItem: {
+          select: {
+            prescription: {
+              select: {
+                prescribedBy: {
+                  select: { id: true, name: true },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  async findClinicalEventById(id: string) {
+    return this.prisma.clinicalEvent.findUnique({
+      where: { id },
+      include: {
+        user: {
+          select: { id: true, name: true, role: true },
+        },
+        hospitalization: {
+          select: {
+            patient: {
+              select: { id: true, name: true },
+            },
+          },
+        },
+        prescriptionItem: {
+          select: {
+            prescription: {
+              select: {
+                prescribedBy: {
+                  select: { id: true, name: true },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+  }
+
+  async updateClinicalEvent(
+    id: string,
+    data: {
+      title?: string;
+      description?: string | null;
+      metrics?: Record<string, any> | null;
+      recordedAt?: Date;
+    },
+  ) {
+    return this.prisma.clinicalEvent.update({
+      where: { id },
+      data: {
+        ...(data.title !== undefined ? { title: data.title } : {}),
+        ...(data.description !== undefined
+          ? { description: data.description }
+          : {}),
+        ...(data.metrics !== undefined
+          ? { metrics: data.metrics === null ? Prisma.DbNull : data.metrics }
+          : {}),
+        ...(data.recordedAt !== undefined ? { recordedAt: data.recordedAt } : {}),
+      },
+      include: {
+        user: {
+          select: { id: true, name: true, role: true },
+        },
+        hospitalization: {
+          select: {
+            patient: {
+              select: { id: true, name: true },
+            },
+          },
+        },
+        prescriptionItem: {
+          select: {
+            prescription: {
+              select: {
+                prescribedBy: {
+                  select: { id: true, name: true },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
   }
 
   async getLatestVitalSigns(hospitalizationId: string) {

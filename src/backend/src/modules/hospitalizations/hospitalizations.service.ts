@@ -25,8 +25,13 @@ import {
   DischargeResponseDto,
 } from './dto/hospitalization-response.dto';
 import { TimelineQueryDto } from './dto/timeline-query.dto';
-import { PaginatedTimelineResponseDto } from './dto/timeline-response.dto';
+import {
+  PaginatedTimelineResponseDto,
+  TimelineEventItemDto,
+} from './dto/timeline-response.dto';
 import { TemporalSummaryResponseDto } from './dto/temporal-summary-response.dto';
+import { ClinicalEventsQueryDto } from './dto/clinical-events-query.dto';
+import { UpdateClinicalEventDto } from './dto/update-clinical-event.dto';
 import { calculateAgeDisplay } from '../../common/utils/date.utils';
 
 @Injectable()
@@ -545,20 +550,7 @@ export class HospitalizationsService {
     const totalPages = Math.ceil(total / limit) || 1;
 
     return {
-      items: items.map((evt) => ({
-        id: evt.id,
-        hospitalizationId: evt.hospitalizationId,
-        eventType: evt.eventType,
-        title: evt.title,
-        description: evt.description,
-        metrics: evt.metrics as any,
-        recordedAt: evt.recordedAt,
-        executor: {
-          id: evt.user.id,
-          name: evt.user.name,
-          role: evt.user.role,
-        },
-      })),
+      items: items.map((evt) => this.toTimelineEventItemDto(evt)),
       meta: {
         total,
         page,
@@ -609,20 +601,7 @@ export class HospitalizationsService {
     const totalPages = Math.ceil(total / limit) || 1;
 
     return {
-      items: items.map((evt) => ({
-        id: evt.id,
-        hospitalizationId: evt.hospitalizationId,
-        eventType: evt.eventType,
-        title: evt.title,
-        description: evt.description,
-        metrics: evt.metrics as any,
-        recordedAt: evt.recordedAt,
-        executor: {
-          id: evt.user.id,
-          name: evt.user.name,
-          role: evt.user.role,
-        },
-      })),
+      items: items.map((evt) => this.toTimelineEventItemDto(evt)),
       meta: {
         total,
         page,
@@ -638,6 +617,84 @@ export class HospitalizationsService {
             measuredBy: latestVitalSignsEvent.user.name,
           }
         : null,
+    };
+  }
+
+  async listClinicalEventsByExecutor(
+    currentUserId: string,
+    query: ClinicalEventsQueryDto,
+  ): Promise<TimelineEventItemDto[]> {
+    const targetUserId =
+      !query.executor || query.executor === 'me'
+        ? currentUserId
+        : query.executor;
+    const limit = query.limit && query.limit > 0 ? query.limit : 50;
+
+    const events = await this.repository.findClinicalEventsByExecutor(
+      targetUserId,
+      limit,
+    );
+
+    return events.map((evt) => this.toTimelineEventItemDto(evt));
+  }
+
+  async updateClinicalEvent(
+    eventId: string,
+    dto: UpdateClinicalEventDto,
+  ): Promise<TimelineEventItemDto> {
+    const existing = await this.repository.findClinicalEventById(eventId);
+    if (!existing) {
+      throw new NotFoundException(
+        `Evento clínico com ID "${eventId}" não encontrado.`,
+      );
+    }
+
+    const updated = await this.repository.updateClinicalEvent(eventId, {
+      title: dto.title.trim(),
+      description:
+        dto.description !== undefined
+          ? dto.description?.trim() || null
+          : undefined,
+      metrics:
+        dto.metrics !== undefined
+          ? (dto.metrics as Record<string, any> | null)
+          : undefined,
+      recordedAt: new Date(dto.recordedAt),
+    });
+
+    return this.toTimelineEventItemDto(updated);
+  }
+
+  private toTimelineEventItemDto(evt: any): TimelineEventItemDto {
+    const prescribedBy =
+      evt.prescriptionItem?.prescription?.prescribedBy ?? null;
+    const patient = evt.hospitalization?.patient ?? undefined;
+
+    return {
+      id: evt.id,
+      hospitalizationId: evt.hospitalizationId,
+      eventType: evt.eventType,
+      title: evt.title,
+      description: evt.description,
+      metrics: evt.metrics as any,
+      recordedAt: evt.recordedAt,
+      executor: {
+        id: evt.user.id,
+        name: evt.user.name,
+        role: evt.user.role,
+      },
+      prescribedBy: prescribedBy
+        ? {
+            id: prescribedBy.id,
+            name: prescribedBy.name,
+          }
+        : null,
+      patient: patient
+        ? {
+            id: patient.id,
+            name: patient.name,
+          }
+        : undefined,
     };
   }
 

@@ -10,6 +10,7 @@ import {
   HospitalizationStatus,
   PrescriptionItemType,
   EventType,
+  Prisma,
 } from '@prisma/client';
 
 export type PrescriptionItemWithRelations = PrescriptionItem & {
@@ -23,6 +24,10 @@ export type PrescriptionWithRelations = Prescription & {
 
 export type PendingScheduleItemRaw = PrescriptionItem & {
   prescription: Prescription & {
+    prescribedBy?: {
+      id: string;
+      name: string;
+    } | null;
     hospitalization: {
       id: string;
       kennelId: string;
@@ -150,6 +155,21 @@ export class PrescriptionsRepository {
     });
   }
 
+  async updatePrescriptionItem(
+    itemId: string,
+    data: Prisma.PrescriptionItemUpdateInput,
+  ): Promise<PrescriptionItemWithRelations> {
+    return this.prisma.prescriptionItem.update({
+      where: { id: itemId },
+      data,
+      include: {
+        clinicalEvents: {
+          include: { user: true },
+        },
+      },
+    });
+  }
+
   async cancelPrescriptionItem(
     itemId: string,
     hospitalizationId: string,
@@ -239,6 +259,7 @@ export class PrescriptionsRepository {
     kennelId?: string;
     hospitalizationId?: string;
     itemType?: PrescriptionItemType;
+    prescribedById?: string;
   }): Promise<PendingScheduleItemRaw[]> {
     const now = new Date();
     const windowHours = query.windowHours ?? 4;
@@ -256,6 +277,9 @@ export class PrescriptionsRepository {
         ...(query.itemType ? { itemType: query.itemType } : {}),
         prescription: {
           isActive: true,
+          ...(query.prescribedById
+            ? { prescribedById: query.prescribedById }
+            : {}),
           hospitalization: {
             status: HospitalizationStatus.ACTIVE,
             ...(query.kennelId ? { kennelId: query.kennelId } : {}),
@@ -267,6 +291,12 @@ export class PrescriptionsRepository {
       include: {
         prescription: {
           include: {
+            prescribedBy: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
             hospitalization: {
               include: {
                 patient: {

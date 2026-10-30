@@ -26,11 +26,13 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { PrescriptionsService } from './prescriptions.service';
 import { CreatePrescriptionDto } from './dto/create-prescription.dto';
+import { UpdatePrescriptionItemDto } from './dto/update-prescription.dto';
 import { CancelPrescriptionItemDto } from './dto/cancel-prescription-item.dto';
 import { DeactivatePrescriptionDto } from './dto/deactivate-prescription.dto';
 import { PendingScheduleQueryDto } from './dto/pending-schedule-query.dto';
 import {
   PrescriptionResponseDto,
+  PrescriptionItemResponseDto,
   CancelItemResponseDto,
   DeactivatePrescriptionResponseDto,
   PendingScheduleItemResponseDto,
@@ -106,7 +108,7 @@ export class PrescriptionsController {
   @ApiOperation({
     summary: 'Fila de Aprazamento da Enfermaria',
     description:
-      'Lista os medicamentos, procedimentos e checagens pendentes para as próximas horas em todos os leitos ou filtrado por leito/internação, sinalizando doses em atraso.',
+      'Lista os medicamentos, procedimentos e checagens pendentes para as próximas horas em todos os leitos ou filtrado por leito/internação ou pelo profissional autenticado (onlyMine=true), sinalizando doses em atraso.',
   })
   @ApiOkResponse({
     description: 'Fila de itens pendentes para o plantão.',
@@ -114,8 +116,41 @@ export class PrescriptionsController {
   })
   async findPendingSchedule(
     @Query() query: PendingScheduleQueryDto,
+    @CurrentUser('userId') currentUserId: string,
   ): Promise<PendingScheduleItemResponseDto[]> {
-    return this.prescriptionsService.findPendingSchedule(query);
+    return this.prescriptionsService.findPendingSchedule(query, currentUserId);
+  }
+
+  @Patch('prescription-items/:id')
+  @Roles(UserRole.ADMIN, UserRole.VET)
+  @ApiOperation({
+    summary: 'Editar Item de Prescrição (Tarefa Pendente)',
+    description:
+      'Permite editar os dados de uma tarefa/item de prescrição ainda pendente (itemType, title, dosage, route, scheduledTime, instructions).',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'UUID do item da prescrição médica (PrescriptionItem)',
+    example: '5fa85f64-5717-4562-b3fc-2c963f66afa8',
+  })
+  @ApiOkResponse({
+    description: 'Item de prescrição atualizado com sucesso.',
+    type: PrescriptionItemResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description: 'Dados inválidos ou item não está mais com status PENDING.',
+  })
+  @ApiNotFoundResponse({
+    description: 'Item de prescrição não encontrado.',
+  })
+  @ApiForbiddenResponse({
+    description: 'Apenas VET ou ADMIN podem editar itens de prescrição.',
+  })
+  async updateItem(
+    @Param('id') itemId: string,
+    @Body() dto: UpdatePrescriptionItemDto,
+  ): Promise<PrescriptionItemResponseDto> {
+    return this.prescriptionsService.updateItem(itemId, dto);
   }
 
   @Patch('prescription-items/:id/cancel')

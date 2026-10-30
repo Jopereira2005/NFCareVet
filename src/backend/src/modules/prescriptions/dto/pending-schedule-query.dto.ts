@@ -66,4 +66,18 @@ export class PendingScheduleQueryDto {
   })
   @IsOptional()
   itemType?: PrescriptionItemType;
+
+  @ApiPropertyOptional({
+    description:
+      'Se verdadeiro, retorna apenas os itens atribuídos/prescritos pelo profissional autenticado (@CurrentUser)',
+    default: false,
+    example: false,
+  })
+  @Transform(({ value }) => {
+    if (value === undefined || value === null || value === '') return undefined;
+    return value === 'true' || value === true || value === 1 || value === '1';
+  })
+  @IsBoolean({ message: 'onlyMine deve ser um valor booleano.' })
+  @IsOptional()
+  onlyMine?: boolean;
 }

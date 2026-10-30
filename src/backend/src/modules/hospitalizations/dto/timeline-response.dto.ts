@@ -12,6 +12,22 @@ export class TimelineExecutorSummaryDto {
   role: string;
 }
 
+export class TimelinePrescriberSummaryDto {
+  @ApiProperty({ example: 'uuid-user-2' })
+  id: string;
+
+  @ApiProperty({ example: 'Dr. Carlos Mendes' })
+  name: string;
+}
+
+export class TimelinePatientSummaryDto {
+  @ApiProperty({ example: 'uuid-patient-1' })
+  id: string;
+
+  @ApiProperty({ example: 'Thor' })
+  name: string;
+}
+
 export class TimelineEventItemDto {
   @ApiProperty({ example: 'uuid-event-1' })
   id: string;
@@ -25,7 +41,10 @@ export class TimelineEventItemDto {
   @ApiProperty({ example: 'Aferição de Sinais Vitais' })
   title: string;
 
-  @ApiPropertyOptional({ example: 'Paciente alerta, normotérmico e sem dor aparente.' })
+  @ApiPropertyOptional({
+    example: 'Paciente alerta, normotérmico e sem dor aparente.',
+    nullable: true,
+  })
   description?: string | null;
 
   @ApiPropertyOptional({
@@ -38,6 +57,7 @@ export class TimelineEventItemDto {
       bloodGlucose: 98,
     },
     description: 'Métricas clínicas do evento (sinais vitais, alimentação ou eliminações)',
+    nullable: true,
   })
   metrics?: Record<string, any> | null;
 
@@ -46,6 +66,19 @@ export class TimelineEventItemDto {
 
   @ApiProperty({ type: () => TimelineExecutorSummaryDto })
   executor: TimelineExecutorSummaryDto;
+
+  @ApiPropertyOptional({
+    type: () => TimelinePrescriberSummaryDto,
+    nullable: true,
+    description: 'Profissional que prescreveu o item que originou o evento (se aplicável)',
+  })
+  prescribedBy?: TimelinePrescriberSummaryDto | null;
+
+  @ApiPropertyOptional({
+    type: () => TimelinePatientSummaryDto,
+    description: 'Paciente ao qual o evento clínico pertence',
+  })
+  patient?: TimelinePatientSummaryDto;
 }
 
 export class PaginationMetaDto {
