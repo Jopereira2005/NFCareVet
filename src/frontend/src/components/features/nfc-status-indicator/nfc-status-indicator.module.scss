@@ -1,0 +1,70 @@
+@use 'abstracts' as *;
+
+.nfc-status-indicator {
+  @include reset-button;
+  @include circle(3.6rem);
+  @include icon-size(1.6rem);
+
+  position: relative;
+  background: $gray-scale-light;
+  color: $secondary-color;
+
+  // Status dot
+  &::after {
+    position: absolute;
+    top: 0.4rem;
+    right: 0.4rem;
+    width: 0.8rem;
+    height: 0.8rem;
+    border: 1px solid $light-color;
+    border-radius: $radius-full;
+    content: '';
+  }
+
+  &--scanning::after {
+    background: $success-color;
+    animation: nfc-status-indicator-pulse 2s ease-in-out infinite;
+  }
+
+  &--idle {
+    color: $gray-scale-medium;
+
+    &::after {
+      background: $gray-scale-medium;
+    }
+  }
+
+  &--error::after {
+    background: $danger-color;
+  }
+
+  &--unsupported {
+    color: $gray-scale-medium;
+    cursor: default;
+
+    &::after {
+      display: none;
+    }
+  }
+
+  &:is(button) {
+    @include focus-ring;
+  }
+}
+
+@keyframes nfc-status-indicator-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba($success-color, 0.5);
+  }
+
+  50% {
+    box-shadow: 0 0 0 4px rgba($success-color, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nfc-status-indicator--scanning::after {
+    animation: none;
+  }
+}

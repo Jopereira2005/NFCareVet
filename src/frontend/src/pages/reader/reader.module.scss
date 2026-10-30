@@ -1,0 +1,14 @@
+@use 'abstracts' as *;
+
+.reader {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xl;
+}
+
+.reader__detected-dot {
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: $radius-full;
+  background: $secondary-color;
+}
