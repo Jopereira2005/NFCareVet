@@ -1,0 +1,37 @@
+@use 'abstracts' as *;
+
+.link-tag-modal__tag {
+  @include flex(row, flex-start, center);
+
+  gap: $space-md;
+  margin: 0;
+  padding: $space-md;
+  border-radius: $radius-lg;
+  background: $light-color;
+  box-shadow: $shadow-xs;
+}
+
+.link-tag-modal__tag__icon {
+  @include circle(4.4rem);
+  @include icon-size(2rem);
+
+  background: $tertiary-color;
+  color: $primary-color;
+}
+
+.link-tag-modal__tag__label {
+  display: block;
+  color: $gray-scale-medium;
+  font-size: $text-xxs;
+  font-weight: $font-semibold;
+  line-height: 1.4rem;
+  text-transform: uppercase;
+}
+
+.link-tag-modal__tag__uid {
+  color: $dark-color;
+  font-family: $font-family-mono;
+  font-size: $text-md;
+  line-height: 2.2rem;
+  word-break: break-all;
+}

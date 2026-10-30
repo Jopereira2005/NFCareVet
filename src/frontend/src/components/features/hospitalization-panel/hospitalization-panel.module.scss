@@ -1,0 +1,76 @@
+@use 'abstracts' as *;
+
+.hospitalization-panel {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+  padding: $space-lg;
+  border-radius: $radius-lg;
+  background: $light-color;
+  box-shadow: $shadow-xs;
+}
+
+.hospitalization-panel__header {
+  @include flex(row, space-between, center);
+
+  gap: $space-sm;
+}
+
+.hospitalization-panel__header__title {
+  @include flex(row, flex-start, center);
+  @include icon-size(1.8rem);
+
+  gap: $space-sm;
+  margin: 0;
+  color: $dark-color;
+  font-size: $text-md;
+  font-weight: $font-bold;
+  line-height: 2.2rem;
+
+  svg {
+    color: $primary-color;
+  }
+}
+
+.hospitalization-panel__details {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+  margin: 0;
+  padding: $space-md;
+  border-radius: $radius-base;
+  background: $gray-scale-light;
+  list-style: none;
+
+  li {
+    @include flex(row, flex-start, flex-start);
+    @include icon-size(1.4rem);
+
+    gap: $space-sm;
+    color: $gray-scale-dark;
+    font-size: $text-xs;
+    line-height: 1.6rem;
+  }
+
+  svg {
+    margin-top: 0.1rem;
+    color: $secondary-color;
+  }
+}
+
+.hospitalization-panel__empty,
+.hospitalization-panel__restricted {
+  margin: 0;
+  color: $gray-scale-medium;
+  font-size: $text-xs;
+  line-height: 1.6rem;
+}
+
+.hospitalization-panel__actions {
+  display: flex;
+  gap: $space-sm;
+
+  > * {
+    flex: 1 1 0;
+  }
+}

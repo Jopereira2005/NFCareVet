@@ -1,0 +1,16 @@
+@use 'abstracts' as *;
+
+.discharge-modal__warning {
+  @include flex(row, flex-start, center);
+  @include icon-size(1.6rem);
+
+  gap: $space-sm;
+  margin: 0;
+  padding: $space-md;
+  border-radius: $radius-base;
+  background: rgba($warning-color, 0.15);
+  color: color-mix(in srgb, #{$warning-color} 70%, #{$dark-color});
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+  line-height: 1.6rem;
+}
