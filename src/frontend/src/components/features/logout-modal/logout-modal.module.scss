@@ -1,0 +1,45 @@
+@use 'abstracts' as *;
+
+.logout-modal__user {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+  padding: $space-md;
+  border-radius: $radius-base;
+  background: $gray-scale-light;
+}
+
+.logout-modal__user__texts {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.logout-modal__texts__name {
+  @include text-truncate;
+
+  color: $primary-color;
+  font-size: $text-sm;
+  font-weight: $font-semibold;
+}
+
+.logout-modal__texts__email {
+  @include text-truncate;
+
+  color: $gray-scale-dark;
+  font-size: $text-xs;
+}
+
+.logout-modal__warning {
+  @include flex(row, flex-start, flex-start);
+  @include icon-size(1.8rem);
+  @include tinted($danger-color, 0.1);
+
+  gap: $space-sm;
+  margin: 0;
+  padding: $space-md;
+  border-radius: $radius-base;
+  font-size: $text-sm;
+  font-weight: $font-medium;
+  line-height: 2rem;
+}
