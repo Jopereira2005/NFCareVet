@@ -1,0 +1,23 @@
+@use 'abstracts' as *;
+
+.page-heading {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xxs;
+  padding: $space-md 0 $space-lg;
+}
+
+.page-heading__title {
+  margin: 0;
+  color: $dark-color;
+  font-size: $text-xl;
+  font-weight: $font-bold;
+  line-height: 3rem;
+}
+
+.page-heading__subtitle {
+  margin: 0;
+  color: $gray-scale-medium;
+  font-size: $text-xs;
+  line-height: 1.5rem;
+}
