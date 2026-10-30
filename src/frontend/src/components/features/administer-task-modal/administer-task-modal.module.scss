@@ -1,0 +1,152 @@
+@use 'abstracts' as *;
+@use 'sass:color';
+
+.administer-task-modal__conflict {
+  @include flex(row, flex-start, flex-start);
+
+  gap: $space-sm;
+  margin: 0;
+  padding: $space-md;
+  border: 1px solid rgba($danger-color, 0.35);
+  border-radius: $radius-base;
+  background: rgba($danger-color, 0.1);
+  color: $danger-color;
+  font-size: $text-xs;
+  font-weight: $font-bold;
+  line-height: 1.6rem;
+
+  svg {
+    flex-shrink: 0;
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+}
+
+.administer-task-modal__summary {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+  padding: $space-md;
+  border-radius: $radius-lg;
+  background: $light-color;
+  box-shadow: $shadow-xs;
+}
+
+.administer-task-modal__summary__header {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+}
+
+.administer-task-modal__header__icon {
+  @include circle(4.4rem);
+  @include icon-size(2rem);
+
+  border-radius: $radius-md;
+  background: $gray-scale-light;
+  color: $secondary-color;
+}
+
+.administer-task-modal__header__texts {
+  min-width: 0;
+}
+
+.administer-task-modal__texts__type {
+  color: $secondary-color;
+  font-size: $text-xxs;
+  font-weight: $font-bold;
+  line-height: 1.4rem;
+  text-transform: uppercase;
+}
+
+.administer-task-modal__texts__title {
+  margin: 0;
+  color: $dark-color;
+  font-size: $text-lg;
+  font-weight: $font-bold;
+  line-height: 2.2rem;
+}
+
+.administer-task-modal__texts__dosage {
+  margin: 0;
+  color: $dark-color;
+  font-family: $font-family-mono;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+  line-height: 1.6rem;
+}
+
+.administer-task-modal__summary__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-sm $space-lg;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    @include flex(row, flex-start, center);
+    @include icon-size(1.4rem);
+
+    gap: $space-xs;
+    color: $gray-scale-dark;
+    font-size: $text-xs;
+    line-height: 1.6rem;
+  }
+
+  svg {
+    color: $secondary-color;
+  }
+
+  time {
+    color: $dark-color;
+    font-family: $font-family-mono;
+    font-weight: $font-bold;
+  }
+}
+
+.administer-task-modal__summary__instructions {
+  margin: 0;
+  padding: $space-sm $space-md;
+  border-radius: $radius-md;
+  background: $gray-scale-light;
+  color: $gray-scale-dark;
+  font-size: $text-xs;
+  line-height: 1.6rem;
+}
+
+.administer-task-modal__alerts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-sm;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.administer-task-modal__alerts__item {
+  @include flex(row, flex-start, center);
+  @include icon-size(1.2rem);
+
+  gap: $space-xs;
+  min-height: 2.4rem;
+  padding: $space-xs $space-sm;
+  border-radius: $radius-full;
+  font-size: $text-xs;
+  font-weight: $font-medium;
+  line-height: 1.6rem;
+
+  &--allergy {
+    @include tinted($danger-color, 0.12);
+  }
+
+  &--treatment,
+  &--fasting {
+    background: rgba($warning-color, 0.15);
+    color: color.mix($warning-color, $dark-color, 70%);
+  }
+
+  &--behavior {
+    @include tinted($info-color, 0.12);
+  }
+}
