@@ -9,6 +9,7 @@ import { randomUUID } from 'crypto';
 import { CreateNfcTagDto } from './dto/create-nfc-tag.dto';
 import { NfcTagsRepository } from './nfc-tags.repository';
 import { NfcTagResponseDto } from './dto/nfc-tag-response.dto';
+import { NfcTagUsageResponseDto } from './dto/nfc-tag-usage-response.dto';
 import { NfcTag } from '@prisma/client';
 
 @Injectable()
@@ -58,6 +59,10 @@ export class NfcTagsService {
   async findAll(): Promise<NfcTagResponseDto[]> {
     const tags = await this.nfcTagsRepository.findAll();
     return tags.map((tag) => this.toResponseDto(tag));
+  }
+
+  async getUsage(): Promise<NfcTagUsageResponseDto> {
+    return this.nfcTagsRepository.getUsage();
   }
 
   async findOne(identifier: string): Promise<NfcTagResponseDto> {

@@ -14,6 +14,7 @@ import { PrescriptionsModule } from './modules/prescriptions/prescriptions.modul
 import { PatientsModule } from './modules/patients/patients.module';
 import { GuardiansModule } from './modules/guardians/guardians.module';
 import { KennelsModule } from './modules/kennels/kennels.module';
+import { RegistrationsModule } from './modules/registrations/registrations.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { KennelsModule } from './modules/kennels/kennels.module';
     PatientsModule,
     GuardiansModule,
     KennelsModule,
+    RegistrationsModule,
   ],
   controllers: [],
   providers: [

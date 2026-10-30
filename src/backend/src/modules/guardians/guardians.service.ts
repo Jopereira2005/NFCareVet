@@ -36,6 +36,11 @@ export class GuardiansService {
     return this.toResponseDto(guardian);
   }
 
+  async listRecent(limit: number): Promise<GuardianResponseDto[]> {
+    const guardians = await this.guardiansRepository.findRecent(limit);
+    return guardians.map((guardian) => this.toResponseDto(guardian));
+  }
+
   async search(query?: string): Promise<GuardianResponseDto[]> {
     const guardians = await this.guardiansRepository.findAll();
     const mapped = guardians.map((guardian) => this.toResponseDto(guardian));

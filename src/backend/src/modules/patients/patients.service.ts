@@ -35,6 +35,11 @@ export class PatientsService {
     return this.toResponseDto(patient);
   }
 
+  async listRecent(limit: number): Promise<PatientResponseDto[]> {
+    const patients = await this.patientsRepository.findRecent(limit);
+    return patients.map((patient) => this.toResponseDto(patient));
+  }
+
   async search(queryDto: PatientSearchQueryDto): Promise<PatientResponseDto[]> {
     const patients = await this.patientsRepository.findAll({
       species: queryDto.species,

@@ -11,3 +11,8 @@ export interface ICreateNfcTagPayload {
   publicCode: string;
   active?: boolean;
 }
+
+export interface INfcTagUsage {
+  total: number;
+  linked: number;
+}

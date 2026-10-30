@@ -50,6 +50,14 @@ export class PatientsRepository {
     });
   }
 
+  async findRecent(limit: number): Promise<PatientWithRelations[]> {
+    return this.prisma.patient.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+      include: patientRelationsInclude,
+    });
+  }
+
   async findAll(filters: {
     species?: string;
     sex?: PatientSex;

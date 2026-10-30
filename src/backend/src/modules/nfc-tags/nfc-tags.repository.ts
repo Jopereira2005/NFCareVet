@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../database/prisma.service';
-import { NfcTag, Prisma, Hospitalization } from '@prisma/client';
+import {
+  NfcTag,
+  Prisma,
+  Hospitalization,
+  HospitalizationStatus,
+} from '@prisma/client';
 
 export type NfcTagWithHospitalization = NfcTag & {
   hospitalization: Hospitalization | null;
@@ -11,6 +16,7 @@ export interface INfcTagsRepository {
   findByTagUid(tagUid: string): Promise<NfcTagWithHospitalization | null>;
   findByPublicCode(publicCode: string): Promise<NfcTagWithHospitalization | null>;
   findAll(): Promise<NfcTag[]>;
+  getUsage(): Promise<{ total: number; linked: number }>;
   create(data: Prisma.NfcTagCreateInput): Promise<NfcTag>;
   update(id: string, data: Prisma.NfcTagUpdateInput): Promise<NfcTag>;
   delete(id: string): Promise<NfcTag>;
@@ -54,6 +60,26 @@ export class NfcTagsRepository implements INfcTagsRepository {
         hospitalization: true,
       },
     });
+  }
+
+  async getUsage(): Promise<{ total: number; linked: number }> {
+    const [total, linked] = await Promise.all([
+      this.prisma.nfcTag.count({
+        where: { active: true },
+      }),
+      this.prisma.nfcTag.count({
+        where: {
+          active: true,
+          hospitalization: {
+            is: {
+              status: HospitalizationStatus.ACTIVE,
+            },
+          },
+        },
+      }),
+    ]);
+
+    return { total, linked };
   }
 
   async create(data: Prisma.NfcTagCreateInput): Promise<NfcTag> {

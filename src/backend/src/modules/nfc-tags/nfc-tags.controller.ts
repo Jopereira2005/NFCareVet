@@ -23,6 +23,7 @@ import {
 import { NfcTagsService } from './nfc-tags.service';
 import { CreateNfcTagDto } from './dto/create-nfc-tag.dto';
 import { NfcTagResponseDto } from './dto/nfc-tag-response.dto';
+import { NfcTagUsageResponseDto } from './dto/nfc-tag-usage-response.dto';
 
 @ApiTags('Tags NFC')
 @ApiBearerAuth('JWT-auth')
@@ -65,6 +66,23 @@ export class NfcTagsController {
   })
   async findAll() {
     return this.nfcTagsService.findAll();
+  }
+
+  @Get('usage')
+  @ApiOperation({
+    summary: 'Resumo de uso de tags NFC no plantão',
+    description:
+      'Retorna o total de tags NFC ativas no inventário e quantas estão atualmente vinculadas a internações ativas ({ total, linked }). Usado no card de resumo do plantão (ShiftSummaryCard).',
+  })
+  @ApiOkResponse({
+    description: 'Contagem de tags NFC totais e vinculadas.',
+    type: NfcTagUsageResponseDto,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'Não autenticado.',
+  })
+  async getUsage(): Promise<NfcTagUsageResponseDto> {
+    return this.nfcTagsService.getUsage();
   }
 
   @Get(':id')
@@ -162,4 +180,3 @@ export class NfcTagsController {
     return this.nfcTagsService.removeTag(id);
   }
 }
-

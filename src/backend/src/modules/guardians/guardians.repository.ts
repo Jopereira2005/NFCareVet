@@ -49,6 +49,14 @@ export class GuardiansRepository {
     });
   }
 
+  async findRecent(limit: number): Promise<GuardianWithPatients[]> {
+    return this.prisma.guardian.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+      include: guardianInclude,
+    });
+  }
+
   async findAll(): Promise<GuardianWithPatients[]> {
     return this.prisma.guardian.findMany({
       orderBy: { createdAt: 'desc' },

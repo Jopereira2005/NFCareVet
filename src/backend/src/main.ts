@@ -40,6 +40,7 @@ async function bootstrap() {
     .addTag('Baias / Leitos (Kennels)', 'Listagem de baias ativas e ocupação em tempo real')
     .addTag('Tutores (Guardians)', 'Cadastro, busca e perfil de tutores responsáveis')
     .addTag('Pacientes (Patients)', 'Cadastro, busca, histórico de atendimentos e prontuário de pacientes')
+    .addTag('Dashboard & Cadastros Recentes (Registrations)', 'Listagem unificada de últimos pacientes e tutores cadastrados')
     .addTag('Internações (Hospitalizations)', 'Gestão de internações de pacientes, leitos e vínculo de tags NFC')
     .addTag('Usuários', 'Gerenciamento de colaboradores e permissões (Exclusivo ADMIN)')
     .addTag('Health & Diagnóstico', 'Monitoramento de integridade e testes de autorização RBAC')
