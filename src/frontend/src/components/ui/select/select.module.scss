@@ -1,0 +1,51 @@
+@use 'abstracts' as *;
+
+.select {
+  @include transition(border-color, box-shadow);
+
+  position: relative;
+  border: 1px solid $gray-scale-light;
+  border-radius: 1.1rem;
+  background: $light-color;
+  box-shadow: $shadow-sm;
+
+  &:focus-within {
+    border-color: $secondary-color;
+    box-shadow: $shadow-md;
+  }
+
+  &--invalid,
+  &--invalid:focus-within {
+    border-color: $danger-color;
+  }
+}
+
+.select__field {
+  width: 100%;
+  min-height: 4.4rem;
+  padding: 0 4rem 0 $space-md;
+  border: 0;
+  border-radius: inherit;
+  outline: 0;
+  background: transparent;
+  color: $dark-color;
+  font-size: $text-sm;
+  appearance: none;
+  cursor: pointer;
+
+  &:disabled {
+    color: $gray-scale-medium;
+    cursor: not-allowed;
+  }
+}
+
+.select__chevron {
+  position: absolute;
+  top: 50%;
+  right: $space-md;
+  width: 1.6rem;
+  height: 1.6rem;
+  color: $gray-scale-medium;
+  pointer-events: none;
+  transform: translateY(-50%);
+}

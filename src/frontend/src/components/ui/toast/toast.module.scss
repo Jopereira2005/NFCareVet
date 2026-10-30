@@ -1,0 +1,86 @@
+@use 'abstracts' as *;
+
+.toast {
+  --toast-accent: #{$tertiary-color};
+
+  @include flex(row, space-between, center);
+
+  position: fixed;
+  left: 50%;
+  bottom: calc($navbar-height + 1.2rem + env(safe-area-inset-bottom));
+  z-index: 20;
+  gap: $space-md;
+  width: min(calc(100% - 4rem), 35rem);
+  padding: $space-md $space-lg $space-md $space-md;
+  border-radius: $radius-lg;
+  background: $primary-color;
+  box-shadow: $shadow-md;
+  transform: translateX(-50%);
+  animation: toast-enter 0.24s $transition-timing;
+
+  &--warning {
+    --toast-accent: #{$warning-color};
+  }
+}
+
+.toast__icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 3.2rem;
+  height: 3.2rem;
+  border-radius: $radius-full;
+  background: var(--toast-accent);
+  color: $dark-color;
+
+  @include icon-size(1.6rem);
+}
+
+.toast__texts {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.toast__texts__title {
+  margin: 0;
+  color: $light-color;
+  font-size: $text-sm;
+  font-weight: $font-semibold;
+  line-height: 1.6rem;
+}
+
+.toast__texts__description {
+  @include text-truncate;
+
+  margin: 0;
+  color: rgba($light-color, 0.7);
+  font-size: $text-xs;
+  line-height: 1.6rem;
+}
+
+.toast__action {
+  flex-shrink: 0;
+  padding: $space-xs;
+  border: 0;
+  background: transparent;
+  color: var(--toast-accent);
+  font-family: $font-family-mono;
+  font-size: $text-xs;
+  font-weight: $font-bold;
+  cursor: pointer;
+
+  @include focus-ring(var(--toast-accent), 0.2rem);
+}
+
+@keyframes toast-enter {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 0.8rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+  }
+}

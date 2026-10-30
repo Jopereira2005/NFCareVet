@@ -1,0 +1,179 @@
+@use 'abstracts' as *;
+
+.task-card {
+  --priority-color: #{$danger-color};
+  --priority-rgb: 186, 26, 26;
+
+  display: flex;
+  align-items: stretch;
+  gap: $space-xs;
+  padding: 1.4rem;
+  border: 2px solid rgba(var(--priority-rgb), 0.2);
+  border-radius: $radius-base;
+  background: $light-color;
+  box-shadow: $shadow-xs;
+
+  &--high {
+    --priority-color: #{$danger-color};
+    --priority-rgb: 186, 26, 26;
+  }
+
+  &--medium {
+    --priority-color: #{$warning-color};
+    --priority-rgb: 245, 158, 11;
+  }
+
+  &--low {
+    --priority-color: #{$success-color};
+    --priority-rgb: 16, 185, 129;
+  }
+}
+
+.task-card__content {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: $space-sm;
+  min-width: 0;
+}
+
+.task-card__content__heading {
+  @include flex(row, flex-start, center);
+
+  gap: $space-sm;
+}
+
+.task-card__heading__icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 3.8rem;
+  height: 3.8rem;
+  border-radius: $radius-md;
+  background: $gray-scale-light;
+  color: $secondary-color;
+
+  @include icon-size(1.8rem);
+}
+
+.task-card__heading__texts {
+  min-width: 0;
+}
+
+.task-card__texts__title {
+  @include text-truncate;
+
+  margin: 0;
+  color: $dark-color;
+  font-size: $text-sm;
+  font-weight: $font-bold;
+  line-height: 1.8rem;
+}
+
+.task-card__texts__description {
+  @include text-truncate;
+
+  margin: 0;
+  color: $gray-scale-dark;
+  font-size: $text-xs;
+  line-height: 1.6rem;
+}
+
+.task-card__content__meta {
+  @include flex(row, flex-start, center);
+
+  flex-wrap: wrap;
+  gap: $space-xs;
+  margin: 0;
+  color: $gray-scale-dark;
+  font-size: $text-xxs;
+  line-height: 1.6rem;
+
+  svg {
+    flex-shrink: 0;
+    width: 1.1rem;
+    height: 1.1rem;
+    color: $secondary-color;
+  }
+}
+
+.task-card__meta__time,
+.task-card__meta__assignee {
+  @include flex(row, flex-start, center);
+
+  gap: $space-xs;
+  color: $dark-color;
+}
+
+.task-card__meta__time {
+  font-family: $font-family-mono;
+  font-weight: $font-bold;
+}
+
+.task-card__meta__assignee {
+  font-weight: $font-semibold;
+}
+
+.task-card__side {
+  @include flex(column, space-between, flex-end);
+
+  flex-shrink: 0;
+  gap: $space-sm;
+}
+
+.task-card__side__priority {
+  @include flex(row, center, center);
+
+  gap: 0.6rem;
+  padding: 0.3rem 1rem;
+  border-radius: $radius-full;
+  background: rgba(var(--priority-rgb), 0.2);
+  color: var(--priority-color);
+  font-size: $text-xxs;
+  font-weight: $font-bold;
+  line-height: 1.65rem;
+  text-transform: uppercase;
+}
+
+.task-card__side__actions {
+  display: flex;
+  gap: $space-xs;
+}
+
+.task-card__actions__administer {
+  @include reset-button;
+  @include circle(3rem);
+  @include icon-size(1.6rem);
+  @include focus-ring;
+  @include transition(background-color);
+
+  background: $primary-color;
+  color: $light-color;
+
+  @include hover {
+    background: $dark-color;
+  }
+}
+
+.task-card__actions__menu {
+  @include transition(background-color);
+
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+  border: 0;
+  border-radius: $radius-full;
+  background: rgba(var(--priority-rgb), 0.2);
+  color: var(--priority-color);
+  cursor: pointer;
+
+  @include hover {
+    background: rgba(var(--priority-rgb), 0.3);
+  }
+
+  @include focus-ring;
+
+  @include icon-size(1.6rem);
+}

@@ -1,0 +1,43 @@
+@use 'abstracts' as *;
+
+.contact-actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: $space-xs;
+}
+
+.contact-actions__button {
+  @include transition(background-color);
+
+  display: grid;
+  place-items: center;
+  width: var(--contact-action-size);
+  height: var(--contact-action-size);
+  padding: 0;
+  border: 0;
+  border-radius: $radius-full;
+  cursor: pointer;
+
+  @include focus-ring;
+
+  @include icon-size(1.4rem);
+
+  &--message {
+    background: $primary-color;
+    color: $light-color;
+
+    @include hover {
+      background: $dark-color;
+    }
+  }
+
+  &--call {
+    background: $quaternary-color;
+    color: $primary-color;
+
+    @include hover {
+      background: $tertiary-color;
+      color: $primary-color;
+    }
+  }
+}

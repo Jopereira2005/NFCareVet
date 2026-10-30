@@ -1,0 +1,54 @@
+@use 'abstracts' as *;
+
+.segmented-control {
+  display: flex;
+  gap: $space-xs;
+  padding: $space-xs;
+  border-radius: $radius-full;
+  background: $gray-scale-light;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.segmented-control__option {
+  @include flex(row, center, center);
+  @include transition(background-color, color, box-shadow);
+
+  flex: 1 1 0;
+  gap: 0.6rem;
+  min-width: 0;
+  min-height: 3.8rem;
+  padding: 0 $space-md;
+  border: 0;
+  border-radius: $radius-full;
+  background: transparent;
+  color: $gray-scale-medium;
+  font-size: $text-sm;
+  font-weight: $font-semibold;
+  line-height: 1.8rem;
+  white-space: nowrap;
+  cursor: pointer;
+
+  @include hover {
+    color: $gray-scale-dark;
+  }
+
+  @include focus-ring;
+
+  &--selected,
+  &--selected:hover {
+    background: $light-color;
+    color: $dark-color;
+    font-weight: $font-bold;
+    box-shadow: $shadow-sm;
+  }
+}
+
+.segmented-control__option__icon {
+  flex-shrink: 0;
+  width: 1.6rem;
+  height: 1.6rem;
+
+  .segmented-control__option--selected & {
+    color: $secondary-color;
+  }
+}

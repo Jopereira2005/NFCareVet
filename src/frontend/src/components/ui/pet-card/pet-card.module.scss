@@ -1,0 +1,66 @@
+@use 'abstracts' as *;
+
+.pet-card {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+  padding: $space-md;
+  border-radius: $radius-lg;
+  background: $light-color;
+  box-shadow: $shadow-xs;
+}
+
+.pet-card__eyebrow {
+  @include flex(row, flex-start, center);
+
+  gap: 0.6rem;
+  color: $secondary-color;
+  font-size: $text-xxs;
+  font-weight: $font-bold;
+  line-height: 1.4rem;
+  text-transform: uppercase;
+}
+
+.pet-card__content {
+  display: flex;
+  align-items: stretch;
+  gap: $space-md;
+}
+
+.pet-card__content__body {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 0.6rem;
+  min-width: 0;
+}
+
+.pet-card__body__header {
+  @include flex(row, space-between, center);
+
+  gap: $space-sm;
+}
+
+.pet-card__header__name {
+  @include text-truncate;
+
+  margin: 0;
+  color: $dark-color;
+  font-size: $text-lg;
+  font-weight: $font-bold;
+  line-height: 2.2rem;
+}
+
+.pet-card__body__description {
+  @include text-truncate;
+
+  margin: 0;
+  color: $gray-scale-dark;
+  font-size: $text-xs;
+  line-height: 1.6rem;
+}
+
+.pet-card__action {
+  border-radius: $radius-base;
+}

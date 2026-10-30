@@ -1,0 +1,39 @@
+@use 'abstracts' as *;
+
+.form-field {
+  display: grid;
+  gap: 0.5rem;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.form-field__label {
+  padding: 0;
+  color: $gray-scale-dark;
+  font-size: $text-xs;
+  font-weight: $font-medium;
+  line-height: 1.6rem;
+}
+
+.form-field__label__optional {
+  color: $gray-scale-medium;
+  font-weight: $font-regular;
+}
+
+.form-field__hint,
+.form-field__error {
+  margin: 0;
+  font-size: $text-xxs;
+  line-height: 1.4rem;
+}
+
+.form-field__hint {
+  color: $gray-scale-medium;
+}
+
+.form-field__error {
+  color: $danger-color;
+  font-weight: $font-semibold;
+}

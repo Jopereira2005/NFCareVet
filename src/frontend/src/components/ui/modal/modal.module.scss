@@ -1,0 +1,145 @@
+@use 'abstracts' as *;
+
+.modal {
+  // Phone: sheet anchored to the bottom edge
+  inset: auto 0 0;
+  width: 100%;
+  max-width: 100%;
+  max-height: 92svh;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: $radius-lg * 1.5 $radius-lg * 1.5 0 0;
+  background: $background-color;
+  box-shadow: $shadow-md;
+  color: $dark-color;
+  overflow: hidden;
+  animation: modal-sheet-in 0.26s $transition-timing;
+
+  &::backdrop {
+    background: rgba($dark-color, 0.45);
+    animation: modal-fade-in 0.26s $transition-timing;
+  }
+
+  @include respond-to('sm') {
+    inset: 0;
+    width: min(calc(100% - 4.8rem), 52rem);
+    margin: auto;
+    border-radius: $radius-lg * 1.5;
+    animation-name: modal-dialog-in;
+  }
+}
+
+.modal__panel {
+  display: flex;
+  flex-direction: column;
+  max-height: inherit;
+}
+
+.modal__panel__header {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: $space-md;
+  padding: 2.4rem $page-gutter $space-lg;
+  border-bottom: 1px solid $gray-scale-light;
+  background: $light-color;
+}
+
+.modal__header__handle {
+  position: absolute;
+  top: $space-sm;
+  left: 50%;
+  width: 4rem;
+  height: 0.4rem;
+  border-radius: $radius-full;
+  background: $gray-scale-light;
+  transform: translateX(-50%);
+
+  @include respond-to('sm') {
+    display: none;
+  }
+}
+
+.modal__header__texts {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.modal__texts__title {
+  margin: 0;
+  color: $dark-color;
+  font-size: 2rem;
+  font-weight: $font-bold;
+  line-height: 2.6rem;
+}
+
+.modal__texts__description {
+  margin: $space-xxs 0 0;
+  color: $gray-scale-medium;
+  font-size: $text-xs;
+  line-height: 1.6rem;
+}
+
+.modal__header__close {
+  @include reset-button;
+  @include circle(3.2rem);
+  @include icon-size(1.8rem);
+  @include focus-ring;
+  @include transition(background-color);
+
+  background: $gray-scale-light;
+  color: $gray-scale-dark;
+
+  @include hover {
+    background: color-mix(in srgb, #{$gray-scale-light} 80%, #{$dark-color});
+  }
+}
+
+.modal__panel__body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: $space-lg;
+  padding: $space-lg $page-gutter;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.modal__panel__footer {
+  display: flex;
+  gap: $space-sm;
+  padding: $space-md $page-gutter calc($space-md + env(safe-area-inset-bottom));
+  border-top: 1px solid $gray-scale-light;
+  background: $light-color;
+
+  > * {
+    flex: 1 1 0;
+  }
+}
+
+@keyframes modal-sheet-in {
+  from {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes modal-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(1.6rem) scale(0.98);
+  }
+}
+
+@keyframes modal-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal,
+  .modal::backdrop {
+    animation: none;
+  }
+}
