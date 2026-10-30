@@ -1,0 +1,39 @@
+@use 'abstracts' as *;
+
+.history {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xl;
+}
+
+.history__results {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+}
+
+.history__results__time {
+  @include flex(row, flex-end, center);
+
+  flex-shrink: 0;
+  gap: $space-xs;
+  color: $dark-color;
+  font-family: $font-family-mono;
+  font-size: $text-xs;
+  font-weight: $font-bold;
+  line-height: 1.6rem;
+
+  @include icon-size(1.2rem);
+
+  svg {
+    color: $secondary-color;
+  }
+}
+
+.history__results__empty {
+  margin: 0;
+  padding: $space-xl 0;
+  color: $gray-scale-medium;
+  font-size: $text-sm;
+  text-align: center;
+}

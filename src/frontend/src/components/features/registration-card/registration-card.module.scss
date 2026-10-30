@@ -1,0 +1,104 @@
+@use 'abstracts' as *;
+@use 'sass:color';
+
+.registration-card {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+  padding: $space-md;
+  border-radius: $radius-lg;
+  background: $light-color;
+  box-shadow: $shadow-xs;
+}
+
+.registration-card__content {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-md;
+}
+
+.registration-card__content__body {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.registration-card__body__header {
+  @include flex(row, space-between, center);
+
+  gap: $space-sm;
+}
+
+.registration-card__header__title {
+  @include text-truncate;
+
+  margin: 0;
+  color: $dark-color;
+  font-size: $text-lg;
+  font-weight: $font-bold;
+  line-height: 2.4rem;
+}
+
+.registration-card__body__description {
+  @include text-truncate;
+
+  margin: 0;
+  padding-bottom: $space-sm;
+  color: $gray-scale-dark;
+  font-size: $text-xs;
+  line-height: 1.6rem;
+}
+
+.registration-card__description__highlight {
+  color: $dark-color;
+  font-weight: $font-medium;
+}
+
+.registration-card__footer {
+  @include flex(row, space-between, center);
+
+  gap: $space-sm;
+  padding-top: $space-sm;
+}
+
+.registration-card__footer__timestamp {
+  @include flex(row, flex-start, center);
+
+  gap: $space-xs;
+  min-width: 0;
+  font-size: $text-xxs;
+  font-weight: $font-medium;
+  line-height: 1.4rem;
+
+  @include icon-size(1.4rem);
+
+  &--highlight {
+    color: $secondary-color;
+  }
+
+  &--muted {
+    color: $gray-scale-medium;
+  }
+}
+
+.registration-card__footer__action {
+  @include transition(background-color);
+
+  flex-shrink: 0;
+  padding: $space-xs $space-md;
+  border: 0;
+  border-radius: $radius-full;
+  background: $gray-scale-light;
+  color: $dark-color;
+  font-size: $text-xxs;
+  font-weight: $font-semibold;
+  line-height: 1.4rem;
+  cursor: pointer;
+
+  @include hover {
+    background: color.adjust($gray-scale-light, $lightness: -5%);
+  }
+
+  @include focus-ring;
+}

@@ -1,0 +1,101 @@
+@use 'abstracts' as *;
+
+.guardian-financial-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: $space-sm;
+  min-width: 0;
+  padding: 1rem;
+  border-radius: $radius-base;
+  background: $primary-color;
+  box-shadow: $shadow-xs;
+}
+
+.guardian-financial-card__header {
+  @include flex(row, space-between, center);
+
+  gap: $space-xs;
+}
+
+.guardian-financial-card__header__title {
+  @include flex(row, flex-start, center);
+
+  gap: 0.6rem;
+  color: $light-color;
+  font-size: $text-xxs;
+  font-weight: $font-bold;
+  line-height: 1.4rem;
+
+  svg {
+    width: 1.6rem;
+    height: 1.6rem;
+    color: $tertiary-color;
+  }
+}
+
+.guardian-financial-card__header__method {
+  padding: 0.3rem $space-xs;
+  border-radius: $radius-sm;
+  background: $light-color;
+  color: $gray-scale-medium;
+  font-family: $font-family-mono;
+  font-size: 0.8rem;
+  font-weight: $font-bold;
+  line-height: 0.8rem;
+}
+
+.guardian-financial-card__body {
+  @include flex(row, space-between, center);
+
+  gap: $space-sm;
+}
+
+.guardian-financial-card__body__status {
+  @include text-truncate;
+
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 0.4rem 1rem;
+  border-radius: $radius-md;
+  background: $light-color;
+  font-size: $text-sm;
+  font-weight: $font-semibold;
+  line-height: 2rem;
+
+  &--paid {
+    color: $secondary-color;
+  }
+
+  &--pending {
+    color: $warning-color;
+  }
+
+  &--overdue {
+    color: $danger-color;
+  }
+}
+
+.guardian-financial-card__body__history {
+  @include transition(background-color);
+
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2.8rem;
+  height: 2.8rem;
+  padding: 0;
+  border: 0;
+  border-radius: $radius-full;
+  background: $tertiary-color;
+  color: $primary-color;
+  cursor: pointer;
+
+  @include hover {
+    background: $quaternary-color;
+  }
+
+  @include focus-ring($tertiary-color, 0.2rem);
+
+  @include icon-size(1.6rem);
+}

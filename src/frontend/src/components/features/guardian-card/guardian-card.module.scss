@@ -1,0 +1,132 @@
+@use 'abstracts' as *;
+
+.guardian-card {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+  padding: $space-md;
+  border-radius: $radius-lg;
+  background: $light-color;
+  box-shadow: $shadow-xs;
+}
+
+.guardian-card__header {
+  @include flex(row, space-between, center);
+
+  gap: $space-sm;
+}
+
+.guardian-card__header__identity {
+  @include flex(row, flex-start, center);
+
+  gap: $space-sm;
+  min-width: 0;
+}
+
+.guardian-card__identity__texts {
+  min-width: 0;
+}
+
+.guardian-card__texts__name {
+  @include text-truncate;
+
+  margin: 0;
+  color: $dark-color;
+  font-size: $text-lg;
+  font-weight: $font-bold;
+  line-height: 2.4rem;
+}
+
+.guardian-card__texts__meta {
+  @include text-truncate;
+
+  margin: 0;
+  color: $gray-scale-medium;
+  font-size: $text-xs;
+  line-height: 1.6rem;
+}
+
+.guardian-card__body {
+  display: flex;
+  gap: $space-sm;
+}
+
+.guardian-card__body__profile {
+  @include flex(row, center, center);
+  @include transition(background-color);
+
+  flex: 0 0 10.4rem;
+  gap: $space-sm;
+  min-height: 6.8rem;
+  border: 0;
+  border-radius: $radius-base;
+  background: $primary-color;
+  color: $light-color;
+  font-size: $text-sm;
+  font-weight: $font-semibold;
+  cursor: pointer;
+
+  @include hover {
+    background: $dark-color;
+  }
+
+  @include focus-ring;
+
+  @include icon-size(1.6rem);
+}
+
+.guardian-card__body__pets {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-width: 0;
+  padding: 1rem;
+  border-radius: $radius-base;
+  background: $gray-scale-light;
+}
+
+.guardian-card__pets__header {
+  @include flex(row, space-between, center);
+
+  gap: $space-xs;
+}
+
+.guardian-card__pets__title {
+  @include flex(row, flex-start, center);
+
+  gap: $space-xs;
+  color: $dark-color;
+  font-size: $text-xxs;
+  font-weight: $font-bold;
+  line-height: 1.4rem;
+
+  svg {
+    width: 1.2rem;
+    height: 1.2rem;
+    color: $secondary-color;
+  }
+}
+
+.guardian-card__pets__count {
+  padding: 0.3rem $space-xs;
+  border-radius: $radius-sm;
+  background: $light-color;
+  color: $gray-scale-medium;
+  font-family: $font-family-mono;
+  font-size: 0.8rem;
+  font-weight: $font-bold;
+  line-height: 0.8rem;
+}
+
+.guardian-card__pets__names {
+  @include text-truncate;
+
+  margin: 0;
+  padding: 0.4rem 1rem;
+  border-radius: $radius-md;
+  background: $light-color;
+  color: $dark-color;
+  font-size: $text-sm;
+  line-height: 2rem;
+}

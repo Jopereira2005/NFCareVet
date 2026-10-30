@@ -1,0 +1,19 @@
+@use 'abstracts' as *;
+
+.guardian-profile {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xl;
+}
+
+.guardian-profile__actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 11.1rem;
+  gap: $space-sm;
+}
+
+.guardian-profile__pets {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+}

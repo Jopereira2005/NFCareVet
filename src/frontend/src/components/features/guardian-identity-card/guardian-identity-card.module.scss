@@ -1,0 +1,133 @@
+@use 'abstracts' as *;
+
+.guardian-identity-card {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+  padding: $space-lg;
+  border-radius: $radius-lg;
+  background: $light-color;
+  box-shadow: $shadow-md;
+}
+
+.guardian-identity-card__header {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+}
+
+.guardian-identity-card__header__edit {
+  align-self: flex-start;
+}
+
+.guardian-identity-card__header__info {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: $space-xs;
+  min-width: 0;
+}
+
+.guardian-identity-card__info__meta {
+  @include flex(row, space-between, center);
+
+  flex-wrap: wrap;
+  gap: $space-xs;
+}
+
+.guardian-identity-card__meta__since {
+  color: $gray-scale-dark;
+  font-family: $font-family-mono;
+  font-size: $text-xs;
+  font-weight: $font-medium;
+  line-height: 1.6rem;
+}
+
+.guardian-identity-card__info__name {
+  margin: 0;
+  color: $dark-color;
+  font-size: $text-lg;
+  font-weight: $font-bold;
+  line-height: 2.4rem;
+}
+
+.guardian-identity-card__info__document {
+  margin: 0;
+  padding: 0.6rem $space-sm;
+  border-radius: $radius-md;
+  background: $gray-scale-light;
+  color: $gray-scale-dark;
+  font-size: $text-xs;
+  line-height: 1.6rem;
+
+  strong {
+    color: $dark-color;
+    font-family: $font-family-mono;
+    font-weight: $font-bold;
+  }
+}
+
+.guardian-identity-card__group {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+}
+
+.guardian-identity-card__group__box {
+  @include flex(row, space-between, center);
+
+  gap: $space-sm;
+  padding: $space-sm;
+  border-radius: $radius-base;
+  background: $gray-scale-light;
+}
+
+.guardian-identity-card__box__list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    @include flex(row, flex-start, center);
+
+    gap: 0.6rem;
+    min-width: 0;
+  }
+
+  svg {
+    flex-shrink: 0;
+    width: 1.4rem;
+    height: 1.4rem;
+    color: $secondary-color;
+  }
+
+  a {
+    @include text-truncate;
+
+    color: $gray-scale-dark;
+    font-size: $text-xs;
+    line-height: 1.6rem;
+  }
+}
+
+.guardian-identity-card__box__address {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  margin: 0;
+  color: $gray-scale-dark;
+  font-size: $text-xs;
+  line-height: 1.6rem;
+
+  svg {
+    flex-shrink: 0;
+    width: 1.4rem;
+    height: 1.4rem;
+    margin-top: 0.1rem;
+    color: $secondary-color;
+  }
+}

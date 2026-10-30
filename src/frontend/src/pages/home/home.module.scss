@@ -1,0 +1,20 @@
+@use 'abstracts' as *;
+
+.home {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xl;
+}
+
+.home__actions {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+  // The design keeps quick actions closer to the summary card than the other sections
+  margin-top: -$space-lg;
+}
+
+.home__actions__grid {
+  display: flex;
+  gap: $space-sm;
+}

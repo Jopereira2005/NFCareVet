@@ -1,0 +1,21 @@
+@use 'abstracts' as *;
+
+.my-activities {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xl;
+}
+
+.my-activities__section {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+}
+
+.my-activities__section__empty {
+  margin: 0;
+  padding: $space-lg 0;
+  color: $gray-scale-medium;
+  font-size: $text-sm;
+  text-align: center;
+}

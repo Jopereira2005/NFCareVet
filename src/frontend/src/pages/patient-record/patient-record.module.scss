@@ -1,0 +1,23 @@
+@use 'abstracts' as *;
+
+.patient-record {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xl;
+  // Leaves room so the floating button never covers the last card
+  padding-bottom: 5rem;
+}
+
+.patient-record__section {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+}
+
+.patient-record__section__empty {
+  margin: 0;
+  padding: $space-lg 0;
+  color: $gray-scale-medium;
+  font-size: $text-sm;
+  text-align: center;
+}

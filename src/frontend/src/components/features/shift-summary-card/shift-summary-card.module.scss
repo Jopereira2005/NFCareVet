@@ -1,0 +1,45 @@
+@use 'abstracts' as *;
+
+.shift-summary-card {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+  padding: $space-md;
+  border-radius: $radius-lg;
+  background: $light-color;
+  box-shadow: $shadow-xs;
+}
+
+.shift-summary-card__header {
+  @include flex(row, space-between, center);
+
+  padding-bottom: 0.9rem;
+  border-bottom: 1px solid $gray-scale-light;
+}
+
+.shift-summary-card__header__title {
+  @include flex(row, flex-start, center);
+
+  gap: $space-sm;
+}
+
+.shift-summary-card__title__icon {
+  @include circle(2.8rem);
+  @include icon-size(1.6rem);
+
+  background: $tertiary-color;
+  color: $secondary-color;
+}
+
+.shift-summary-card__title__label {
+  margin: 0;
+  color: $dark-color;
+  font-size: $text-xs;
+  font-weight: $font-bold;
+  line-height: 1.2rem;
+}
+
+.shift-summary-card__stats {
+  display: flex;
+  gap: 1rem;
+}

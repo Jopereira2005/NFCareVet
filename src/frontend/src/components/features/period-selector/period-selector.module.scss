@@ -1,0 +1,70 @@
+@use 'abstracts' as *;
+
+.period-selector {
+  display: flex;
+  gap: $space-sm;
+  padding: $space-md;
+  border-radius: $radius-lg;
+  background: $light-color;
+  box-shadow: $shadow-xs;
+}
+
+.period-selector__option {
+  @include transition(border-color, background-color);
+
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-width: 0;
+  padding: 1rem;
+  border: 2px solid transparent;
+  border-radius: $radius-base;
+  background: $gray-scale-light;
+  text-align: left;
+  cursor: pointer;
+
+  @include hover {
+    border-color: rgba($secondary-color, 0.3);
+  }
+
+  @include focus-ring;
+
+  &--selected,
+  &--selected:hover {
+    border-color: $secondary-color;
+  }
+}
+
+.period-selector__option__header {
+  @include flex(row, space-between, center);
+
+  color: $dark-color;
+  font-size: $text-xs;
+  font-weight: $font-bold;
+  line-height: 1.5rem;
+
+  svg {
+    width: 1.5rem;
+    height: 1.5rem;
+    color: $secondary-color;
+  }
+}
+
+.period-selector__option__total {
+  padding: 0.6rem 1rem;
+  border-radius: $radius-md;
+  background: $light-color;
+  color: $dark-color;
+  font-family: $font-family-mono;
+  font-size: 2rem;
+  font-weight: $font-medium;
+  font-variant-numeric: tabular-nums;
+  line-height: 2.4rem;
+}
+
+.period-selector__option__caption {
+  color: $gray-scale-medium;
+  font-size: 0.8rem;
+  line-height: 0.8rem;
+}
