@@ -1,0 +1,13 @@
+@use 'abstracts' as *;
+
+.task-form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+}
+
+.task-form__row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: $space-md;
+}

@@ -1,0 +1,28 @@
+@use 'abstracts' as *;
+
+.cancel-task-form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+  padding: $space-md;
+  border: 1px solid rgba($danger-color, 0.25);
+  border-radius: $radius-base;
+  background: rgba($danger-color, 0.05);
+}
+
+.cancel-task-form__warning {
+  margin: 0;
+  color: $danger-color;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+  line-height: 1.6rem;
+}
+
+.cancel-task-form__actions {
+  display: flex;
+  gap: $space-sm;
+
+  > * {
+    flex: 1 1 0;
+  }
+}

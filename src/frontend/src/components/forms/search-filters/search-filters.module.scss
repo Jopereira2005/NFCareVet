@@ -1,0 +1,7 @@
+@use 'abstracts' as *;
+
+.search-filters {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xl;
+}

@@ -1,0 +1,7 @@
+@use 'abstracts' as *;
+
+.clinical-event-form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+}
