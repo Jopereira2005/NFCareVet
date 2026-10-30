@@ -4,8 +4,10 @@ import { getAccessToken, useSessionStore } from '@/stores/useSessionStore';
 
 import { toApiError } from './api-error';
 
+const defaultApiUrl = `http://${window.location.hostname || 'localhost'}:3000`;
+
 export const httpClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL ?? 'http://localhost:3000',
+  baseURL: import.meta.env.VITE_API_URL || defaultApiUrl,
   timeout: 15_000,
   headers: { 'Content-Type': 'application/json' },
 });
