@@ -1,0 +1,163 @@
+@use 'abstracts' as *;
+
+.button {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  border-radius: 1.1rem;
+  font-size: $text-sm;
+  font-weight: $font-semibold;
+  cursor: pointer;
+}
+
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.button__content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: inherit;
+}
+
+.button__ripple {
+  position: absolute;
+  z-index: 0;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0;
+  pointer-events: none;
+  animation: button-ripple 520ms $transition-timing forwards;
+}
+
+.button--primary {
+  min-height: 4.2rem;
+  border: 0;
+  background: $primary-color;
+  color: $light-color;
+  transition: background-color $transition-speed $transition-timing;
+}
+
+.button--primary:hover {
+  background: $dark-color;
+}
+
+.button--primary:focus-visible,
+.button--outlined:focus-visible,
+.button--icon:focus-visible {
+  outline: 0.3rem solid $secondary-color;
+  outline-offset: 0.2rem;
+}
+
+.button--primary svg,
+.button--outlined svg {
+  width: 1.8rem;
+  height: 1.8rem;
+}
+
+.button--danger {
+  min-height: 4.2rem;
+  border: 0;
+  background: $danger-color;
+  color: $light-color;
+  transition: background-color $transition-speed $transition-timing;
+
+  @include focus-ring($danger-color);
+  @include icon-size(1.8rem);
+
+  &:hover:not(:disabled) {
+    background: color-mix(in srgb, #{$danger-color} 85%, #{$dark-color});
+  }
+}
+
+.button--outlined {
+  min-height: 3.8rem;
+  border: 1px solid $gray-scale-light;
+  background: $light-color;
+  color: $dark-color;
+  box-shadow: $shadow-sm;
+}
+
+.button--outlined svg {
+  color: $secondary-color;
+}
+
+.button--icon {
+  display: grid;
+  place-items: center;
+  padding: 0.4rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: $gray-scale-medium;
+}
+
+.button--icon svg {
+  width: 1.8rem;
+  height: 1.8rem;
+}
+
+// Round icon buttons, e.g. chat/phone shortcuts on contact cards
+.button--circle,
+.button--circle-soft {
+  display: grid;
+  place-items: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  padding: 0;
+  border: 0;
+  border-radius: $radius-full;
+  transition: background-color $transition-speed $transition-timing;
+
+  @include icon-size(1.4rem);
+
+  @include focus-ring;
+}
+
+.button--circle {
+  background: $primary-color;
+  color: $light-color;
+
+  &:hover {
+    background: $dark-color;
+  }
+}
+
+.button--circle-soft {
+  background: $quaternary-color;
+  color: $primary-color;
+
+  &:hover {
+    background: $tertiary-color;
+  }
+}
+
+@keyframes button-ripple {
+  0% {
+    opacity: 0.2;
+    transform: scale(0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button__ripple {
+    animation: none;
+  }
+
+  .button--primary {
+    transition: none;
+  }
+}

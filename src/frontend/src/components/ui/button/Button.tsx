@@ -1,8 +1,10 @@
 import { useRef, useState, type ButtonHTMLAttributes, type MouseEvent, type PointerEvent } from 'react';
 
-import './Button.scss';
+import clsx from 'clsx';
 
-type ButtonVariant = 'primary' | 'outlined' | 'icon';
+import styles from './button.module.scss';
+
+type ButtonVariant = 'primary' | 'outlined' | 'danger' | 'icon' | 'circle' | 'circle-soft';
 
 type Ripple = {
   id: number;
@@ -68,7 +70,7 @@ export function Button({
   return (
     <button
       {...props}
-      className={`ui-button ui-button--${variant}${className ? ` ${className}` : ''}`}
+      className={clsx(styles['button'], styles[`button--${variant}`], className)}
       type={type}
       onPointerDown={handlePointerDown}
       onClick={handleClick}
@@ -76,13 +78,13 @@ export function Button({
       {ripples.map((ripple) => (
         <span
           key={ripple.id}
-          className="ui-button__ripple"
+          className={styles['button__ripple']}
           aria-hidden="true"
           style={{ left: ripple.left, top: ripple.top, width: ripple.size, height: ripple.size }}
           onAnimationEnd={() => removeRipple(ripple.id)}
         />
       ))}
-      <span className="ui-button__content">{children}</span>
+      <span className={styles['button__content']}>{children}</span>
     </button>
   );
 }
