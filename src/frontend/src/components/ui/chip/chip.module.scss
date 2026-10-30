@@ -1,0 +1,53 @@
+@use 'abstracts' as *;
+
+.chip {
+  --chip-icon-color: #{$secondary-color};
+
+  @include flex(row, center, center);
+  @include transition(background-color);
+
+  gap: $space-xs;
+  min-height: 2.6rem;
+  padding: $space-xs $space-md;
+  border: 0;
+  border-radius: $radius-full;
+  background: $light-color;
+  box-shadow: $shadow-xs;
+  color: $dark-color;
+  font-size: $text-xs;
+  font-weight: $font-medium;
+  line-height: 1.4rem;
+  white-space: nowrap;
+  cursor: pointer;
+
+  @include hover {
+    background: $gray-scale-light;
+  }
+
+  @include focus-ring;
+
+  &--info {
+    --chip-icon-color: #{$info-color};
+
+    color: $info-color;
+  }
+
+  &--warning {
+    --chip-icon-color: #{$warning-color};
+
+    color: $warning-color;
+  }
+
+  &--danger {
+    --chip-icon-color: #{$danger-color};
+
+    color: $danger-color;
+  }
+}
+
+.chip__icon {
+  flex-shrink: 0;
+  width: 1.2rem;
+  height: 1.2rem;
+  color: var(--chip-icon-color);
+}

@@ -1,0 +1,94 @@
+@use 'abstracts' as *;
+
+.search-bar {
+  @include flex(row, flex-start, center);
+
+  gap: $space-sm;
+  width: 100%;
+}
+
+.search-bar__field {
+  @include flex(row, flex-start, center);
+  @include transition(box-shadow);
+
+  flex: 1 1 0;
+  gap: $space-sm;
+  min-width: 0;
+  min-height: 3.6rem;
+  padding: $space-sm $space-md;
+  border-radius: $radius-base;
+  background: $light-color;
+  box-shadow: $shadow-xs;
+  cursor: text;
+
+  &:focus-within {
+    box-shadow: 0 0 0 0.2rem rgba($secondary-color, 0.4);
+  }
+}
+
+.search-bar__field__icon {
+  flex-shrink: 0;
+  width: 1.6rem;
+  height: 1.6rem;
+  color: $secondary-color;
+}
+
+.search-bar__field__input {
+  flex: 1 1 0;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: $dark-color;
+  font-size: $text-sm;
+  line-height: 2rem;
+
+  &::placeholder {
+    color: $gray-scale-medium;
+  }
+
+  &::-webkit-search-cancel-button {
+    display: none;
+  }
+}
+
+.search-bar__field__clear {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: $gray-scale-dark;
+  cursor: pointer;
+
+  @include icon-size(1.6rem);
+}
+
+.search-bar__filter {
+  @include transition(background-color);
+
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 3.6rem;
+  height: 3.6rem;
+  border: 0;
+  border-radius: $radius-base;
+  background: $tertiary-color;
+  color: $primary-color;
+  box-shadow: $shadow-xs;
+  cursor: pointer;
+
+  @include hover {
+    background: $quaternary-color;
+  }
+
+  @include icon-size(2rem);
+}
+
+.search-bar__field__clear:focus-visible,
+.search-bar__filter:focus-visible {
+  outline: 0.3rem solid $secondary-color;
+  outline-offset: 0.2rem;
+}

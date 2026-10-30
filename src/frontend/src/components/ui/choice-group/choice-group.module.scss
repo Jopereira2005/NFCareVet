@@ -1,0 +1,56 @@
+@use 'abstracts' as *;
+
+.choice-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-sm;
+}
+
+.choice-group__option {
+  @include flex(row, center, center);
+  @include transition(background-color, border-color, color);
+  @include icon-size(1.4rem);
+
+  position: relative;
+  gap: 0.6rem;
+  min-height: 3.6rem;
+  padding: $space-xs $space-lg;
+  border: 1px solid $gray-scale-light;
+  border-radius: $radius-full;
+  background: $light-color;
+  color: $gray-scale-dark;
+  font-size: $text-xs;
+  font-weight: $font-medium;
+  cursor: pointer;
+
+  @include hover {
+    border-color: $quaternary-color;
+  }
+
+  // Focus ring follows the hidden radio input
+  &:has(:focus-visible) {
+    outline: $focus-ring-width solid $secondary-color;
+    outline-offset: $focus-ring-offset;
+  }
+
+  &:has(:disabled) {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  &--selected,
+  &--selected:hover {
+    border-color: $primary-color;
+    background: $primary-color;
+    color: $light-color;
+    font-weight: $font-semibold;
+  }
+}
+
+.choice-group__option__input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}

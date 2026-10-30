@@ -1,0 +1,93 @@
+@use 'abstracts' as *;
+@use 'sass:color';
+
+.action-card {
+  @include flex(column, center, center);
+  @include transition(background-color, transform);
+
+  flex: 1 1 0;
+  min-width: 0;
+  padding: $space-sm $space-md;
+  border: 0;
+  border-radius: $radius-base;
+  box-shadow: $shadow-xs;
+  text-align: center;
+  cursor: pointer;
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  @include focus-ring;
+
+  &--primary {
+    background: $primary-color;
+
+    @include hover {
+      background: $dark-color;
+    }
+  }
+
+  &--default {
+    background: $light-color;
+
+    @include hover {
+      background: color.adjust($background-color, $lightness: -1%);
+    }
+  }
+}
+
+.action-card__icon-wrapper {
+  display: grid;
+  place-items: center;
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: $space-xs;
+  border-radius: $radius-full;
+
+  @include icon-size(2rem);
+
+  .action-card--primary & {
+    background: $background-color;
+    color: $primary-color;
+  }
+
+  .action-card--default & {
+    background: $tertiary-color;
+    color: $secondary-color;
+  }
+}
+
+.action-card__title {
+  font-size: $text-xs;
+  font-weight: $font-bold;
+  line-height: 1.5rem;
+
+  .action-card--primary & {
+    color: $background-color;
+  }
+
+  .action-card--default & {
+    color: $dark-color;
+  }
+}
+
+.action-card__description {
+  padding-top: $space-xxs;
+  font-size: $text-xxxs;
+  line-height: 1rem;
+
+  .action-card--primary & {
+    color: $tertiary-color;
+  }
+
+  .action-card--default & {
+    color: $gray-scale-medium;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .action-card:active {
+    transform: none;
+  }
+}

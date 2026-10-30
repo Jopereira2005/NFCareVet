@@ -1,0 +1,27 @@
+@use 'abstracts' as *;
+
+.section-label {
+  @include flex(row, flex-start, center);
+
+  gap: $space-sm;
+}
+
+.section-label__text {
+  @include flex(row, flex-start, center);
+
+  flex-shrink: 0;
+  gap: $space-xs;
+  color: $gray-scale-medium;
+  font-size: $text-xxs;
+  font-weight: $font-semibold;
+  line-height: 1.4rem;
+  text-transform: uppercase;
+
+  @include icon-size(1.2rem);
+}
+
+.section-label__line {
+  flex: 1 1 0;
+  height: 1px;
+  background: $gray-scale-light;
+}

@@ -1,0 +1,29 @@
+@use 'abstracts' as *;
+
+.admit-patient-form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+}
+
+.admit-patient-form__tag {
+  @include flex(row, flex-start, center);
+  @include icon-size(1.6rem);
+
+  gap: $space-sm;
+  margin: 0;
+  padding: $space-md;
+  border-radius: $radius-base;
+  background: $gray-scale-light;
+  color: $gray-scale-dark;
+  font-size: $text-xs;
+
+  svg {
+    color: $secondary-color;
+  }
+
+  strong {
+    color: $dark-color;
+    font-family: $font-family-mono;
+  }
+}

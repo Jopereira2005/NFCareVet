@@ -1,0 +1,98 @@
+@use 'abstracts' as *;
+
+.checkbox {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  color: $gray-scale-dark;
+  font-size: $text-sm;
+  cursor: pointer;
+}
+
+.checkbox input {
+  position: absolute;
+  left: 0;
+  width: 1.8rem;
+  height: 1.8rem;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkbox__box {
+  width: 1.8rem;
+  min-width: 1.8rem;
+  height: 1.8rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid $gray-scale-light;
+  border-radius: 0.5rem;
+  background: $light-color;
+  transition: border-color $transition-speed $transition-timing, background-color $transition-speed $transition-timing;
+}
+
+.checkbox__box::after {
+  content: '';
+  width: 0.4rem;
+  height: 0.75rem;
+  border-right: 0.2rem solid $light-color;
+  border-bottom: 0.2rem solid $light-color;
+  opacity: 0;
+  transform: rotate(45deg) scale(0.2);
+}
+
+.checkbox input:checked + .checkbox__box {
+  border-color: $secondary-color;
+  background: $secondary-color;
+  animation: checkbox-pop 260ms $transition-timing;
+}
+
+.checkbox input:checked + .checkbox__box::after {
+  animation: checkbox-check 260ms $transition-timing both;
+}
+
+.checkbox input:focus-visible + .checkbox__box {
+  outline: 0.3rem solid $secondary-color;
+  outline-offset: 0.2rem;
+}
+
+@keyframes checkbox-pop {
+  0% {
+    transform: scale(1);
+  }
+
+  45% {
+    transform: scale(1.16);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes checkbox-check {
+  0% {
+    opacity: 0;
+    transform: rotate(45deg) scale(0.2);
+  }
+
+  65% {
+    opacity: 1;
+    transform: rotate(45deg) scale(1.2);
+  }
+
+  100% {
+    opacity: 1;
+    transform: rotate(45deg) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .checkbox__box,
+  .checkbox input:checked + .checkbox__box,
+  .checkbox input:checked + .checkbox__box::after {
+    animation: none;
+    transition: none;
+  }
+}

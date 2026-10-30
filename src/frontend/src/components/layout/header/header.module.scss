@@ -1,0 +1,101 @@
+@use 'abstracts' as *;
+
+.header {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 10;
+  background: $light-color;
+  box-shadow: $shadow-header;
+}
+
+.header__container {
+  @include flex(row, space-between, center);
+
+  width: min(100%, $content-max-width);
+  height: $header-height;
+  margin: 0 auto;
+  padding: 0 $page-gutter;
+}
+
+.header__container__brand {
+  @include flex(row, flex-start, center);
+  @include focus-ring;
+
+  gap: $space-xs;
+}
+
+.header__brand__logo {
+  width: 2.108rem;
+  height: 3rem;
+}
+
+.header__brand__name {
+  display: flex;
+  font-size: $text-lg;
+  line-height: 2.4rem;
+  white-space: nowrap;
+}
+
+.header__name__primary {
+  color: $primary-color;
+  font-weight: $font-bold;
+}
+
+.header__name__neutral {
+  color: $dark-color;
+  font-weight: $font-medium;
+}
+
+.header__name__accent {
+  color: $tertiary-color;
+  font-weight: $font-bold;
+}
+
+.header__container__actions {
+  @include flex(row, flex-end, center);
+
+  gap: $space-sm;
+}
+
+.header__actions__role {
+  @include flex(row, center, center);
+  @include icon-size(1.4rem);
+
+  gap: $space-xs;
+  min-height: 3.6rem;
+  padding: 1rem $space-sm;
+  border-radius: $radius-full;
+  background: $gray-scale-light;
+  color: $secondary-color;
+}
+
+.header__role__label {
+  font-size: $text-xxs;
+  font-weight: $font-semibold;
+  line-height: 1.4rem;
+}
+
+.header__actions__profile {
+  @include reset-button;
+  @include focus-ring;
+
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-width: 4.4rem;
+  min-height: 4.4rem;
+  border-radius: $radius-full;
+}
+
+// Small badge over the avatar hinting that tapping it signs out
+.header__profile__logout {
+  @include circle(1.6rem);
+  @include icon-size(1rem);
+
+  position: absolute;
+  right: 0.2rem;
+  bottom: 0.4rem;
+  background: $light-color;
+  box-shadow: $shadow-sm;
+  color: $danger-color;
+}

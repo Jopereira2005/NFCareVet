@@ -1,0 +1,70 @@
+@use 'abstracts' as *;
+
+.section-header {
+  @include flex(row, space-between, center);
+
+  gap: $space-md;
+  width: 100%;
+}
+
+.section-header__heading {
+  @include flex(row, flex-start, center);
+
+  gap: $space-sm;
+  min-width: 0;
+}
+
+.section-header__heading__icon {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  color: $primary-color;
+}
+
+.section-header__heading__texts {
+  min-width: 0;
+}
+
+.section-header__texts__title {
+  margin: 0;
+  color: $dark-color;
+  font-weight: $font-bold;
+
+  &--sm {
+    font-size: $text-sm;
+    line-height: 1.8rem;
+  }
+
+  &--md {
+    font-size: $text-lg;
+    line-height: 2.4rem;
+  }
+
+  &--lg {
+    font-size: 2rem;
+    line-height: 2.8rem;
+  }
+}
+
+.section-header__texts__subtitle {
+  margin: 0;
+  color: $gray-scale-medium;
+  font-size: $text-xs;
+  line-height: 1.6rem;
+}
+
+.section-header__action {
+  @include flex(row, center, center);
+
+  flex-shrink: 0;
+  gap: $space-xs;
+  color: $secondary-color;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+  line-height: 1.6rem;
+  white-space: nowrap;
+
+  @include icon-size(1.4rem);
+
+  @include focus-ring;
+}

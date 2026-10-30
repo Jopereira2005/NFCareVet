@@ -1,0 +1,33 @@
+@use 'abstracts' as *;
+
+.patient-form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+}
+
+.patient-form__row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: $space-md;
+}
+
+.patient-form__guardian {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+}
+
+.patient-form__guardian__new {
+  @include reset-button;
+  @include flex(row, flex-start, center);
+  @include icon-size(1.4rem);
+  @include focus-ring;
+
+  align-self: flex-start;
+  gap: $space-xs;
+  color: $secondary-color;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+  line-height: 1.6rem;
+}

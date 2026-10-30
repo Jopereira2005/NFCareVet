@@ -1,0 +1,25 @@
+@use 'abstracts' as *;
+
+.administer-task-form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+}
+
+.administer-task-form__double-check {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+  padding: $space-md;
+  border: 1px solid $quaternary-color;
+  border-radius: $radius-base;
+  background: rgba($tertiary-color, 0.15);
+}
+
+.administer-task-form__error {
+  margin: 0;
+  color: $danger-color;
+  font-size: $text-xxs;
+  font-weight: $font-semibold;
+  line-height: 1.4rem;
+}

@@ -1,0 +1,62 @@
+@use 'abstracts' as *;
+
+.avatar {
+  position: relative;
+  flex-shrink: 0;
+  width: var(--avatar-size);
+  height: var(--avatar-size);
+}
+
+.avatar__frame {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+  &--circle {
+    border-radius: $radius-full;
+  }
+
+  &--rounded {
+    border-radius: $radius-base;
+  }
+}
+
+.avatar__frame__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar__frame__fallback {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  background: rgba($dark-color, 0.1);
+  color: $dark-color;
+
+  @include icon-size(2rem);
+}
+
+.avatar__badge {
+  position: absolute;
+  right: -0.4rem;
+  bottom: -0.4rem;
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: $radius-full;
+  color: $light-color;
+  font-size: $text-xxxs;
+  line-height: 1;
+
+  &--dark {
+    background: $dark-color;
+  }
+
+  &--secondary {
+    background: $secondary-color;
+  }
+}

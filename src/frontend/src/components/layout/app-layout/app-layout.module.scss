@@ -1,0 +1,13 @@
+@use 'abstracts' as *;
+
+.app-layout {
+  min-height: 100vh;
+  min-height: 100svh;
+  background: $background-color;
+}
+
+.app-layout__main {
+  width: min(100%, $content-max-width);
+  margin: 0 auto;
+  padding: $header-height $page-gutter calc($navbar-height + 3.2rem + env(safe-area-inset-bottom));
+}

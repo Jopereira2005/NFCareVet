@@ -1,5 +1,4 @@
-@use '../../styles/abstracts/variables' as *;
-@use '../../styles/abstracts/mixins' as *;
+@use 'abstracts' as *;
 
 .login-page {
   min-height: 100vh;
@@ -103,7 +102,22 @@
   background: $gray-scale-light;
 }
 
-.login-form > .ui-button--primary {
+.login-form__error {
+  margin: 0;
+  padding: $space-sm $space-md;
+  border-radius: $radius-md;
+  background: rgba($danger-color, 0.1);
+  color: $danger-color;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+  line-height: 1.6rem;
+}
+
+.login-card > .login-form__error {
+  margin-top: $space-sm;
+}
+
+.login-form__submit {
   margin-top: 0.2rem;
 }
 

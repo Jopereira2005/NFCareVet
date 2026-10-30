@@ -1,0 +1,23 @@
+@use 'abstracts' as *;
+
+.team-activities {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xl;
+  // Leaves room so the floating button never covers the last card
+  padding-bottom: 5rem;
+}
+
+.team-activities__section {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+}
+
+.team-activities__section__empty {
+  margin: 0;
+  padding: $space-xl 0;
+  color: $gray-scale-medium;
+  font-size: $text-sm;
+  text-align: center;
+}

@@ -1,0 +1,89 @@
+@use 'abstracts' as *;
+
+.stat-card {
+  --stat-tone: #{$dark-color};
+
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-width: 0;
+  padding: 1rem;
+  border-radius: $radius-base;
+  background: $gray-scale-light;
+
+  &--danger {
+    --stat-tone: #{$danger-color};
+  }
+}
+
+.stat-card__header {
+  @include flex(row, space-between, center);
+
+  gap: $space-xs;
+}
+
+.stat-card__header__title {
+  @include flex(row, flex-start, center);
+
+  gap: $space-xs;
+  min-width: 0;
+}
+
+.stat-card__title__icon {
+  flex-shrink: 0;
+  width: 1.4rem;
+  height: 1.4rem;
+  color: $secondary-color;
+}
+
+.stat-card__title__label {
+  margin: 0;
+  color: $dark-color;
+  font-size: $text-xxs;
+  font-weight: $font-bold;
+  line-height: 1.4rem;
+}
+
+.stat-card__header__total {
+  flex-shrink: 0;
+  padding: $space-xs;
+  border-radius: $radius-sm;
+  background: $light-color;
+  color: $gray-scale-medium;
+  font-family: $font-family-mono;
+  font-size: $text-xxs;
+  font-weight: $font-bold;
+  line-height: 1.4rem;
+  white-space: nowrap;
+}
+
+.stat-card__panel {
+  display: flex;
+  flex-direction: column;
+  padding: 0.6rem 1rem;
+  border-radius: $radius-md;
+  background: rgba($light-color, 0.8);
+}
+
+.stat-card__panel__caption {
+  color: $gray-scale-medium;
+  font-size: $text-xxxs;
+  line-height: 1rem;
+}
+
+.stat-card__panel__value {
+  padding-top: $space-xxs;
+  color: var(--stat-tone);
+  font-size: $text-lg;
+  font-weight: $font-bold;
+  font-variant-numeric: tabular-nums;
+  line-height: 2.25rem;
+}
+
+.stat-card__panel__detail {
+  color: var(--stat-tone);
+  font-size: $text-xxxs;
+  font-weight: $font-medium;
+  line-height: 1rem;
+}

@@ -1,0 +1,61 @@
+@use 'abstracts' as *;
+
+.bottom-navbar {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 10;
+  background: $light-color;
+  box-shadow: $shadow-navbar;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.bottom-navbar__list {
+  @include flex(row, space-between, center);
+
+  width: min(100%, $content-max-width);
+  height: $navbar-height;
+  margin: 0 auto;
+  padding: 0 $space-lg;
+  list-style: none;
+}
+
+.bottom-navbar__list__link {
+  @include flex(column, center, center);
+  @include transition(background-color, color);
+
+  gap: $space-xxs;
+  min-width: 5.6rem;
+  min-height: 4.8rem;
+  padding: $space-xs 0.6rem;
+  border-radius: $radius-base;
+  color: $gray-scale-dark;
+
+  @include hover {
+    background: $gray-scale-light;
+    color: $gray-scale-dark;
+  }
+
+  @include focus-ring;
+
+  &--active,
+  &--active:hover {
+    background: $primary-color;
+    color: $light-color;
+  }
+}
+
+.bottom-navbar__link__icon {
+  width: 2rem;
+  height: 2rem;
+}
+
+.bottom-navbar__link__label {
+  font-size: $text-xxs;
+  font-weight: $font-regular;
+  line-height: 1.375rem;
+  white-space: nowrap;
+
+  .bottom-navbar__list__link--active & {
+    font-weight: $font-semibold;
+  }
+}

@@ -1,0 +1,52 @@
+@use 'abstracts' as *;
+
+.chip-group {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+}
+
+.chip-group__header {
+  @include flex(row, space-between, center);
+
+  gap: $space-sm;
+}
+
+.chip-group__header__title {
+  @include flex(row, flex-start, center);
+
+  gap: $space-xs;
+  color: $gray-scale-medium;
+  font-size: $text-xxs;
+  font-weight: $font-semibold;
+  line-height: 1.4rem;
+  text-transform: uppercase;
+
+  @include icon-size(1.2rem);
+}
+
+.chip-group__header__action {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: $secondary-color;
+  font-size: $text-xxs;
+  font-weight: $font-semibold;
+  line-height: 1.4rem;
+  cursor: pointer;
+
+  @include focus-ring;
+}
+
+.chip-group__list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-sm;
+}
+
+.chip-group__empty {
+  margin: 0;
+  color: $gray-scale-medium;
+  font-size: $text-xs;
+  line-height: 2.6rem;
+}

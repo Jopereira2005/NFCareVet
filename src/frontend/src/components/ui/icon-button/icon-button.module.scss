@@ -1,0 +1,23 @@
+@use 'abstracts' as *;
+
+.icon-button {
+  @include reset-button;
+  @include circle(3.2rem);
+  @include transition(background-color);
+
+  background: $quaternary-color;
+  color: $primary-color;
+
+  @include focus-ring;
+
+  @include icon-size(1.6rem);
+
+  @include hover {
+    background: $tertiary-color;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}

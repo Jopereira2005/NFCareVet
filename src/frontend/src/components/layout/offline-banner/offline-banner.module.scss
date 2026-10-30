@@ -1,0 +1,30 @@
+@use 'abstracts' as *;
+
+.offline-banner {
+  @include flex(row, flex-start, center);
+  @include icon-size(1.8rem);
+  @include tinted($warning-color, 0.15);
+
+  position: sticky;
+  top: calc($header-height + $space-xs);
+  z-index: 5;
+  gap: $space-sm;
+  margin-top: $space-sm;
+  padding: $space-sm $space-md;
+  border: 1px solid rgba($warning-color, 0.4);
+  border-radius: $radius-base;
+  backdrop-filter: blur(8px);
+}
+
+.offline-banner__text {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  color: $dark-color;
+  font-size: $text-xs;
+  line-height: 1.6rem;
+
+  strong {
+    font-weight: $font-semibold;
+  }
+}

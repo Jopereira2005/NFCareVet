@@ -1,0 +1,7 @@
+@use 'abstracts' as *;
+
+.transfer-kennel-form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+}

@@ -1,0 +1,32 @@
+@use 'abstracts' as *;
+
+.textarea {
+  @include transition(border-color, box-shadow);
+
+  width: 100%;
+  min-height: 8.8rem;
+  padding: $space-md;
+  border: 1px solid $gray-scale-light;
+  border-radius: 1.1rem;
+  outline: 0;
+  background: $light-color;
+  box-shadow: $shadow-sm;
+  color: $dark-color;
+  font-size: $text-sm;
+  line-height: 2rem;
+  resize: vertical;
+
+  &::placeholder {
+    color: $gray-scale-medium;
+  }
+
+  &:focus {
+    border-color: $secondary-color;
+    box-shadow: $shadow-md;
+  }
+
+  &--invalid,
+  &--invalid:focus {
+    border-color: $danger-color;
+  }
+}

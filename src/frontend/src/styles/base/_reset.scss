@@ -34,3 +34,8 @@ input, button, textarea, select {
 p, h1, h2, h3, h4, h5, h6 {
   overflow-wrap: break-word;
 }
+
+// Keeps the page behind an open modal (<dialog>) from scrolling
+html:has(dialog[open]) {
+  overflow: hidden;
+}

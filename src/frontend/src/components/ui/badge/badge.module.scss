@@ -1,0 +1,48 @@
+@use 'abstracts' as *;
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: $space-xxs $space-sm;
+  border-radius: $radius-full;
+  color: $dark-color;
+  font-size: $text-xxs;
+  font-weight: $font-semibold;
+  line-height: 1.4rem;
+  white-space: nowrap;
+
+  &--quaternary {
+    background: $quaternary-color;
+  }
+
+  &--neutral {
+    background: $gray-scale-light;
+  }
+
+  &--dark {
+    background: $dark-color;
+    color: $tertiary-color;
+  }
+
+  &--danger {
+    background: rgba($danger-color, 0.2);
+    color: $danger-color;
+  }
+
+  &--warning {
+    background: rgba($warning-color, 0.2);
+    color: $warning-color;
+  }
+
+  &--success {
+    background: rgba($success-color, 0.2);
+    color: $secondary-color;
+  }
+
+  &--mono {
+    font-family: $font-family-mono;
+    font-weight: $font-bold;
+    line-height: 1.6rem;
+  }
+}

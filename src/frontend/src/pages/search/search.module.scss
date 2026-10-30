@@ -1,0 +1,21 @@
+@use 'abstracts' as *;
+
+.search {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xl;
+}
+
+.search__results {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+}
+
+.search__results__empty {
+  margin: 0;
+  padding: $space-xl 0;
+  color: $gray-scale-medium;
+  font-size: $text-sm;
+  text-align: center;
+}

@@ -1,0 +1,40 @@
+@use 'abstracts' as *;
+
+.empty-state {
+  @include flex(column, center, center);
+
+  gap: $space-md;
+  padding: 3.2rem $space-xl;
+  border-radius: $radius-lg;
+  background: $light-color;
+  box-shadow: $shadow-xs;
+  text-align: center;
+}
+
+.empty-state__icon {
+  display: grid;
+  place-items: center;
+  width: 5.6rem;
+  height: 5.6rem;
+  border-radius: $radius-full;
+  background: $gray-scale-light;
+  color: $gray-scale-medium;
+
+  @include icon-size(2.4rem);
+}
+
+.empty-state__title {
+  margin: 0;
+  color: $dark-color;
+  font-size: $text-lg;
+  font-weight: $font-bold;
+  line-height: 2.4rem;
+}
+
+.empty-state__description {
+  max-width: 28rem;
+  margin: 0;
+  color: $gray-scale-medium;
+  font-size: $text-sm;
+  line-height: 2rem;
+}

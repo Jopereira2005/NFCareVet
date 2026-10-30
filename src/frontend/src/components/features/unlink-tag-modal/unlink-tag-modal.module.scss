@@ -1,0 +1,12 @@
+@use 'abstracts' as *;
+
+.unlink-tag-modal__info {
+  margin: 0;
+  color: $gray-scale-dark;
+  font-size: $text-sm;
+  line-height: 2rem;
+
+  a {
+    font-weight: $font-semibold;
+  }
+}

@@ -1,0 +1,21 @@
+@use 'abstracts' as *;
+
+.task-modal__cancel-task {
+  @include reset-button;
+  @include flex(row, center, center);
+  @include icon-size(1.6rem);
+  @include focus-ring($danger-color);
+  @include transition(background-color);
+
+  gap: $space-sm;
+  min-height: 4.2rem;
+  border: 1px dashed rgba($danger-color, 0.4);
+  border-radius: 1.1rem;
+  color: $danger-color;
+  font-size: $text-sm;
+  font-weight: $font-semibold;
+
+  @include hover {
+    background: rgba($danger-color, 0.06);
+  }
+}

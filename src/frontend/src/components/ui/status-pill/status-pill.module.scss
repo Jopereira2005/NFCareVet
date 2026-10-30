@@ -1,0 +1,67 @@
+@use 'abstracts' as *;
+
+.status-pill {
+  --status-color: #{$success-color};
+
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  height: 2.05rem;
+  padding: 0 $space-sm;
+  border-radius: $radius-full;
+  background: rgba($success-color, 0.2);
+  color: var(--status-color);
+
+  &--danger {
+    --status-color: #{$danger-color};
+
+    background: rgba($danger-color, 0.2);
+  }
+
+  // Green indicator on a gray pill with dark text, e.g. "NFC Pronto • Sensor Ativo"
+  &--neutral {
+    background: $gray-scale-light;
+    color: $dark-color;
+  }
+}
+
+.status-pill__indicator {
+  position: relative;
+  width: 0.8rem;
+  height: 0.8rem;
+}
+
+.status-pill__indicator__ping,
+.status-pill__indicator__dot {
+  position: absolute;
+  inset: 0;
+  border-radius: $radius-full;
+  background: var(--status-color);
+}
+
+.status-pill__indicator__ping {
+  opacity: 0.75;
+  animation: status-pill-ping 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.status-pill__label {
+  font-size: $text-xxs;
+  font-weight: $font-semibold;
+  line-height: 1.65rem;
+  white-space: nowrap;
+}
+
+@keyframes status-pill-ping {
+  75%,
+  100% {
+    opacity: 0;
+    transform: scale(2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status-pill__indicator__ping {
+    animation: none;
+    opacity: 0;
+  }
+}
