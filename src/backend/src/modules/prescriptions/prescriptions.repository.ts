@@ -262,10 +262,14 @@ export class PrescriptionsRepository {
     prescribedById?: string;
   }): Promise<PendingScheduleItemRaw[]> {
     const now = new Date();
-    const windowHours = query.windowHours ?? 4;
-    const maxTime = new Date(now.getTime() + windowHours * 60 * 60 * 1000);
+    const scheduledTimeFilter: Prisma.DateTimeFilter = {};
 
-    const scheduledTimeFilter: { lte: Date; gte?: Date } = { lte: maxTime };
+    if (query.windowHours !== undefined) {
+      scheduledTimeFilter.lte = new Date(
+        now.getTime() + query.windowHours * 60 * 60 * 1000,
+      );
+    }
+
     if (query.includeOverdue === false) {
       scheduledTimeFilter.gte = now;
     }
@@ -273,7 +277,9 @@ export class PrescriptionsRepository {
     return this.prisma.prescriptionItem.findMany({
       where: {
         status: PrescriptionStatus.PENDING,
-        scheduledTime: scheduledTimeFilter,
+        ...(Object.keys(scheduledTimeFilter).length > 0
+          ? { scheduledTime: scheduledTimeFilter }
+          : {}),
         ...(query.itemType ? { itemType: query.itemType } : {}),
         prescription: {
           isActive: true,

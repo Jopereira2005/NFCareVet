@@ -13,18 +13,21 @@ import { PrescriptionItemType } from '@nfcarevet/common';
 
 export class PendingScheduleQueryDto {
   @ApiPropertyOptional({
-    description: 'Janela de tempo futura em horas para listar os itens programados',
+    description:
+      'Janela de tempo futura em horas para listar os itens programados. Se omitido, retorna todas as tarefas pendentes futuras sem restrição de janela.',
     example: 4,
-    default: 4,
     minimum: 1,
-    maximum: 48,
+    maximum: 720,
   })
+  @Transform(({ value }) =>
+    value === undefined || value === null || value === '' ? undefined : value,
+  )
   @Type(() => Number)
   @IsInt({ message: 'windowHours deve ser um número inteiro.' })
   @Min(1, { message: 'windowHours deve ser no mínimo 1 hora.' })
-  @Max(48, { message: 'windowHours não pode exceder 48 horas.' })
+  @Max(720, { message: 'windowHours não pode exceder 720 horas.' })
   @IsOptional()
-  windowHours?: number = 4;
+  windowHours?: number;
 
   @ApiPropertyOptional({
     description:
