@@ -97,10 +97,21 @@ export class HospitalizationsService {
     let tagInfo: { tagUid: string; publicCode: string } | null = null;
 
     if (dto.tagIdentifier) {
-      const tag = await this.repository.findTagByIdentifier(dto.tagIdentifier);
+      let tag = await this.repository.findTagByIdentifier(dto.tagIdentifier);
+
+      if (!tag) {
+        const sanitizedUid = dto.tagIdentifier
+          .replace(/[:\s-]/g, '')
+          .toUpperCase();
+        const createdTag = await this.nfcTagsService.registerTag({
+          tagUid: sanitizedUid,
+        });
+        tag = await this.repository.findTagByIdentifier(createdTag.id);
+      }
+
       if (!tag) {
         throw new NotFoundException(
-          `Tag NFC com identificador "${dto.tagIdentifier}" não encontrada no inventário.`,
+          `Não foi possível localizar ou cadastrar a tag NFC [${dto.tagIdentifier}].`,
         );
       }
       if (!tag.active) {
