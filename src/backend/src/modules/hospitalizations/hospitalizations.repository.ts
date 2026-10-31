@@ -410,6 +410,16 @@ export class HospitalizationsRepository {
               patient: {
                 select: { id: true, name: true },
               },
+              prescriptions: {
+                where: { isActive: true },
+                orderBy: { createdAt: 'desc' },
+                take: 1,
+                select: {
+                  prescribedBy: {
+                    select: { id: true, name: true },
+                  },
+                },
+              },
             },
           },
           prescriptionItem: {
@@ -472,6 +482,16 @@ export class HospitalizationsRepository {
               patient: {
                 select: { id: true, name: true },
               },
+              prescriptions: {
+                where: { isActive: true },
+                orderBy: { createdAt: 'desc' },
+                take: 1,
+                select: {
+                  prescribedBy: {
+                    select: { id: true, name: true },
+                  },
+                },
+              },
             },
           },
           prescriptionItem: {
@@ -507,6 +527,16 @@ export class HospitalizationsRepository {
             patient: {
               select: { id: true, name: true },
             },
+            prescriptions: {
+              where: { isActive: true },
+              orderBy: { createdAt: 'desc' },
+              take: 1,
+              select: {
+                prescribedBy: {
+                  select: { id: true, name: true },
+                },
+              },
+            },
           },
         },
         prescriptionItem: {
@@ -535,6 +565,16 @@ export class HospitalizationsRepository {
           select: {
             patient: {
               select: { id: true, name: true },
+            },
+            prescriptions: {
+              where: { isActive: true },
+              orderBy: { createdAt: 'desc' },
+              take: 1,
+              select: {
+                prescribedBy: {
+                  select: { id: true, name: true },
+                },
+              },
             },
           },
         },
@@ -582,6 +622,16 @@ export class HospitalizationsRepository {
           select: {
             patient: {
               select: { id: true, name: true },
+            },
+            prescriptions: {
+              where: { isActive: true },
+              orderBy: { createdAt: 'desc' },
+              take: 1,
+              select: {
+                prescribedBy: {
+                  select: { id: true, name: true },
+                },
+              },
             },
           },
         },

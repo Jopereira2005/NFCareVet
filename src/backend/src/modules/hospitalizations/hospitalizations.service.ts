@@ -667,7 +667,9 @@ export class HospitalizationsService {
 
   private toTimelineEventItemDto(evt: any): TimelineEventItemDto {
     const prescribedBy =
-      evt.prescriptionItem?.prescription?.prescribedBy ?? null;
+      evt.prescriptionItem?.prescription?.prescribedBy ??
+      evt.hospitalization?.prescriptions?.[0]?.prescribedBy ??
+      null;
     const patient = evt.hospitalization?.patient ?? undefined;
 
     return {
