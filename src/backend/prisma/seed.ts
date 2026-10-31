@@ -48,7 +48,7 @@ async function main() {
       email: 'admin@nfcarevet.com',
       passwordHash: defaultPasswordHash,
       role: UserRole.ADMIN,
-      badgeUid: 'BADGE-ADMIN-001',
+      badgeUid: 'BADGE001',
       active: true,
     },
   });
@@ -59,7 +59,7 @@ async function main() {
       email: 'madalena@nfcarevet.com',
       passwordHash: vetPasswordHash,
       role: UserRole.VET,
-      badgeUid: 'BADGE-VET-001',
+      badgeUid: 'BADGE002',
       active: true,
     },
   });
@@ -70,7 +70,7 @@ async function main() {
       email: 'recepcao@nfcarevet.com',
       passwordHash: recPasswordHash,
       role: UserRole.REC,
-      badgeUid: 'BADGE-REC-001',
+      badgeUid: 'BADGE003',
       active: true,
     },
   });

@@ -24,10 +24,13 @@ export class UsersService {
       );
     }
 
-    if (createUserDto.badgeUid) {
-      const existingBadge = await this.usersRepository.findByBadgeUid(
-        createUserDto.badgeUid,
-      );
+    const sanitizedBadgeUid = createUserDto.badgeUid
+      ? createUserDto.badgeUid.replace(/[:\s-]/g, '').toUpperCase()
+      : null;
+
+    if (sanitizedBadgeUid) {
+      const existingBadge =
+        await this.usersRepository.findByBadgeUid(sanitizedBadgeUid);
       if (existingBadge) {
         throw new ConflictException(
           'Este crachá NFC (badgeUid) já está associado a outro usuário.',
@@ -42,7 +45,7 @@ export class UsersService {
       email: createUserDto.email.toLowerCase(),
       passwordHash,
       role: createUserDto.role,
-      badgeUid: createUserDto.badgeUid || null,
+      badgeUid: sanitizedBadgeUid,
       avatarUrl: createUserDto.avatarUrl?.trim() || null,
       active: createUserDto.active ?? true,
     });
@@ -86,12 +89,19 @@ export class UsersService {
       }
     }
 
+    const sanitizedUpdateBadgeUid =
+      updateUserDto.badgeUid !== undefined
+        ? updateUserDto.badgeUid
+          ? updateUserDto.badgeUid.replace(/[:\s-]/g, '').toUpperCase()
+          : null
+        : undefined;
+
     if (
-      updateUserDto.badgeUid &&
-      updateUserDto.badgeUid !== existingUser.badgeUid
+      sanitizedUpdateBadgeUid &&
+      sanitizedUpdateBadgeUid !== existingUser.badgeUid
     ) {
       const badgeConflict = await this.usersRepository.findByBadgeUid(
-        updateUserDto.badgeUid,
+        sanitizedUpdateBadgeUid,
       );
       if (badgeConflict) {
         throw new ConflictException(
@@ -104,8 +114,8 @@ export class UsersService {
       ...(updateUserDto.name && { name: updateUserDto.name }),
       ...(updateUserDto.email && { email: updateUserDto.email.toLowerCase() }),
       ...(updateUserDto.role && { role: updateUserDto.role }),
-      ...(updateUserDto.badgeUid !== undefined && {
-        badgeUid: updateUserDto.badgeUid || null,
+      ...(sanitizedUpdateBadgeUid !== undefined && {
+        badgeUid: sanitizedUpdateBadgeUid,
       }),
       ...(updateUserDto.avatarUrl !== undefined && {
         avatarUrl: updateUserDto.avatarUrl?.trim() || null,

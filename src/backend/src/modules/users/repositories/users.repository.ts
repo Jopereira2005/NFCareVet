@@ -29,6 +29,13 @@ export class UsersRepository {
   }
 
   async findByBadgeUid(badgeUid: string): Promise<User | null> {
+    const sanitized = badgeUid.replace(/[:\s-]/g, '').toUpperCase();
+    const user = await this.prisma.user.findUnique({
+      where: { badgeUid: sanitized },
+    });
+    if (user || sanitized === badgeUid) {
+      return user;
+    }
     return this.prisma.user.findUnique({
       where: { badgeUid },
     });

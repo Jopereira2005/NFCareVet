@@ -49,13 +49,15 @@ export class AuthService {
   }
 
   async badgeLogin(badgeLoginDto: BadgeLoginDto): Promise<AuthResponseDto> {
-    const user = await this.usersRepository.findByBadgeUid(
-      badgeLoginDto.badgeUid,
-    );
+    const sanitizedBadgeUid = badgeLoginDto.badgeUid
+      .replace(/[:\s-]/g, '')
+      .toUpperCase();
+
+    const user = await this.usersRepository.findByBadgeUid(sanitizedBadgeUid);
 
     if (!user) {
       this.logger.warn(
-        `[AUTH-NFC] Falha na autenticação: crachá [${badgeLoginDto.badgeUid}] não reconhecido.`,
+        `[AUTH-NFC] Falha na autenticação: crachá [${sanitizedBadgeUid}] não reconhecido.`,
       );
       throw new UnauthorizedException(
         'Crachá NFC não cadastrado ou não reconhecido.',
@@ -64,13 +66,13 @@ export class AuthService {
 
     if (!user.active) {
       this.logger.warn(
-        `[AUTH-NFC] Falha na autenticação: colaborador [${user.name}] do crachá [${badgeLoginDto.badgeUid}] está inativo.`,
+        `[AUTH-NFC] Falha na autenticação: colaborador [${user.name}] do crachá [${sanitizedBadgeUid}] está inativo.`,
       );
       throw new ForbiddenException('Usuário inativo no sistema.');
     }
 
     this.logger.log(
-      `[AUTH-NFC] Autenticação por crachá realizada com sucesso: crachaUid=${badgeLoginDto.badgeUid}, usuario=${user.name}, id=${user.id}`,
+      `[AUTH-NFC] Autenticação por crachá realizada com sucesso: crachaUid=${sanitizedBadgeUid}, usuario=${user.name}, id=${user.id}`,
     );
     return this.generateToken(user);
   }

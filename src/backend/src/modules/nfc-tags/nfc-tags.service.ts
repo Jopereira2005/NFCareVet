@@ -22,21 +22,23 @@ export class NfcTagsService {
   ) {}
 
   async registerTag(dto: CreateNfcTagDto): Promise<NfcTagResponseDto> {
-    const existingTag = await this.nfcTagsRepository.findByTagUid(dto.tagUid);
+    const sanitizedUid = dto.tagUid.replace(/[:\s-]/g, '').toUpperCase();
+    const existingTag =
+      await this.nfcTagsRepository.findByTagUid(sanitizedUid);
 
     if (existingTag) {
       this.logger.warn(
-        `[NFC] Falha ao cadastrar tag: Tag física [${dto.tagUid}] já cadastrada no inventário.`,
+        `[NFC] Falha ao cadastrar tag: Tag física [${sanitizedUid}] já cadastrada no inventário.`,
       );
       throw new ConflictException(
-        `Tag física [${dto.tagUid}] já cadastrada no inventário.`,
+        `Tag física [${sanitizedUid}] já cadastrada no inventário.`,
       );
     }
 
     try {
       const publicCode = `tag-${randomUUID()}`;
       const newTag = await this.nfcTagsRepository.create({
-        tagUid: dto.tagUid,
+        tagUid: sanitizedUid,
         publicCode,
         active: true,
       });
@@ -167,9 +169,10 @@ export class NfcTagsService {
   }
 
   private async findTagByIdentifier(identifier: string) {
+    const sanitizedUid = identifier.replace(/[:\s-]/g, '').toUpperCase();
     const tag =
       (await this.nfcTagsRepository.findById(identifier)) ||
-      (await this.nfcTagsRepository.findByTagUid(identifier)) ||
+      (await this.nfcTagsRepository.findByTagUid(sanitizedUid)) ||
       (await this.nfcTagsRepository.findByPublicCode(identifier));
 
     if (!tag) {

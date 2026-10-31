@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
   IsEmail,
   IsEnum,
@@ -52,6 +53,11 @@ export class CreateUserDto {
   })
   @IsString()
   @IsOptional()
+  @Transform(({ value }: { value: string }) =>
+    typeof value === 'string' && value.trim()
+      ? value.replace(/[:\s-]/g, '').toUpperCase()
+      : value,
+  )
   badgeUid?: string;
 
   @ApiPropertyOptional({

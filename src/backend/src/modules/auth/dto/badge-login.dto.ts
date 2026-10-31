@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import { IsNotEmpty, IsString } from 'class-validator';
 
 export class BadgeLoginDto {
@@ -8,6 +9,9 @@ export class BadgeLoginDto {
   })
   @IsString()
   @IsNotEmpty({ message: 'O UID do crachá NFC (badgeUid) é obrigatório.' })
+  @Transform(({ value }: { value: string }) =>
+    typeof value === 'string' ? value.replace(/[:\s-]/g, '').toUpperCase() : value,
+  )
   badgeUid!: string;
 }
 
