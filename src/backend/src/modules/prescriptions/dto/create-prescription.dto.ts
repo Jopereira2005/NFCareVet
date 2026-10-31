@@ -123,13 +123,13 @@ export class CreatePrescriptionDto implements Partial<ICreatePrescriptionPayload
 
   @ApiPropertyOptional({
     description:
-      'Indica se deve inativar automaticamente protocolos/prescrições anteriores ativas da mesma internação para evitar conflitos de dosagem.',
-    default: true,
-    example: true,
+      'Indica se deve inativar automaticamente protocolos/prescrições anteriores ativas da mesma internação. Por padrão é false para que novas tarefas adicionadas ao prontuário não desativem as tarefas anteriores.',
+    default: false,
+    example: false,
   })
   @IsBoolean({ message: 'autoDeactivatePrevious deve ser um valor booleano.' })
   @IsOptional()
-  autoDeactivatePrevious?: boolean = true;
+  autoDeactivatePrevious?: boolean = false;
 
   @ApiProperty({
     description: 'Lista de medicamentos, procedimentos e checagens aprazadas que compõem a prescrição',

@@ -58,7 +58,7 @@ export class PrescriptionsRepository {
     dto: CreatePrescriptionDto,
   ): Promise<PrescriptionWithRelations> {
     return this.prisma.$transaction(async (tx) => {
-      if (dto.autoDeactivatePrevious !== false) {
+      if (dto.autoDeactivatePrevious === true) {
         await tx.prescription.updateMany({
           where: {
             hospitalizationId,
@@ -104,7 +104,7 @@ export class PrescriptionsRepository {
   async findActiveByHospitalizationId(
     hospitalizationId: string,
   ): Promise<PrescriptionWithRelations | null> {
-    return this.prisma.prescription.findFirst({
+    const activePrescriptions = await this.prisma.prescription.findMany({
       where: {
         hospitalizationId,
         isActive: true,
@@ -122,6 +122,24 @@ export class PrescriptionsRepository {
         },
       },
     });
+
+    if (activePrescriptions.length === 0) {
+      return null;
+    }
+
+    const latest = activePrescriptions[0];
+    const allItems = activePrescriptions
+      .flatMap((prescription) => prescription.items)
+      .sort(
+        (a, b) =>
+          new Date(a.scheduledTime).getTime() -
+          new Date(b.scheduledTime).getTime(),
+      );
+
+    return {
+      ...latest,
+      items: allItems,
+    };
   }
 
   async findById(id: string): Promise<PrescriptionWithRelations | null> {

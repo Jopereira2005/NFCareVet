@@ -83,12 +83,13 @@ export const prescriptionService = {
 
     const { data } = await httpClient.post<IPrescription>(`/hospitalizations/${hospitalizationId}/prescriptions`, {
       prescribedById,
+      autoDeactivatePrevious: false,
       items: [item],
     });
     return data.items?.[0] as IPrescriptionItem;
   },
 
-  /** Pending API: PATCH /prescription-items/:id */
+  /** PATCH /prescription-items/:id */
   async updateTask(itemId: string, payload: UpdateTaskPayload): Promise<IPrescriptionItem> {
     if (USE_MOCKS) {
       const entry = PENDING_SCHEDULE_MOCK.find(({ item }) => item.id === itemId);
@@ -121,7 +122,6 @@ export const prescriptionService = {
     itemId: string,
     payload: IApplyPrescriptionItemPayload,
     executor: Pick<IUserSummary, 'id' | 'name' | 'role'>,
-    /** Pending API: idempotency key, so an administration resent from the offline outbox is never registered twice. */
     requestId?: string,
   ): Promise<IApplyPrescriptionItemResponse> {
     if (USE_MOCKS) {
