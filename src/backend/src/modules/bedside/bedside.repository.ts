@@ -134,7 +134,11 @@ export class BedsideRepository {
     return this.prisma.prescriptionItem.findUnique({
       where: { id: itemId },
       include: {
-        prescription: true,
+        prescription: {
+          include: {
+            hospitalization: true,
+          },
+        },
       },
     });
   }

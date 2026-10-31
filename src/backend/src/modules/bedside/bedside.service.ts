@@ -6,7 +6,11 @@ import {
   Logger,
 } from '@nestjs/common';
 import { BedsideRepository } from './bedside.repository';
-import { PrescriptionStatus, Patient } from '@prisma/client';
+import {
+  HospitalizationStatus,
+  PrescriptionStatus,
+  Patient,
+} from '@prisma/client';
 import {
   QuickRecordResponseDto,
   BedsidePendingTaskDto,
@@ -284,6 +288,33 @@ export class BedsideService {
         `[BEDSIDE] Falha ao aplicar: item [${itemId}] já foi registrado como aplicado anteriormente.`,
       );
       throw new BadRequestException('Este item de prescrição já foi registrado como aplicado.');
+    }
+
+    if (item.status === PrescriptionStatus.CANCELLED || item.status !== PrescriptionStatus.PENDING) {
+      this.logger.warn(
+        `[BEDSIDE] Falha ao aplicar: item [${itemId}] encontra-se cancelado/suspenso.`,
+      );
+      throw new BadRequestException(
+        'Não é possível aplicar um item de prescrição que foi cancelado/suspenso.',
+      );
+    }
+
+    if (!item.prescription.isActive) {
+      this.logger.warn(
+        `[BEDSIDE] Falha ao aplicar: prescrição [${item.prescriptionId}] do item [${itemId}] está inativa.`,
+      );
+      throw new BadRequestException(
+        'Não é possível aplicar um item cuja prescrição foi inativada.',
+      );
+    }
+
+    if (item.prescription.hospitalization.status !== HospitalizationStatus.ACTIVE) {
+      this.logger.warn(
+        `[BEDSIDE] Falha ao aplicar: internação [${item.prescription.hospitalizationId}] do item [${itemId}] não está ativa.`,
+      );
+      throw new BadRequestException(
+        'Não é possível aplicar um item de prescrição em uma internação inativa ou encerrada.',
+      );
     }
 
     try {
