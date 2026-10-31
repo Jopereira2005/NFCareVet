@@ -15,9 +15,11 @@ export interface IBedsidePatient {
   name: string;
   species: string;
   breed?: string | null;
+  sex?: 'MALE' | 'FEMALE' | null;
   weightKg?: number | string | null;
   photoUrl?: string | null;
   allergies?: string | null;
+  treatments?: string[];
   isFasting: boolean;
   isCastrated: boolean;
   behaviorNotes?: string | null;
@@ -32,6 +34,8 @@ export interface IBedsideKennel {
 
 export interface IBedsideQuickRecord {
   hospitalizationId: string;
+  admissionReason?: string | null;
+  admissionDate?: string;
   kennel: IBedsideKennel;
   patient: IBedsidePatient;
   prescriptions: IPrescription[];

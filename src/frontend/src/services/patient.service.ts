@@ -38,11 +38,12 @@ const matchesSearch = (patient: Patient, { query, species, sex, hospitalized }: 
 /** GET /bedside/:identifier returns the quick record plus admission and tag data (`QuickRecordResponseDto`). */
 type BedsideQuickRecordResponse = IBedsideQuickRecord & {
   admissionDate: string;
+  admissionReason?: string | null;
   nfcTag?: { id: string; tagUid: string; publicCode: string } | null;
 };
 
 /** Bedside quick record → Patient, so the NFC reader shares the same card as the other screens. */
-const toPatient = ({ patient, hospitalizationId, admissionDate, nfcTag }: BedsideQuickRecordResponse): Patient => ({
+const toPatient = ({ patient, hospitalizationId, admissionDate, admissionReason, kennel, nfcTag }: BedsideQuickRecordResponse): Patient => ({
   ...patient,
   guardianId: patient.guardian.id,
   // The bedside payload omits audit dates; screens never display them for this flow
@@ -50,11 +51,17 @@ const toPatient = ({ patient, hospitalizationId, admissionDate, nfcTag }: Bedsid
   createdAt: '',
   updatedAt: '',
   nfcTag: nfcTag ? { ...nfcTag, active: true, createdAt: '' } : null,
-  activeHospitalization: { id: hospitalizationId, status: HospitalizationStatus.ACTIVE, admissionDate },
+  activeHospitalization: {
+    id: hospitalizationId,
+    status: HospitalizationStatus.ACTIVE,
+    admissionDate,
+    admissionReason: admissionReason ?? null,
+    kennel: kennel ? { id: kennel.id, name: kennel.name } : null,
+  },
 });
 
 export const patientService = {
-  /** Pending API: GET /patients/:id */
+  /** GET /patients/:id */
   async getById(patientId: string): Promise<Patient> {
     if (USE_MOCKS) {
       const patient = PATIENTS_MOCK.find(({ id }) => id === patientId);
@@ -65,7 +72,7 @@ export const patientService = {
     return data;
   },
 
-  /** Pending API: GET /patients?query=&species=&sex=&hospitalized= */
+  /** GET /patients?query=&species=&sex=&hospitalized= */
   async search(params: PatientSearchParams): Promise<Patient[]> {
     if (USE_MOCKS) return mockResponse(PATIENTS_MOCK.map(withGuardian).filter((patient) => matchesSearch(patient, params)));
 
@@ -84,7 +91,7 @@ export const patientService = {
     return toPatient(data);
   },
 
-  /** Pending API: GET /patients/visits?period= */
+  /** GET /patients/visits?period= */
   async listVisits(period: HistoryPeriod): Promise<PatientVisit[]> {
     if (USE_MOCKS) {
       const visits = PATIENT_VISITS_MOCK.filter(({ visitedAt }) => isWithinPeriod(visitedAt, period)).flatMap(({ id, patientId, visitedAt }) => {
@@ -98,7 +105,7 @@ export const patientService = {
     return data;
   },
 
-  /** Pending API: POST /patients */
+  /** POST /patients */
   async create(payload: CreatePatientPayload): Promise<Patient> {
     if (USE_MOCKS) {
       const now = new Date().toISOString();
@@ -120,7 +127,7 @@ export const patientService = {
     return data;
   },
 
-  /** Pending API: PATCH /patients/:id */
+  /** PATCH /patients/:id */
   async update(patientId: string, payload: UpdatePatientPayload): Promise<Patient> {
     if (USE_MOCKS) {
       const patient = PATIENTS_MOCK.find(({ id }) => id === patientId);

@@ -30,6 +30,9 @@ export class BedsidePatientDto {
   @ApiPropertyOptional({ example: 'Golden Retriever', nullable: true, description: 'Raça' })
   breed?: string | null;
 
+  @ApiPropertyOptional({ example: 'MALE', nullable: true, description: 'Sexo do paciente (MALE | FEMALE)' })
+  sex?: string | null;
+
   @ApiPropertyOptional({ example: 32.5, nullable: true, description: 'Peso aferido em kg' })
   weightKg?: number | any | null;
 
@@ -51,6 +54,9 @@ export class BedsidePatientDto {
 
   @ApiPropertyOptional({ example: 'Alergia a Dipirona', nullable: true, description: 'Alergias conhecidas' })
   allergies?: string | null;
+
+  @ApiPropertyOptional({ example: ['Dermatite atópica'], type: [String], description: 'Tratamentos em andamento' })
+  treatments?: string[];
 
   @ApiProperty({ example: false, description: 'Indica se o paciente deve permanecer em jejum' })
   isFasting: boolean;
