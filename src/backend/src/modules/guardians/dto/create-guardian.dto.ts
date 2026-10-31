@@ -1,14 +1,43 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
+  IsBoolean,
   IsEmail,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
   MaxLength,
   MinLength,
+  ValidateNested,
 } from 'class-validator';
-import { Transform } from 'class-transformer';
-import { ICreateGuardianPayload } from '@nfcarevet/common';
+import { Transform, Type } from 'class-transformer';
+import {
+  FinancialStatus,
+  ICreateGuardianPayload,
+  IGuardianFinancial,
+} from '@nfcarevet/common';
+
+export class GuardianFinancialDto implements IGuardianFinancial {
+  @ApiProperty({
+    description: 'Status financeiro do tutor na clínica',
+    enum: FinancialStatus,
+    example: FinancialStatus.PAID,
+  })
+  @IsEnum(FinancialStatus, {
+    message: 'status financeiro deve ser PAID, PENDING ou OVERDUE.',
+  })
+  status!: FinancialStatus;
+
+  @ApiProperty({
+    description: 'Método de pagamento preferencial/utilizado',
+    example: 'Pix',
+    maxLength: 50,
+  })
+  @IsString({ message: 'paymentMethod deve ser um texto.' })
+  @IsNotEmpty({ message: 'paymentMethod é obrigatório.' })
+  @MaxLength(50, { message: 'paymentMethod não pode exceder 50 caracteres.' })
+  paymentMethod!: string;
+}
 
 export class CreateGuardianDto implements ICreateGuardianPayload {
   @ApiProperty({
@@ -70,4 +99,34 @@ export class CreateGuardianDto implements ICreateGuardianPayload {
   @MaxLength(200, { message: 'address não pode exceder 200 caracteres.' })
   @IsOptional()
   address?: string;
+
+  @ApiPropertyOptional({
+    description: 'URL da foto do tutor',
+    example: 'https://cdn.suaclinica.com/guardians/lucas.jpg',
+  })
+  @Transform(({ value }) =>
+    typeof value === 'string' && value.trim() === '' ? undefined : value,
+  )
+  @IsString({ message: 'photoUrl deve ser um texto.' })
+  @IsOptional()
+  photoUrl?: string;
+
+  @ApiPropertyOptional({
+    description: 'Indica se o tutor é um cliente ativo da clínica',
+    default: true,
+    example: true,
+  })
+  @IsBoolean({ message: 'isActive deve ser um valor booleano.' })
+  @IsOptional()
+  isActive?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Dados financeiros do tutor (status e método de pagamento)',
+    type: () => GuardianFinancialDto,
+    nullable: true,
+  })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => GuardianFinancialDto)
+  financial?: GuardianFinancialDto | null;
 }

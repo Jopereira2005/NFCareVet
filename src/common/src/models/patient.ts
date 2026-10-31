@@ -15,6 +15,7 @@ export interface IPatient {
   weightKg?: number | string | null;
   photoUrl?: string | null;
   allergies?: string | null;
+  treatments?: string[];
   isFasting: boolean;
   isCastrated: boolean;
   behaviorNotes?: string | null;
@@ -35,6 +36,7 @@ export interface ICreatePatientPayload {
   weightKg?: number;
   photoUrl?: string;
   allergies?: string;
+  treatments?: string[];
   isFasting?: boolean;
   isCastrated?: boolean;
   behaviorNotes?: string;
@@ -51,8 +53,8 @@ export interface IUpdatePatientPayload {
   weightKg?: number;
   photoUrl?: string;
   allergies?: string;
+  treatments?: string[];
   isFasting?: boolean;
   isCastrated?: boolean;
   behaviorNotes?: string;
 }
-

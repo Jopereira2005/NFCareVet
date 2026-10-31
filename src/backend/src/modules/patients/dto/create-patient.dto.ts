@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
+  IsArray,
   IsBoolean,
   IsDateString,
   IsEnum,
@@ -112,6 +113,16 @@ export class CreatePatientDto implements ICreatePatientPayload {
   @IsString({ message: 'allergies deve ser um texto.' })
   @IsOptional()
   allergies?: string;
+
+  @ApiPropertyOptional({
+    description: 'Tratamentos contínuos ou em andamento do paciente',
+    example: ['Dermatite atópica'],
+    type: [String],
+  })
+  @IsArray({ message: 'treatments deve ser uma lista de textos.' })
+  @IsString({ each: true, message: 'Cada tratamento deve ser um texto.' })
+  @IsOptional()
+  treatments?: string[];
 
   @ApiPropertyOptional({
     description: 'Indica se o paciente está em jejum alimentar/hídrico',

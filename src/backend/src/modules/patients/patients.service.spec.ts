@@ -18,6 +18,10 @@ describe('PatientsService', () => {
     email: 'carlos@email.com',
     phone: '(15) 99123-4567',
     address: 'Rua das Palmeiras, 450',
+    photoUrl: null,
+    isActive: true,
+    financialStatus: null,
+    paymentMethod: null,
     createdAt: now,
     updatedAt: now,
   };
@@ -34,6 +38,7 @@ describe('PatientsService', () => {
     weightKg: new Prisma.Decimal(32.5),
     photoUrl: null,
     allergies: 'Dipirona',
+    treatments: ['Dermatite atópica'],
     isFasting: true,
     isCastrated: true,
     behaviorNotes: 'Manso',

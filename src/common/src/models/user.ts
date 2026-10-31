@@ -6,6 +6,7 @@ export interface IUser {
   email: string;
   role: UserRole;
   badgeUid?: string | null;
+  avatarUrl?: string | null;
   active: boolean;
   createdAt: Date | string;
 }
@@ -15,6 +16,7 @@ export interface IUserSummary {
   name: string;
   email: string;
   role: UserRole;
+  avatarUrl?: string | null;
 }
 
 export interface ICreateUserPayload {
@@ -23,6 +25,7 @@ export interface ICreateUserPayload {
   password: string;
   role: UserRole;
   badgeUid?: string;
+  avatarUrl?: string;
   active?: boolean;
 }
 
@@ -32,5 +35,6 @@ export interface IUpdateUserPayload {
   password?: string;
   role?: UserRole;
   badgeUid?: string;
+  avatarUrl?: string | null;
   active?: boolean;
 }

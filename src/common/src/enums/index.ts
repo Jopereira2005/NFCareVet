@@ -54,4 +54,8 @@ export enum PatientSex {
   FEMALE = 'FEMALE',
 }
 
-
+export enum FinancialStatus {
+  PAID = 'PAID',
+  PENDING = 'PENDING',
+  OVERDUE = 'OVERDUE',
+}

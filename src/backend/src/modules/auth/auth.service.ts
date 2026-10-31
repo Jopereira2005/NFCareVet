@@ -81,6 +81,7 @@ export class AuthService {
     name: string;
     role: any;
     badgeUid: string | null;
+    avatarUrl?: string | null;
   }): AuthResponseDto {
     const payload: JwtPayload = {
       sub: user.id,
@@ -98,6 +99,7 @@ export class AuthService {
         email: user.email,
         role: user.role,
         badgeUid: user.badgeUid,
+        avatarUrl: user.avatarUrl ?? null,
       },
     };
   }

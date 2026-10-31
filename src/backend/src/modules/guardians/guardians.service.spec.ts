@@ -17,6 +17,10 @@ describe('GuardiansService', () => {
     email: 'lucas.silva@email.com',
     phone: '(15) 99123-3292',
     address: 'Rua das Palmeiras, 450',
+    photoUrl: null,
+    isActive: true,
+    financialStatus: null,
+    paymentMethod: null,
     createdAt: now,
     updatedAt: now,
     patients: [
@@ -32,6 +36,7 @@ describe('GuardiansService', () => {
         weightKg: new Prisma.Decimal(28.4),
         photoUrl: null,
         allergies: 'Dipirona',
+        treatments: ['Dermatite atópica'],
         isFasting: false,
         isCastrated: true,
         behaviorNotes: null,

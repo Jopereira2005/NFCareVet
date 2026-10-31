@@ -101,6 +101,9 @@ export class PatientsService {
       weightKg: dto.weightKg ?? null,
       photoUrl: dto.photoUrl?.trim() || null,
       allergies: dto.allergies?.trim() || null,
+      treatments: (dto.treatments ?? [])
+        .map((item) => item.trim())
+        .filter(Boolean),
       isFasting: dto.isFasting ?? false,
       isCastrated: dto.isCastrated ?? false,
       behaviorNotes: dto.behaviorNotes?.trim() || null,
@@ -147,6 +150,11 @@ export class PatientsService {
     if (dto.allergies !== undefined) {
       data.allergies = dto.allergies?.trim() || null;
     }
+    if (dto.treatments !== undefined) {
+      data.treatments = dto.treatments
+        .map((item) => item.trim())
+        .filter(Boolean);
+    }
     if (dto.isFasting !== undefined) data.isFasting = dto.isFasting;
     if (dto.isCastrated !== undefined) data.isCastrated = dto.isCastrated;
     if (dto.behaviorNotes !== undefined) {
@@ -176,6 +184,7 @@ export class PatientsService {
           : null,
       photoUrl: patient.photoUrl,
       allergies: patient.allergies,
+      treatments: patient.treatments ?? [],
       isFasting: patient.isFasting,
       isCastrated: patient.isCastrated,
       behaviorNotes: patient.behaviorNotes,
@@ -189,6 +198,16 @@ export class PatientsService {
             email: patient.guardian.email,
             phone: patient.guardian.phone,
             address: patient.guardian.address,
+            photoUrl: patient.guardian.photoUrl,
+            isActive: patient.guardian.isActive,
+            financial:
+              patient.guardian.financialStatus &&
+              patient.guardian.paymentMethod
+                ? {
+                    status: patient.guardian.financialStatus,
+                    paymentMethod: patient.guardian.paymentMethod,
+                  }
+                : null,
             createdAt: patient.guardian.createdAt,
             updatedAt: patient.guardian.updatedAt,
           }

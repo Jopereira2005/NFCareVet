@@ -17,10 +17,16 @@ export class UserResponseDto {
   @ApiPropertyOptional({ example: '04A1B2C3D4E5F6', nullable: true, description: 'UID do crachá NFC vinculado' })
   badgeUid?: string | null;
 
+  @ApiPropertyOptional({
+    example: 'https://cdn.suaclinica.com/avatars/maria.jpg',
+    nullable: true,
+    description: 'URL da foto de perfil (avatar)',
+  })
+  avatarUrl?: string | null;
+
   @ApiProperty({ example: true, description: 'Indica se o colaborador está ativo' })
   active!: boolean;
 
   @ApiProperty({ example: '2026-03-01T10:00:00.000Z', description: 'Data de criação do registro' })
   createdAt!: Date;
 }
-

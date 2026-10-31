@@ -1,13 +1,16 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
+  IsBoolean,
   IsEmail,
   IsOptional,
   IsString,
   MaxLength,
   MinLength,
+  ValidateNested,
 } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { IUpdateGuardianPayload } from '@nfcarevet/common';
+import { GuardianFinancialDto } from './create-guardian.dto';
 
 export class UpdateGuardianDto implements IUpdateGuardianPayload {
   @ApiPropertyOptional({
@@ -72,4 +75,34 @@ export class UpdateGuardianDto implements IUpdateGuardianPayload {
   @MaxLength(200, { message: 'address não pode exceder 200 caracteres.' })
   @IsOptional()
   address?: string;
+
+  @ApiPropertyOptional({
+    description: 'URL da foto do tutor (string vazia ou null para limpar)',
+    example: 'https://cdn.suaclinica.com/guardians/lucas.jpg',
+    nullable: true,
+  })
+  @Transform(({ value }) =>
+    typeof value === 'string' && value.trim() === '' ? null : value,
+  )
+  @IsString({ message: 'photoUrl deve ser um texto.' })
+  @IsOptional()
+  photoUrl?: string | null;
+
+  @ApiPropertyOptional({
+    description: 'Indica se o tutor é um cliente ativo da clínica',
+    example: true,
+  })
+  @IsBoolean({ message: 'isActive deve ser um valor booleano.' })
+  @IsOptional()
+  isActive?: boolean;
+
+  @ApiPropertyOptional({
+    description: 'Dados financeiros do tutor (ou null para limpar)',
+    type: () => GuardianFinancialDto,
+    nullable: true,
+  })
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => GuardianFinancialDto)
+  financial?: GuardianFinancialDto | null;
 }

@@ -55,6 +55,14 @@ export class CreateUserDto {
   badgeUid?: string;
 
   @ApiPropertyOptional({
+    example: 'https://cdn.suaclinica.com/avatars/lucas.jpg',
+    description: 'URL da foto de perfil (avatar) do colaborador',
+  })
+  @IsString()
+  @IsOptional()
+  avatarUrl?: string;
+
+  @ApiPropertyOptional({
     example: true,
     default: true,
     description: 'Indica se o colaborador está ativo no sistema',
@@ -63,4 +71,3 @@ export class CreateUserDto {
   @IsOptional()
   active?: boolean;
 }
-

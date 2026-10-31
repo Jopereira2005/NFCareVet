@@ -12,7 +12,10 @@ import {
 import { CreateGuardianDto } from './dto/create-guardian.dto';
 import { UpdateGuardianDto } from './dto/update-guardian.dto';
 import { GuardianResponseDto } from './dto/guardian-response.dto';
-import { PatientResponseDto } from '../patients/dto/patient-response.dto';
+import {
+  PatientGuardianDto,
+  PatientResponseDto,
+} from '../patients/dto/patient-response.dto';
 
 function normalizeText(value: string): string {
   return value
@@ -88,6 +91,10 @@ export class GuardiansService {
       cpf: trimmedCpf,
       email: dto.email?.trim().toLowerCase() || null,
       address: dto.address?.trim() || null,
+      photoUrl: dto.photoUrl?.trim() || null,
+      isActive: dto.isActive ?? true,
+      financialStatus: dto.financial?.status ?? null,
+      paymentMethod: dto.financial?.paymentMethod?.trim() || null,
     });
 
     return this.toResponseDto(created);
@@ -126,26 +133,47 @@ export class GuardiansService {
     if (dto.address !== undefined) {
       data.address = dto.address ? dto.address.trim() : null;
     }
+    if (dto.photoUrl !== undefined) {
+      data.photoUrl = dto.photoUrl ? dto.photoUrl.trim() : null;
+    }
+    if (dto.isActive !== undefined) {
+      data.isActive = dto.isActive;
+    }
+    if (dto.financial !== undefined) {
+      data.financialStatus = dto.financial?.status ?? null;
+      data.paymentMethod = dto.financial?.paymentMethod?.trim() || null;
+    }
 
     const updated = await this.guardiansRepository.update(id, data);
     return this.toResponseDto(updated);
   }
 
   private toResponseDto(guardian: GuardianWithPatients): GuardianResponseDto {
-    const guardianSummary = {
+    const financial =
+      guardian.financialStatus && guardian.paymentMethod
+        ? {
+            status: guardian.financialStatus,
+            paymentMethod: guardian.paymentMethod,
+          }
+        : null;
+
+    const guardianSummary: PatientGuardianDto = {
       id: guardian.id,
       name: guardian.name,
       cpf: guardian.cpf,
       email: guardian.email,
       phone: guardian.phone,
       address: guardian.address,
+      photoUrl: guardian.photoUrl,
+      isActive: guardian.isActive ?? true,
+      financial,
       createdAt: guardian.createdAt,
       updatedAt: guardian.updatedAt,
     };
 
     return {
       ...guardianSummary,
-      isActive: true,
+      isActive: guardian.isActive ?? true,
       patients: (guardian.patients ?? []).map((patient) =>
         this.toPatientDto(patient, guardianSummary),
       ),
@@ -154,16 +182,7 @@ export class GuardiansService {
 
   private toPatientDto(
     patient: GuardianPatientWithRelations,
-    guardianSummary: {
-      id: string;
-      name: string;
-      cpf: string | null;
-      email: string | null;
-      phone: string;
-      address: string | null;
-      createdAt: Date;
-      updatedAt: Date;
-    },
+    guardianSummary: PatientGuardianDto,
   ): PatientResponseDto {
     const activeHosp = patient.hospitalizations?.[0] ?? null;
     const activeTag = activeHosp?.nfcTag ?? null;
@@ -183,6 +202,7 @@ export class GuardiansService {
           : null,
       photoUrl: patient.photoUrl,
       allergies: patient.allergies,
+      treatments: patient.treatments ?? [],
       isFasting: patient.isFasting,
       isCastrated: patient.isCastrated,
       behaviorNotes: patient.behaviorNotes,

@@ -7,6 +7,7 @@ import {
   AdministrationRoute,
   EventType,
   PatientSex,
+  FinancialStatus,
 } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 
@@ -144,6 +145,9 @@ async function main() {
       email: 'carlos.santos@email.com',
       phone: '(15) 99123-4567',
       address: 'Rua das Palmeiras, 450 - Apto 82, Campolim - Sorocaba/SP',
+      isActive: true,
+      financialStatus: FinancialStatus.PAID,
+      paymentMethod: 'Boleto',
     },
   });
 
@@ -154,6 +158,9 @@ async function main() {
       email: 'mariana.costa@email.com',
       phone: '(15) 98111-2233',
       address: 'Av. Brasil, 1200 - Jardim América, Sorocaba/SP',
+      isActive: true,
+      financialStatus: FinancialStatus.PENDING,
+      paymentMethod: 'Pix',
     },
   });
 
@@ -164,6 +171,9 @@ async function main() {
       email: 'roberto.alves@email.com',
       phone: '(15) 97222-3344',
       address: 'Rua Sete de Setembro, 310 - Centro, Sorocaba/SP',
+      isActive: true,
+      financialStatus: FinancialStatus.PAID,
+      paymentMethod: 'Cartão de Crédito',
     },
   });
 
@@ -174,6 +184,9 @@ async function main() {
       email: 'juliana.martins@email.com',
       phone: '(15) 96333-4455',
       address: 'Rua Santa Clara, 88 - Mangal, Sorocaba/SP',
+      isActive: true,
+      financialStatus: FinancialStatus.PAID,
+      paymentMethod: 'Pix',
     },
   });
 
@@ -184,6 +197,9 @@ async function main() {
       email: 'fernando.rocha@email.com',
       phone: '(15) 95444-5566',
       address: 'Av. General Carneiro, 950 - Cerrado, Sorocaba/SP',
+      isActive: true,
+      financialStatus: FinancialStatus.PAID,
+      paymentMethod: 'Cartão de Débito',
     },
   });
 
@@ -200,6 +216,7 @@ async function main() {
       birthDate: new Date('2022-04-10'),
       bloodType: 'DEA 1.1+',
       allergies: 'Alérgico a Dipirona e Sulfas',
+      treatments: ['Dermatite atópica'],
       isFasting: true,
       isCastrated: true,
       behaviorNotes: 'Dócil, porém assustado com manipulação de patas traseiras',
@@ -217,6 +234,7 @@ async function main() {
       birthDate: new Date('2024-03-15'),
       bloodType: 'Tipo A',
       allergies: null,
+      treatments: ['Controle glicêmico'],
       isFasting: false,
       isCastrated: true,
       behaviorNotes: 'Reativa à contenção forçada, manipular preferencialmente com toalha macia',
@@ -234,6 +252,7 @@ async function main() {
       birthDate: new Date('2020-11-20'),
       bloodType: 'DEA 1.1-',
       allergies: 'Penicilina e derivados',
+      treatments: ['Fisioterapia pós-TPLO'],
       isFasting: true,
       isCastrated: false,
       behaviorNotes: 'Muito dócil e cooperativo, aceita medicação em sachê com facilidade',
@@ -251,6 +270,7 @@ async function main() {
       birthDate: new Date('2025-06-01'),
       bloodType: 'Tipo B',
       allergies: null,
+      treatments: [],
       isFasting: false,
       isCastrated: true,
       behaviorNotes: 'Calma e tímida, assusta-se com barulhos altos ou movimentos bruscos',
@@ -268,6 +288,7 @@ async function main() {
       birthDate: new Date('2021-08-14'),
       bloodType: 'DEA 1.2+',
       allergies: null,
+      treatments: [],
       isFasting: false,
       isCastrated: true,
       behaviorNotes: 'Muito ativo e alerta',
@@ -285,6 +306,7 @@ async function main() {
       birthDate: new Date('2023-01-20'),
       bloodType: 'DEA 1.1+',
       allergies: null,
+      treatments: [],
       isFasting: false,
       isCastrated: true,
     },

@@ -1,5 +1,8 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { PatientResponseDto } from '../../patients/dto/patient-response.dto';
+import {
+  PatientGuardianFinancialDto,
+  PatientResponseDto,
+} from '../../patients/dto/patient-response.dto';
 
 export class GuardianResponseDto {
   @ApiProperty({ example: 'uuid-guardian-1' })
@@ -23,8 +26,17 @@ export class GuardianResponseDto {
   })
   address?: string | null;
 
+  @ApiPropertyOptional({ example: null, nullable: true })
+  photoUrl?: string | null;
+
   @ApiProperty({ example: true })
   isActive: boolean;
+
+  @ApiPropertyOptional({
+    type: () => PatientGuardianFinancialDto,
+    nullable: true,
+  })
+  financial?: PatientGuardianFinancialDto | null;
 
   @ApiProperty({ example: '2026-09-18T12:00:00.000Z' })
   createdAt: Date;

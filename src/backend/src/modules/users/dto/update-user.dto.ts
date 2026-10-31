@@ -7,6 +7,7 @@ import {
   MinLength,
   IsBoolean,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 import { UserRole } from '@prisma/client';
 
 export class UpdateUserDto {
@@ -54,6 +55,18 @@ export class UpdateUserDto {
   badgeUid?: string;
 
   @ApiPropertyOptional({
+    example: 'https://cdn.suaclinica.com/avatars/lucas.jpg',
+    description: 'URL da foto de perfil (avatar) do colaborador (ou null para limpar)',
+    nullable: true,
+  })
+  @Transform(({ value }) =>
+    typeof value === 'string' && value.trim() === '' ? null : value,
+  )
+  @IsString()
+  @IsOptional()
+  avatarUrl?: string | null;
+
+  @ApiPropertyOptional({
     example: true,
     description: 'Status ativo/inativo',
   })
@@ -61,4 +74,3 @@ export class UpdateUserDto {
   @IsOptional()
   active?: boolean;
 }
-

@@ -16,6 +16,13 @@ export class AuthUserDto {
 
   @ApiPropertyOptional({ example: '04A1B2C3D4E5F6', nullable: true, description: 'UID do crachá NFC vinculado' })
   badgeUid?: string | null;
+
+  @ApiPropertyOptional({
+    example: 'https://cdn.suaclinica.com/avatars/ana.jpg',
+    nullable: true,
+    description: 'URL da foto de perfil (avatar) do usuário',
+  })
+  avatarUrl?: string | null;
 }
 
 export class AuthResponseDto {
@@ -28,4 +35,3 @@ export class AuthResponseDto {
   @ApiProperty({ type: () => AuthUserDto, description: 'Dados resumidos do usuário autenticado' })
   user!: AuthUserDto;
 }
-

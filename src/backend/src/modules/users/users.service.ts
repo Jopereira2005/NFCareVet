@@ -43,6 +43,7 @@ export class UsersService {
       passwordHash,
       role: createUserDto.role,
       badgeUid: createUserDto.badgeUid || null,
+      avatarUrl: createUserDto.avatarUrl?.trim() || null,
       active: createUserDto.active ?? true,
     });
 
@@ -106,6 +107,9 @@ export class UsersService {
       ...(updateUserDto.badgeUid !== undefined && {
         badgeUid: updateUserDto.badgeUid || null,
       }),
+      ...(updateUserDto.avatarUrl !== undefined && {
+        avatarUrl: updateUserDto.avatarUrl?.trim() || null,
+      }),
       ...(updateUserDto.active !== undefined && {
         active: updateUserDto.active,
       }),
@@ -135,7 +139,7 @@ export class UsersService {
   }
 
   private toResponseDto(user: User): UserResponseDto {
-    const { passwordHash, ...userWithoutPassword } = user;
+    const { passwordHash: _passwordHash, ...userWithoutPassword } = user;
     return userWithoutPassword;
   }
 }

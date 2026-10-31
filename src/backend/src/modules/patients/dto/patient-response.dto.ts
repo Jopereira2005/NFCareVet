@@ -1,5 +1,17 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { HospitalizationStatus, PatientSex } from '@prisma/client';
+import {
+  FinancialStatus,
+  HospitalizationStatus,
+  PatientSex,
+} from '@prisma/client';
+
+export class PatientGuardianFinancialDto {
+  @ApiProperty({ enum: FinancialStatus, example: FinancialStatus.PAID })
+  status: FinancialStatus;
+
+  @ApiProperty({ example: 'Boleto' })
+  paymentMethod: string;
+}
 
 export class PatientGuardianDto {
   @ApiProperty({ example: 'uuid-guardian-1' })
@@ -22,6 +34,18 @@ export class PatientGuardianDto {
     nullable: true,
   })
   address?: string | null;
+
+  @ApiPropertyOptional({ example: null, nullable: true })
+  photoUrl?: string | null;
+
+  @ApiPropertyOptional({ example: true })
+  isActive?: boolean;
+
+  @ApiPropertyOptional({
+    type: () => PatientGuardianFinancialDto,
+    nullable: true,
+  })
+  financial?: PatientGuardianFinancialDto | null;
 
   @ApiProperty({ example: '2026-09-18T12:00:00.000Z' })
   createdAt: Date;
@@ -108,6 +132,9 @@ export class PatientResponseDto {
 
   @ApiPropertyOptional({ example: 'Alérgico a Dipirona e Sulfas', nullable: true })
   allergies?: string | null;
+
+  @ApiPropertyOptional({ example: ['Dermatite atópica'], type: [String] })
+  treatments?: string[];
 
   @ApiProperty({ example: true })
   isFasting: boolean;
