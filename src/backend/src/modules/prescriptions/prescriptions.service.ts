@@ -31,6 +31,13 @@ import {
 import { UserRole } from '@nfcarevet/common';
 import { UsersRepository } from '../users/repositories/users.repository';
 
+const APPLICATION_EVENT_TYPES = new Set<EventType>([
+  EventType.MEDICATION_APPLICATION,
+  EventType.VITAL_SIGNS,
+  EventType.PROCEDURE,
+  EventType.EXAM,
+]);
+
 @Injectable()
 export class PrescriptionsService {
   constructor(
@@ -310,8 +317,8 @@ export class PrescriptionsService {
       item.status === PrescriptionStatus.PENDING &&
       new Date(item.scheduledTime) < now;
 
-    const applyEvent = item.clinicalEvents?.find(
-      (evt) => evt.eventType === EventType.MEDICATION_APPLICATION,
+    const applyEvent = item.clinicalEvents?.find((evt) =>
+      APPLICATION_EVENT_TYPES.has(evt.eventType),
     );
 
     return {
