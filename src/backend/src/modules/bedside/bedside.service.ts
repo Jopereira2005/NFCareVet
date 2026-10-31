@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  ConflictException,
   Logger,
 } from '@nestjs/common';
 import { BedsideRepository } from './bedside.repository';
@@ -240,7 +241,37 @@ export class BedsideService {
     userId: string,
     bedsideNotes?: string,
     metrics?: Record<string, any>,
+    idempotencyKey?: string,
   ): Promise<ApplyMedicationResponseDto> {
+    const trimmedKey = idempotencyKey?.trim() || undefined;
+
+    if (trimmedKey) {
+      const existingEvent =
+        await this.bedsideRepository.findClinicalEventByIdempotencyKey(
+          trimmedKey,
+        );
+
+      if (existingEvent) {
+        if (existingEvent.prescriptionItemId && existingEvent.prescriptionItemId !== itemId) {
+          throw new ConflictException(
+            'Esta chave de idempotência (Idempotency-Key) já foi utilizada para outro item de prescrição.',
+          );
+        }
+
+        if (existingEvent.prescriptionItem) {
+          this.logger.log(
+            `[BEDSIDE] Requisição idempotente detectada (Idempotency-Key=${trimmedKey}): retornando resultado já registrado para itemId=${itemId}.`,
+          );
+          const { prescriptionItem, ...clinicalEventData } = existingEvent;
+          return {
+            message: 'Procedimento registrado com sucesso',
+            prescriptionItem,
+            clinicalEvent: clinicalEventData,
+          };
+        }
+      }
+    }
+
     const item = await this.bedsideRepository.findPrescriptionItemById(itemId);
 
     if (!item) {
@@ -261,6 +292,7 @@ export class BedsideService {
         userId,
         bedsideNotes,
         metrics,
+        trimmedKey,
       );
 
       this.logger.log(
@@ -273,7 +305,11 @@ export class BedsideService {
         clinicalEvent,
       };
     } catch (error) {
-      if (error instanceof NotFoundException || error instanceof BadRequestException) {
+      if (
+        error instanceof NotFoundException ||
+        error instanceof BadRequestException ||
+        error instanceof ConflictException
+      ) {
         throw error;
       }
       this.logger.error(

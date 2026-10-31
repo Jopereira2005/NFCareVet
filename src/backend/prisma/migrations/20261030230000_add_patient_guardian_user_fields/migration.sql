@@ -15,3 +15,10 @@ ALTER TABLE "guardians"
 -- AlterTable
 ALTER TABLE "patients"
   ADD COLUMN "treatments" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[];
+
+-- AlterTable
+ALTER TABLE "clinical_events"
+  ADD COLUMN "idempotency_key" VARCHAR(64);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "clinical_events_idempotency_key_key" ON "clinical_events"("idempotency_key");

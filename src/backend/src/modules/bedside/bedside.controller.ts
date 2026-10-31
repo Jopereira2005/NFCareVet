@@ -1,14 +1,16 @@
-import { Controller, Get, Post, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, Headers } from '@nestjs/common';
 import {
   ApiTags,
   ApiBearerAuth,
   ApiOperation,
   ApiParam,
+  ApiHeader,
   ApiOkResponse,
   ApiNotFoundResponse,
   ApiUnauthorizedResponse,
   ApiForbiddenResponse,
   ApiBadRequestResponse,
+  ApiConflictResponse,
 } from '@nestjs/swagger';
 import { UserRole } from '@prisma/client';
 import { BedsideService } from './bedside.service';
@@ -90,21 +92,29 @@ export class BedsideController {
   @Roles(UserRole.ADMIN, UserRole.VET)
   @Post('items/:id/apply')
   @ApiOperation({
-    summary: 'Checar e aplicar item de prescrição',
+    summary: 'Checar e aplicar item de prescrição (com suporte a Idempotency-Key offline)',
     description:
-      'Registra a administração de medicamento ou execução de procedimento à beira do leito, alterando o status para APPLIED e gravando o evento clínico no prontuário.',
+      'Registra a administração de medicamento ou execução de procedimento à beira do leito, alterando o status para APPLIED e gravando o evento clínico no prontuário. Aceita o header opcional Idempotency-Key para evitar duplicidade ao descarregar a fila offline.',
   })
   @ApiParam({
     name: 'id',
     example: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
     description: 'ID do item da prescrição médica (PrescriptionItem)',
   })
+  @ApiHeader({
+    name: 'Idempotency-Key',
+    required: false,
+    description: 'UUID único gerado no cliente para garantir idempotência em reenvios da fila offline',
+  })
   @ApiOkResponse({
-    description: 'Medicação/item aplicado com sucesso.',
+    description: 'Medicação/item aplicado com sucesso (ou replay idempotente).',
     type: ApplyMedicationResponseDto,
   })
   @ApiBadRequestResponse({
-    description: 'Item já aplicado anteriormente ou dados inválidos.',
+    description: 'Item já aplicado anteriormente por outra requisição ou dados inválidos.',
+  })
+  @ApiConflictResponse({
+    description: 'Chave Idempotency-Key já utilizada para outro item.',
   })
   @ApiNotFoundResponse({
     description: 'Item da prescrição ou usuário não encontrado.',
@@ -119,12 +129,14 @@ export class BedsideController {
     @Param('id') itemId: string,
     @CurrentUser('userId') userId: string,
     @Body() applyMedicationDto: ApplyMedicationDto,
+    @Headers('idempotency-key') idempotencyKey?: string,
   ): Promise<ApplyMedicationResponseDto> {
     return this.bedsideService.applyMedication(
       itemId,
       userId,
       applyMedicationDto?.bedsideNotes,
       applyMedicationDto?.metrics,
+      idempotencyKey,
     );
   }
 
@@ -139,6 +151,11 @@ export class BedsideController {
     name: 'id',
     example: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
     description: 'ID do item da prescrição',
+  })
+  @ApiHeader({
+    name: 'Idempotency-Key',
+    required: false,
+    description: 'UUID único gerado no cliente para garantir idempotência em reenvios da fila offline',
   })
   @ApiOkResponse({
     description: 'Item aplicado com sucesso.',
@@ -157,12 +174,14 @@ export class BedsideController {
     @Param('id') itemId: string,
     @CurrentUser('userId') userId: string,
     @Body() applyMedicationDto: ApplyMedicationDto,
+    @Headers('idempotency-key') idempotencyKey?: string,
   ): Promise<ApplyMedicationResponseDto> {
     return this.bedsideService.applyMedication(
       itemId,
       userId,
       applyMedicationDto?.bedsideNotes,
       applyMedicationDto?.metrics,
+      idempotencyKey,
     );
   }
 }

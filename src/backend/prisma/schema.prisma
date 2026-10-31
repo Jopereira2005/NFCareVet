@@ -216,6 +216,7 @@ model ClinicalEvent {
   prescriptionItem   PrescriptionItem? @relation(fields: [prescriptionItemId], references: [id], onDelete: SetNull)
   userId             String            @map("user_id")
   user               User              @relation("ExecutedByUser", fields: [userId], references: [id], onDelete: Restrict)
+  idempotencyKey     String?           @unique @map("idempotency_key") @db.VarChar(64)
   eventType          EventType         @map("event_type")
   title              String            @db.VarChar(120)
   description        String?

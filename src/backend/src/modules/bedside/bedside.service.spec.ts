@@ -41,6 +41,7 @@ describe('BedsideService', () => {
     repository = {
       findTagWithActiveHospitalization: jest.fn(),
       findPrescriptionItemById: jest.fn(),
+      findClinicalEventByIdempotencyKey: jest.fn(),
       applyPrescriptionItem: jest.fn(),
     };
 
@@ -109,6 +110,34 @@ describe('BedsideService', () => {
       await expect(
         service.applyMedication('item-1', 'user-1'),
       ).rejects.toThrow(BadRequestException);
+    });
+
+    it('should return existing response without re-applying when Idempotency-Key matches an already recorded event', async () => {
+      const mockAppliedItem = {
+        id: 'item-1',
+        title: 'Cefalotina',
+        status: PrescriptionStatus.APPLIED,
+        itemType: PrescriptionItemType.MEDICATION,
+      };
+      repository.findClinicalEventByIdempotencyKey.mockResolvedValue({
+        id: 'evt-1',
+        prescriptionItemId: 'item-1',
+        idempotencyKey: 'req-uuid-1',
+        title: 'Execução de item: Cefalotina',
+        prescriptionItem: mockAppliedItem,
+      });
+
+      const result = await service.applyMedication(
+        'item-1',
+        'user-1',
+        'Notes',
+        undefined,
+        'req-uuid-1',
+      );
+
+      expect(result.message).toBe('Procedimento registrado com sucesso');
+      expect(result.prescriptionItem.status).toBe(PrescriptionStatus.APPLIED);
+      expect(repository.applyPrescriptionItem).not.toHaveBeenCalled();
     });
   });
 });

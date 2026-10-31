@@ -139,11 +139,21 @@ export class BedsideRepository {
     });
   }
 
+  async findClinicalEventByIdempotencyKey(idempotencyKey: string) {
+    return this.prisma.clinicalEvent.findUnique({
+      where: { idempotencyKey },
+      include: {
+        prescriptionItem: true,
+      },
+    });
+  }
+
   async applyPrescriptionItem(
     itemId: string,
     userId: string,
     bedsideNotes?: string,
     metrics?: Record<string, any>,
+    idempotencyKey?: string,
   ): Promise<{ updatedItem: PrescriptionItem; clinicalEvent: ClinicalEvent }> {
     return this.prisma.$transaction(async (tx) => {
       const item = await tx.prescriptionItem.findUniqueOrThrow({
@@ -170,6 +180,7 @@ export class BedsideRepository {
           hospitalizationId: item.prescription.hospitalizationId,
           prescriptionItemId: item.id,
           userId,
+          idempotencyKey: idempotencyKey || null,
           eventType,
           title: `Execução de item: ${item.title}`,
           description: bedsideNotes || null,
