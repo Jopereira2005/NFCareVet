@@ -1,7 +1,14 @@
-import type { ICreateUserPayload, IUpdateUserPayload, IUser } from '@nfcarevet/common';
+import type {
+  ICreateUserPayload,
+  IPatientPhotoUploadUrlRequest,
+  IPatientPhotoUploadUrlResponse,
+  IUpdateUserPayload,
+  IUser,
+} from '@nfcarevet/common';
 import { UserRole } from '@nfcarevet/common';
 
 import { findMockCollarByUid, setMockUserBadge } from '@/mocks/nfc-registry.mock';
+import { useSessionStore } from '@/stores/useSessionStore';
 
 import { ApiError } from './api-error';
 import { httpClient } from './http-client';
@@ -14,7 +21,8 @@ const USERS_MOCK: IUser[] = [
     email: 'admin@nfcarevet.com',
     role: UserRole.ADMIN,
     badgeUid: 'BADGE001',
-    avatarUrl: null,
+    avatarUrl:
+      'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=256&h=256&q=80',
     active: true,
     createdAt: '2025-01-15T08:00:00.000Z',
   },
@@ -24,7 +32,8 @@ const USERS_MOCK: IUser[] = [
     email: 'madalena@nfcarevet.com',
     role: UserRole.VET,
     badgeUid: 'BADGE002',
-    avatarUrl: null,
+    avatarUrl:
+      'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=256&h=256&q=80',
     active: true,
     createdAt: '2025-01-20T09:00:00.000Z',
   },
@@ -34,7 +43,8 @@ const USERS_MOCK: IUser[] = [
     email: 'paxe@nfcarevet.com',
     role: UserRole.VET,
     badgeUid: 'BADGE004',
-    avatarUrl: null,
+    avatarUrl:
+      'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=256&h=256&q=80',
     active: true,
     createdAt: '2025-02-01T10:00:00.000Z',
   },
@@ -44,7 +54,8 @@ const USERS_MOCK: IUser[] = [
     email: 'rafael@nfcarevet.com',
     role: UserRole.VET,
     badgeUid: 'BADGE005',
-    avatarUrl: null,
+    avatarUrl:
+      'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=256&h=256&q=80',
     active: true,
     createdAt: '2025-02-05T10:30:00.000Z',
   },
@@ -54,7 +65,8 @@ const USERS_MOCK: IUser[] = [
     email: 'recepcao@nfcarevet.com',
     role: UserRole.REC,
     badgeUid: 'BADGE003',
-    avatarUrl: null,
+    avatarUrl:
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=256&h=256&q=80',
     active: true,
     createdAt: '2025-02-10T11:00:00.000Z',
   },
@@ -64,7 +76,8 @@ const USERS_MOCK: IUser[] = [
     email: 'fernanda@nfcarevet.com',
     role: UserRole.REC,
     badgeUid: 'BADGE006',
-    avatarUrl: null,
+    avatarUrl:
+      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&h=256&q=80',
     active: true,
     createdAt: '2025-02-15T14:00:00.000Z',
   },
@@ -72,10 +85,31 @@ const USERS_MOCK: IUser[] = [
 
 let mockUsersList = [...USERS_MOCK];
 
+const syncCurrentSessionIfSelf = (updatedUser: IUser) => {
+  const currentUser = useSessionStore.getState().user;
+  if (
+    currentUser &&
+    (currentUser.id === updatedUser.id ||
+      currentUser.email.toLowerCase() === updatedUser.email.toLowerCase())
+  ) {
+    useSessionStore.getState().updateCurrentUser({
+      name: updatedUser.name,
+      email: updatedUser.email,
+      role: updatedUser.role,
+      badgeUid: updatedUser.badgeUid,
+      avatarUrl: updatedUser.avatarUrl,
+    });
+  }
+};
+
 export const userService = {
   async list(): Promise<IUser[]> {
-    if (USE_MOCKS) return mockResponse(mockUsersList);
+    if (USE_MOCKS) {
+      for (const u of mockUsersList) syncCurrentSessionIfSelf(u);
+      return mockResponse(mockUsersList);
+    }
     const { data } = await httpClient.get<IUser[]>('/users');
+    for (const u of data) syncCurrentSessionIfSelf(u);
     return data;
   },
 
@@ -193,9 +227,11 @@ export const userService = {
       if (updatedBadge !== undefined) {
         setMockUserBadge(updated.id, updated.name, updated.badgeUid ?? null);
       }
+      syncCurrentSessionIfSelf(updated);
       return mockResponse(updated);
     }
     const { data } = await httpClient.patch<IUser>(`/users/${id}`, payload);
+    syncCurrentSessionIfSelf(data);
     return data;
   },
 
@@ -205,6 +241,27 @@ export const userService = {
       return mockResponse({ message: 'Usuário desativado com sucesso.' });
     }
     const { data } = await httpClient.delete<{ message: string }>(`/users/${id}`);
+    return data;
+  },
+
+  async requestAvatarUploadUrl(
+    userId: string,
+    payload: IPatientPhotoUploadUrlRequest,
+  ): Promise<IPatientPhotoUploadUrlResponse> {
+    if (USE_MOCKS) {
+      const key = `users/${userId}/${Date.now()}.webp`;
+      return mockResponse({
+        uploadUrl: `mock://r2-presigned/${key}`,
+        publicUrl:
+          'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=256&h=256&q=80',
+        key,
+        expiresIn: 120,
+      });
+    }
+    const { data } = await httpClient.post<IPatientPhotoUploadUrlResponse>(
+      `/users/${userId}/avatar-upload-url`,
+      payload,
+    );
     return data;
   },
 };

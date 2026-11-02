@@ -12,6 +12,7 @@ interface SessionState {
   /** "Lembrar de mim": keeps the session after the browser closes (localStorage instead of sessionStorage). */
   remember: boolean;
   signIn: (response: IAuthResponse, remember: boolean) => void;
+  updateCurrentUser: (patch: Partial<CurrentUser>) => void;
   signOut: () => void;
 }
 
@@ -40,6 +41,8 @@ export const useSessionStore = create<SessionState>()(
       user: null,
       remember: false,
       signIn: ({ accessToken, user }, remember) => set({ accessToken, user, remember }),
+      updateCurrentUser: (patch) =>
+        set((state) => (state.user ? { user: { ...state.user, ...patch } } : state)),
       signOut: () => set({ accessToken: null, user: null, remember: false }),
     }),
     {

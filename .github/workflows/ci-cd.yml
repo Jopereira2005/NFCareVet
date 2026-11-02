@@ -65,7 +65,6 @@ jobs:
           username: ${{ secrets.ORACLE_SSH_USER || 'ubuntu' }}
           key: ${{ secrets.ORACLE_SSH_PRIVATE_KEY }}
           port: ${{ secrets.ORACLE_SSH_PORT || 22 }}
-          script_stop: true
           script: |
             set -e
 
@@ -100,11 +99,9 @@ jobs:
               local key="$1"
               local val="$2"
               if [ -n "$val" ]; then
-                if grep -q "^${key}=" .env.prod; then
-                  sed -i "s|^${key}=.*|${key}=${val}|" .env.prod
-                else
-                  echo "${key}=${val}" >> .env.prod
-                fi
+                grep -v "^${key}=" .env.prod > .env.prod.tmp || true
+                printf '%s=%s\n' "$key" "$val" >> .env.prod.tmp
+                mv .env.prod.tmp .env.prod
               fi
             }
 

@@ -1,5 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks';
-import { TriangleAlert } from 'lucide-react';
+import { TriangleAlert, User } from 'lucide-react';
 
 import { Avatar, Button, Modal } from '@/components/ui';
 import { offlineDb } from '@/db/offline-database';
@@ -36,7 +36,12 @@ export function LogoutModal({ user, onClose }: LogoutModalProps) {
       }
     >
       <div className={styles['logout-modal__user']}>
-        <Avatar src={user.avatarUrl ?? undefined} alt="" size={40} />
+        <Avatar
+          src={user.avatarUrl ?? undefined}
+          alt=""
+          size={40}
+          fallback={<User aria-hidden="true" />}
+        />
         <span className={styles['logout-modal__user__texts']}>
           <span className={styles['logout-modal__texts__name']}>{user.name}</span>
           <span className={styles['logout-modal__texts__email']}>{user.email}</span>

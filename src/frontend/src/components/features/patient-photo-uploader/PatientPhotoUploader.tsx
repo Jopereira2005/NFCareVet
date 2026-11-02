@@ -1,8 +1,12 @@
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
-import { Camera, Trash2 } from 'lucide-react';
+import { Camera, Crop, Trash2 } from 'lucide-react';
 import { ALLOWED_PATIENT_PHOTO_MIME_TYPES } from '@nfcarevet/common';
 
 import { PawIcon } from '@/assets/icons/paw-icon';
+import {
+  ImageCropperModal,
+  type CroppingTarget,
+} from '@/components/features/image-cropper-modal/ImageCropperModal';
 import { Avatar, Button } from '@/components/ui';
 import {
   usePatientPhotoUpload,
@@ -47,6 +51,15 @@ export function PatientPhotoUploader(props: PatientPhotoUploaderProps) {
 
 function ImmediatePhotoUploader({ patient }: { patient: Patient }) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [croppingTarget, setCroppingTarget] = useState<CroppingTarget | null>(null);
+  const [localError, setLocalError] = useState<string | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (croppingTarget) URL.revokeObjectURL(croppingTarget.url);
+    };
+  }, [croppingTarget]);
+
   const {
     uploadPhoto,
     removePhoto,
@@ -59,12 +72,21 @@ function ImmediatePhotoUploader({ patient }: { patient: Patient }) {
 
   const isBusy = isUploading || isRemoving;
 
-  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     event.target.value = '';
     if (!file) return;
 
-    await uploadPhoto(file);
+    try {
+      validatePatientPhotoFile(file);
+      setLocalError(null);
+      if (croppingTarget) URL.revokeObjectURL(croppingTarget.url);
+      setCroppingTarget({ file, url: URL.createObjectURL(file) });
+    } catch (err) {
+      setLocalError(
+        err instanceof Error ? err.message : 'Arquivo de imagem inválido.',
+      );
+    }
   };
 
   return (
@@ -83,8 +105,7 @@ function ImmediatePhotoUploader({ patient }: { patient: Patient }) {
         <div className={styles['photo-uploader__info']}>
           <p className={styles['photo-uploader__title']}>Foto do paciente</p>
           <p className={styles['photo-uploader__hint']}>
-            JPEG, PNG ou WebP até 3 MB. A imagem é comprimida automaticamente
-            antes do envio.
+            JPEG, PNG ou WebP até 3 MB. Ajuste o enquadramento antes do envio.
           </p>
 
           <div className={styles['photo-uploader__actions']}>
@@ -144,10 +165,27 @@ function ImmediatePhotoUploader({ patient }: { patient: Patient }) {
         </>
       )}
 
-      {error && (
+      {(localError ?? error) && (
         <p className={styles['photo-uploader__error']} role="alert">
-          {error}
+          {localError ?? error}
         </p>
+      )}
+
+      {croppingTarget && (
+        <ImageCropperModal
+          target={croppingTarget}
+          shape="rounded"
+          confirmLabel="Confirmar e enviar"
+          onCancel={() => {
+            URL.revokeObjectURL(croppingTarget.url);
+            setCroppingTarget(null);
+          }}
+          onConfirm={(croppedFile) => {
+            URL.revokeObjectURL(croppingTarget.url);
+            setCroppingTarget(null);
+            void uploadPhoto(croppedFile);
+          }}
+        />
       )}
     </div>
   );
@@ -161,6 +199,8 @@ function StagedPhotoUploader({
   disabled = false,
 }: StagedPatientProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [originalFile, setOriginalFile] = useState<File | null>(null);
+  const [croppingTarget, setCroppingTarget] = useState<CroppingTarget | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>();
   const [localError, setLocalError] = useState<string | null>(null);
 
@@ -169,6 +209,12 @@ function StagedPhotoUploader({
       if (previewUrl) URL.revokeObjectURL(previewUrl);
     };
   }, [previewUrl]);
+
+  useEffect(() => {
+    return () => {
+      if (croppingTarget) URL.revokeObjectURL(croppingTarget.url);
+    };
+  }, [croppingTarget]);
 
   const isUploading = step !== 'idle';
   const isBusy = disabled || isUploading;
@@ -181,14 +227,13 @@ function StagedPhotoUploader({
     try {
       validatePatientPhotoFile(file);
       setLocalError(null);
-      setPreviewUrl(URL.createObjectURL(file));
-      onStagedFileChange(file);
+      setOriginalFile(file);
+      if (croppingTarget) URL.revokeObjectURL(croppingTarget.url);
+      setCroppingTarget({ file, url: URL.createObjectURL(file) });
     } catch (err) {
       setLocalError(
         err instanceof Error ? err.message : 'Arquivo de imagem inválido.',
       );
-      setPreviewUrl(undefined);
-      onStagedFileChange(null);
     }
   };
 
@@ -210,8 +255,7 @@ function StagedPhotoUploader({
             Foto do paciente (opcional)
           </p>
           <p className={styles['photo-uploader__hint']}>
-            JPEG, PNG ou WebP até 3 MB. Será comprimida e enviada após o
-            cadastro.
+            JPEG, PNG ou WebP até 3 MB. Ajuste o enquadramento antes do envio.
           </p>
 
           <div className={styles['photo-uploader__actions']}>
@@ -233,13 +277,33 @@ function StagedPhotoUploader({
               <span>{stagedFile ? 'Trocar foto' : 'Selecionar foto'}</span>
             </Button>
 
+            {stagedFile && originalFile && (
+              <Button
+                type="button"
+                variant="outlined"
+                onClick={() => {
+                  if (croppingTarget) URL.revokeObjectURL(croppingTarget.url);
+                  setCroppingTarget({
+                    file: originalFile,
+                    url: URL.createObjectURL(originalFile),
+                  });
+                }}
+                disabled={isBusy}
+              >
+                <Crop aria-hidden="true" />
+                <span>Enquadrar</span>
+              </Button>
+            )}
+
             {stagedFile && (
               <Button
                 type="button"
                 variant="danger"
                 onClick={() => {
                   setLocalError(null);
+                  if (previewUrl) URL.revokeObjectURL(previewUrl);
                   setPreviewUrl(undefined);
+                  setOriginalFile(null);
                   onStagedFileChange(null);
                 }}
                 disabled={isBusy}
@@ -279,6 +343,24 @@ function StagedPhotoUploader({
         <p className={styles['photo-uploader__error']} role="alert">
           {localError}
         </p>
+      )}
+
+      {croppingTarget && (
+        <ImageCropperModal
+          target={croppingTarget}
+          shape="rounded"
+          onCancel={() => {
+            URL.revokeObjectURL(croppingTarget.url);
+            setCroppingTarget(null);
+          }}
+          onConfirm={(croppedFile) => {
+            URL.revokeObjectURL(croppingTarget.url);
+            setCroppingTarget(null);
+            if (previewUrl) URL.revokeObjectURL(previewUrl);
+            setPreviewUrl(URL.createObjectURL(croppedFile));
+            onStagedFileChange(croppedFile);
+          }}
+        />
       )}
     </div>
   );

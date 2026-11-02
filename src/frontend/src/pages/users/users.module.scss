@@ -199,6 +199,49 @@
   gap: $space-md;
 }
 
+.user-modal-form__avatar-box {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+  padding: $space-md;
+  border-radius: $radius-base;
+  background: $gray-scale-light;
+  border: 1px dashed rgba($gray-scale-medium, 0.45);
+}
+
+.user-modal-form__avatar-info {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.user-modal-form__avatar-title {
+  margin: 0;
+  color: $dark-color;
+  font-size: $text-sm;
+  font-weight: $font-semibold;
+}
+
+.user-modal-form__avatar-hint {
+  margin: 0;
+  color: $gray-scale-medium;
+  font-size: $text-xs;
+  line-height: 1.4;
+}
+
+.user-modal-form__avatar-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-xs;
+  margin-top: $space-xs;
+}
+
+.user-modal-form__avatar-input {
+  display: none;
+}
+
 .user-modal-form__nfc-box {
   display: flex;
   flex-direction: column;

@@ -86,6 +86,8 @@ async function main() {
       passwordHash: defaultPasswordHash,
       role: UserRole.ADMIN,
       badgeUid: 'BADGE001',
+      avatarUrl:
+        'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=256&h=256&q=80',
       active: true,
     },
   });
@@ -98,6 +100,8 @@ async function main() {
       passwordHash: vetPasswordHash,
       role: UserRole.VET,
       badgeUid: 'BADGE002',
+      avatarUrl:
+        'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=256&h=256&q=80',
       active: true,
     },
   });
@@ -110,6 +114,8 @@ async function main() {
       passwordHash: vetPasswordHash,
       role: UserRole.VET,
       badgeUid: 'BADGE004',
+      avatarUrl:
+        'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=256&h=256&q=80',
       active: true,
     },
   });
@@ -122,6 +128,8 @@ async function main() {
       passwordHash: vetPasswordHash,
       role: UserRole.VET,
       badgeUid: 'BADGE005',
+      avatarUrl:
+        'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=256&h=256&q=80',
       active: true,
     },
   });
@@ -134,6 +142,8 @@ async function main() {
       passwordHash: recPasswordHash,
       role: UserRole.REC,
       badgeUid: 'BADGE003',
+      avatarUrl:
+        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=256&h=256&q=80',
       active: true,
     },
   });
@@ -146,6 +156,8 @@ async function main() {
       passwordHash: recPasswordHash,
       role: UserRole.REC,
       badgeUid: 'BADGE006',
+      avatarUrl:
+        'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&h=256&q=80',
       active: true,
     },
   });
@@ -158,6 +170,8 @@ async function main() {
       passwordHash: vetPasswordHash,
       role: UserRole.VET,
       badgeUid: 'BADGE999',
+      avatarUrl:
+        'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=256&h=256&q=80',
       active: false,
     },
   });

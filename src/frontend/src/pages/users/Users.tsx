@@ -1,9 +1,11 @@
-import { useState, type FormEvent } from 'react';
+import { useEffect, useId, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import type { IUser } from '@nfcarevet/common';
 import { UserRole } from '@nfcarevet/common';
 import {
   Calendar,
+  Camera,
   CheckCircle2,
+  Crop,
   KeyRound,
   Nfc,
   Pencil,
@@ -13,12 +15,17 @@ import {
   ShieldAlert,
   ShieldCheck,
   Stethoscope,
+  Trash2,
   UserCheck,
   UserPlus,
   Users as UsersIcon,
   UserX,
 } from 'lucide-react';
 
+import {
+  ImageCropperModal,
+  type CroppingTarget,
+} from '@/components/features/image-cropper-modal/ImageCropperModal';
 import { PageHeading, SectionHeader } from '@/components/layout';
 import {
   Avatar,
@@ -44,8 +51,11 @@ import {
 import { useNfcReader } from '@/hooks/useNfcReader';
 import type { NfcReading } from '@/interfaces/nfc.types';
 import { findMockCollarByUid } from '@/mocks/nfc-registry.mock';
+import { patientService } from '@/services/patient.service';
+import { userService } from '@/services/user.service';
 import { useSessionStore } from '@/stores/useSessionStore';
 import { showToast } from '@/stores/useToastStore';
+import { compressPatientImage, validatePatientPhotoFile } from '@/utils/compressPatientImage';
 import { normalizeText } from '@/utils/normalizeText';
 import { pluralize } from '@/utils/pluralize';
 
@@ -363,6 +373,8 @@ function UserFormModal({ user, allUsers, onClose }: UserFormModalProps) {
   const isInitiallyInactive = Boolean(user && !user.active);
   const createUser = useCreateUser();
   const updateUser = useUpdateUser();
+  const fileInputId = useId();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [name, setName] = useState(user?.name ?? '');
   const [email, setEmail] = useState(user?.email ?? '');
@@ -371,6 +383,70 @@ function UserFormModal({ user, allUsers, onClose }: UserFormModalProps) {
   const [badgeUid, setBadgeUid] = useState(user?.badgeUid ?? '');
   const [active, setActive] = useState(user ? user.active : true);
   const [formError, setFormError] = useState<string | null>(null);
+  const [originalAvatarFile, setOriginalAvatarFile] = useState<File | null>(null);
+  const [croppingTarget, setCroppingTarget] = useState<CroppingTarget | null>(null);
+  const [pendingAvatarFile, setPendingAvatarFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [avatarRemoved, setAvatarRemoved] = useState(false);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
+
+  useEffect(() => {
+    return () => {
+      if (croppingTarget) URL.revokeObjectURL(croppingTarget.url);
+    };
+  }, [croppingTarget]);
+
+  const handleAvatarFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    try {
+      validatePatientPhotoFile(file);
+    } catch (err) {
+      const validationError = err instanceof Error ? err.message : 'Imagem inválida.';
+      showToast({
+        tone: 'warning',
+        title: 'Arquivo inválido',
+        description: validationError,
+      });
+      return;
+    }
+
+    setOriginalAvatarFile(file);
+    if (croppingTarget) URL.revokeObjectURL(croppingTarget.url);
+    setCroppingTarget({ file, url: URL.createObjectURL(file) });
+  };
+
+  const handleRemoveAvatar = () => {
+    if (previewUrl) URL.revokeObjectURL(previewUrl);
+    if (croppingTarget) URL.revokeObjectURL(croppingTarget.url);
+    setOriginalAvatarFile(null);
+    setCroppingTarget(null);
+    setPendingAvatarFile(null);
+    setPreviewUrl(null);
+    setAvatarRemoved(true);
+  };
+
+  const uploadAvatarToR2 = async (targetUserId: string, file: File): Promise<string> => {
+    const compressed = await compressPatientImage(file);
+    const presigned = await userService.requestAvatarUploadUrl(targetUserId, {
+      mimeType: compressed.mimeType,
+      fileSize: compressed.fileSize,
+    });
+    await patientService.uploadToPresignedUrl(
+      presigned.uploadUrl,
+      compressed.blob,
+      compressed.mimeType,
+    );
+    return presigned.publicUrl;
+  };
 
   const validateBadgeConflict = (rawUid: string): string | null => {
     const sanitized = rawUid.replace(/[:\s-]/g, '').toUpperCase();
@@ -477,61 +553,71 @@ function UserFormModal({ user, allUsers, onClose }: UserFormModalProps) {
 
     setFormError(null);
 
-    if (isEditing && user) {
-      updateUser.mutate(
-        {
-          id: user.id,
-          payload: {
+    const runSave = async () => {
+      try {
+        if (isEditing && user) {
+          let nextAvatarUrl: string | null | undefined = undefined;
+          if (pendingAvatarFile) {
+            setIsUploadingAvatar(true);
+            nextAvatarUrl = await uploadAvatarToR2(user.id, pendingAvatarFile);
+            setIsUploadingAvatar(false);
+          } else if (avatarRemoved) {
+            nextAvatarUrl = null;
+          }
+
+          await updateUser.mutateAsync({
+            id: user.id,
+            payload: {
+              name: name.trim(),
+              email: email.trim().toLowerCase(),
+              role,
+              ...(password ? { password } : {}),
+              badgeUid: sanitizedBadge || '',
+              active,
+              ...(nextAvatarUrl !== undefined ? { avatarUrl: nextAvatarUrl } : {}),
+            },
+          });
+          onClose();
+        } else {
+          const created = await createUser.mutateAsync({
             name: name.trim(),
             email: email.trim().toLowerCase(),
             role,
-            ...(password ? { password } : {}),
-            badgeUid: sanitizedBadge || '',
+            password,
+            badgeUid: sanitizedBadge || undefined,
             active,
-          },
-        },
-        {
-          onSuccess: () => onClose(),
-          onError: (error) => {
-            setFormError(error.message);
-            showToast({
-              tone: 'warning',
-              title: error.message.toLowerCase().includes('coleira')
-                ? 'Tag de coleira detectada'
-                : 'Crachá já cadastrado',
-              description: error.message,
+          });
+
+          if (pendingAvatarFile) {
+            setIsUploadingAvatar(true);
+            const uploadedUrl = await uploadAvatarToR2(created.id, pendingAvatarFile);
+            await updateUser.mutateAsync({
+              id: created.id,
+              payload: { avatarUrl: uploadedUrl },
             });
-          },
-        },
-      );
-    } else {
-      createUser.mutate(
-        {
-          name: name.trim(),
-          email: email.trim().toLowerCase(),
-          role,
-          password,
-          badgeUid: sanitizedBadge || undefined,
-          active,
-        },
-        {
-          onSuccess: () => onClose(),
-          onError: (error) => {
-            setFormError(error.message);
-            showToast({
-              tone: 'warning',
-              title: error.message.toLowerCase().includes('coleira')
-                ? 'Tag de coleira detectada'
-                : 'Crachá já cadastrado',
-              description: error.message,
-            });
-          },
-        },
-      );
-    }
+            setIsUploadingAvatar(false);
+          }
+          onClose();
+        }
+      } catch (err) {
+        setIsUploadingAvatar(false);
+        const message = err instanceof Error ? err.message : 'Erro ao salvar colaborador.';
+        setFormError(message);
+        showToast({
+          tone: 'warning',
+          title: message.toLowerCase().includes('coleira')
+            ? 'Tag de coleira detectada'
+            : 'Não foi possível concluir',
+          description: message,
+        });
+      }
+    };
+
+    void runSave();
   };
 
-  const isSaving = createUser.isPending || updateUser.isPending;
+  const isSaving = createUser.isPending || updateUser.isPending || isUploadingAvatar;
+  const displayedAvatarUrl = previewUrl ?? (avatarRemoved ? undefined : (user?.avatarUrl ?? undefined));
 
   return (
     <Modal
@@ -595,6 +681,94 @@ function UserFormModal({ user, allUsers, onClose }: UserFormModalProps) {
               </div>
             </div>
           )
+        )}
+
+        <div className={styles['user-modal-form__avatar-box']}>
+          <Avatar
+            size={60}
+            src={displayedAvatarUrl}
+            alt={name || 'Avatar do colaborador'}
+            fallback={getInitials(name || 'Colaborador')}
+          />
+
+          <div className={styles['user-modal-form__avatar-info']}>
+            <p className={styles['user-modal-form__avatar-title']}>
+              Foto de Avatar (Opcional)
+            </p>
+            <p className={styles['user-modal-form__avatar-hint']}>
+              JPG, PNG ou WebP até 3 MB. Otimização automática para WebP (máx. 800×800 px).
+            </p>
+
+            <div className={styles['user-modal-form__avatar-actions']}>
+              <input
+                ref={fileInputRef}
+                id={fileInputId}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className={styles['user-modal-form__avatar-input']}
+                onChange={handleAvatarFileChange}
+                disabled={isSaving}
+              />
+              <Button
+                type="button"
+                variant="outlined"
+                disabled={isSaving}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Camera aria-hidden="true" />
+                <span>{displayedAvatarUrl ? 'Trocar foto' : 'Escolher foto'}</span>
+              </Button>
+
+              {pendingAvatarFile && originalAvatarFile && (
+                <Button
+                  type="button"
+                  variant="outlined"
+                  disabled={isSaving}
+                  onClick={() => {
+                    if (croppingTarget) URL.revokeObjectURL(croppingTarget.url);
+                    setCroppingTarget({
+                      file: originalAvatarFile,
+                      url: URL.createObjectURL(originalAvatarFile),
+                    });
+                  }}
+                >
+                  <Crop aria-hidden="true" />
+                  <span>Enquadrar</span>
+                </Button>
+              )}
+
+              {displayedAvatarUrl && (
+                <Button
+                  type="button"
+                  variant="outlined"
+                  disabled={isSaving}
+                  onClick={handleRemoveAvatar}
+                >
+                  <Trash2 aria-hidden="true" />
+                  <span>Remover</span>
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {croppingTarget && (
+          <ImageCropperModal
+            target={croppingTarget}
+            shape="circle"
+            onCancel={() => {
+              URL.revokeObjectURL(croppingTarget.url);
+              setCroppingTarget(null);
+            }}
+            onConfirm={(croppedFile) => {
+              URL.revokeObjectURL(croppingTarget.url);
+              setCroppingTarget(null);
+              if (previewUrl) URL.revokeObjectURL(previewUrl);
+              setPendingAvatarFile(croppedFile);
+              setPreviewUrl(URL.createObjectURL(croppedFile));
+              setAvatarRemoved(false);
+            }}
+          />
         )}
 
         <Input

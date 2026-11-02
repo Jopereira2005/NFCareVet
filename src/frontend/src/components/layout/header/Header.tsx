@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { UserRole } from '@nfcarevet/common';
-import { LogOut, ShieldUser } from 'lucide-react';
+import { LogOut, ShieldUser, User } from 'lucide-react';
 import { Link } from 'react-router';
 
 import { Logo } from '@/assets/Logo.tsx';
@@ -18,12 +18,29 @@ const ROLE_LABEL: Record<UserRole, string> = {
   [UserRole.REC]: 'Recepção',
 };
 
+const DEFAULT_AVATARS_BY_EMAIL: Record<string, string> = {
+  'admin@nfcarevet.com':
+    'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=256&h=256&q=80',
+  'madalena@nfcarevet.com':
+    'https://images.unsplash.com/photo-1594824476967-48c8b964273f?auto=format&fit=crop&w=256&h=256&q=80',
+  'paxe@nfcarevet.com':
+    'https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=256&h=256&q=80',
+  'rafael@nfcarevet.com':
+    'https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=256&h=256&q=80',
+  'recepcao@nfcarevet.com':
+    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=256&h=256&q=80',
+  'fernanda@nfcarevet.com':
+    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&h=256&q=80',
+};
+
 type HeaderProps = {
   user: CurrentUser;
 };
 
 export function Header({ user }: HeaderProps) {
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
+  const avatarSrc =
+    user.avatarUrl ?? DEFAULT_AVATARS_BY_EMAIL[user.email.toLowerCase()] ?? undefined;
 
   return (
     <header className={styles['header']}>
@@ -50,7 +67,12 @@ export function Header({ user }: HeaderProps) {
             title="Sair da conta"
             onClick={() => setIsLogoutOpen(true)}
           >
-            <Avatar src={user.avatarUrl ?? undefined} alt="" size={32} />
+            <Avatar
+              src={avatarSrc}
+              alt=""
+              size={32}
+              fallback={<User aria-hidden="true" />}
+            />
             <span className={styles['header__profile__logout']} aria-hidden="true">
               <LogOut />
             </span>
@@ -58,7 +80,12 @@ export function Header({ user }: HeaderProps) {
         </div>
       </div>
 
-      {isLogoutOpen && <LogoutModal user={user} onClose={() => setIsLogoutOpen(false)} />}
+      {isLogoutOpen && (
+        <LogoutModal
+          user={{ ...user, avatarUrl: avatarSrc }}
+          onClose={() => setIsLogoutOpen(false)}
+        />
+      )}
     </header>
   );
 }

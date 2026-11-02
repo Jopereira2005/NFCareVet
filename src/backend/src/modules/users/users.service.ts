@@ -9,10 +9,18 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 import { User } from '@prisma/client';
+import { StorageService } from '../storage/storage.service';
+import {
+  GeneratePhotoUploadUrlDto,
+  PhotoUploadUrlResponseDto,
+} from '../patients/dto/patient-photo-upload.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(
+    private readonly usersRepository: UsersRepository,
+    private readonly storageService: StorageService,
+  ) {}
 
   async create(createUserDto: CreateUserDto): Promise<UserResponseDto> {
     const existingEmail = await this.usersRepository.findByEmail(
@@ -77,6 +85,23 @@ export class UsersService {
     return this.toResponseDto(user);
   }
 
+  async generateAvatarUploadUrl(
+    userId: string,
+    dto: GeneratePhotoUploadUrlDto,
+  ): Promise<PhotoUploadUrlResponseDto> {
+    const existing = await this.usersRepository.findById(userId);
+    if (!existing) {
+      throw new NotFoundException(`Usuário com ID "${userId}" não encontrado.`);
+    }
+
+    return this.storageService.generatePresignedUploadUrl(
+      userId,
+      dto.mimeType,
+      dto.fileSize,
+      'users',
+    );
+  }
+
   async update(
     id: string,
     updateUserDto: UpdateUserDto,
@@ -132,6 +157,8 @@ export class UsersService {
       }
     }
 
+    const previousAvatarUrl = existingUser.avatarUrl;
+
     const dataToUpdate: any = {
       ...(updateUserDto.name && { name: updateUserDto.name }),
       ...(updateUserDto.email && { email: updateUserDto.email.toLowerCase() }),
@@ -155,6 +182,15 @@ export class UsersService {
     }
 
     const updatedUser = await this.usersRepository.update(id, dataToUpdate);
+
+    if (
+      updateUserDto.avatarUrl !== undefined &&
+      previousAvatarUrl &&
+      previousAvatarUrl !== updatedUser.avatarUrl
+    ) {
+      await this.storageService.deleteFile(previousAvatarUrl);
+    }
+
     return this.toResponseDto(updatedUser);
   }
 

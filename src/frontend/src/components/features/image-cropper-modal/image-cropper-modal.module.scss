@@ -1,0 +1,138 @@
+@use 'abstracts' as *;
+
+.cropper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-md;
+}
+
+.cropper__stage {
+  position: relative;
+  width: 26rem;
+  height: 26rem;
+  border-radius: $radius-lg;
+  background: #141a17;
+  overflow: hidden;
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+  box-shadow: inset 0 0 0 1px rgba($light-color, 0.12);
+
+  &--dragging {
+    cursor: grabbing;
+  }
+}
+
+.cropper__image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  max-width: none;
+  max-height: none;
+  pointer-events: none;
+  user-select: none;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.cropper__mask {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border: 2px solid rgba($light-color, 0.9);
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.48);
+
+  &--rounded {
+    margin: 1.6rem;
+    border-radius: 2.2rem;
+  }
+
+  &--circle {
+    margin: 1.6rem;
+    border-radius: $radius-full;
+  }
+}
+
+.cropper__grid {
+  position: absolute;
+  inset: 1.6rem;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba($light-color, 0.22) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba($light-color, 0.22) 1px, transparent 1px);
+  background-size: 33.333% 33.333%;
+
+  &--rounded {
+    border-radius: 2.2rem;
+  }
+
+  &--circle {
+    border-radius: $radius-full;
+  }
+}
+
+.cropper__hint {
+  margin: 0;
+  color: $gray-scale-medium;
+  font-size: $text-xs;
+  text-align: center;
+}
+
+.cropper__controls {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  width: 100%;
+  max-width: 34rem;
+  padding: $space-sm $space-md;
+  border-radius: $radius-base;
+  background: $gray-scale-light;
+  box-sizing: border-box;
+}
+
+.cropper__zoom-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid rgba($gray-scale-medium, 0.3);
+  border-radius: $radius-sm;
+  background: $light-color;
+  color: $dark-color;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: rgba($primary-color, 0.08);
+    color: $primary-color;
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  > svg {
+    @include icon-size(1.5rem);
+  }
+}
+
+.cropper__slider {
+  flex: 1 1 0;
+  min-width: 0;
+  width: 100%;
+  accent-color: $primary-color;
+  cursor: pointer;
+}
+
+.cropper__zoom-value {
+  min-width: 3.8rem;
+  color: $dark-color;
+  font-family: $font-family-mono;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+  text-align: right;
+}

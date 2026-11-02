@@ -16,6 +16,8 @@ const MOCK_AUTH_RESPONSE: IAuthResponse = {
     email: 'camila.andrade@nfcarevet.com',
     role: UserRole.ADMIN,
     badgeUid: 'BADGE001',
+    avatarUrl:
+      'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=256&h=256&q=80',
   },
 };
 
