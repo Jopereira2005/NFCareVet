@@ -1,0 +1,1694 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NFCareVet — Dossiê Completo: Visão de Negócio, Valor & Especificação Técnica</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #134E3F;
+      --primary-dark: #00362A;
+      --primary-light: #206d59;
+      --secondary: #006D40;
+      --tertiary: #7FE9AC;
+      --quaternary: #99D2BE;
+      --mint-soft: #e8f7f0;
+      --mint-glow: rgba(127, 233, 172, 0.4);
+      
+      --bg: #f8faf8;
+      --surface: #ffffff;
+      --surface-subtle: #f1f5f3;
+      --border: #e2e8e5;
+
+      --text: #1a2723;
+      --text-muted: #53645e;
+      --text-light: #ffffff;
+
+      --danger: #ba1a1a;
+      --danger-bg: #fdf2f2;
+      --warning: #b45309;
+      --warning-bg: #fffbeb;
+      --success: #047857;
+      --success-bg: #ecfdf5;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-pill: 9999px;
+
+      --shadow-sm: 0 2px 8px rgba(19, 78, 63, 0.05);
+      --shadow-md: 0 8px 24px rgba(19, 78, 63, 0.08);
+      --shadow-lg: 0 16px 40px rgba(19, 78, 63, 0.12);
+
+      --font-base: 'Manrope', system-ui, -apple-system, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    [data-theme="dark"] {
+      --bg: #0b1411;
+      --surface: #12211c;
+      --surface-subtle: #182c26;
+      --border: #233e36;
+
+      --text: #e6edea;
+      --text-muted: #95a9a1;
+      --text-light: #ffffff;
+
+      --mint-soft: rgba(127, 233, 172, 0.12);
+      --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+      --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.6);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-base);
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding-bottom: 5rem;
+      transition: background-color 0.25s, color 0.25s;
+    }
+
+    /* Top Utility Bar */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(12px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .top-bar__inner {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .brand-logo {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: var(--radius-md);
+      display: grid;
+      place-items: center;
+      color: var(--tertiary);
+      box-shadow: 0 4px 12px rgba(19, 78, 63, 0.25);
+    }
+
+    .brand-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-title span {
+      color: var(--secondary);
+    }
+
+    .brand-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.55rem;
+      border-radius: var(--radius-pill);
+      background: var(--mint-soft);
+      color: var(--primary);
+      border: 1px solid var(--quaternary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Nav Tabs Principais */
+    .nav-tabs {
+      display: flex;
+      background: var(--surface-subtle);
+      padding: 0.3rem;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border);
+      gap: 0.25rem;
+      overflow-x: auto;
+    }
+
+    .nav-tab {
+      padding: 0.5rem 1.15rem;
+      border-radius: var(--radius-pill);
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .nav-tab:hover {
+      color: var(--text);
+    }
+
+    .nav-tab.active {
+      background: var(--primary);
+      color: var(--text-light);
+      box-shadow: 0 2px 8px rgba(19, 78, 63, 0.3);
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      font-family: inherit;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: var(--surface-subtle);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: var(--text-light);
+      border-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    /* Container */
+    .container {
+      max-width: 1400px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Pitch Hero (Visão Geral) */
+    .pitch-hero {
+      background: linear-gradient(135deg, var(--surface), var(--surface-subtle));
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2.8rem 2.8rem;
+      margin-bottom: 2.5rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .pitch-hero::after {
+      content: '';
+      position: absolute;
+      top: -80px;
+      right: -80px;
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, var(--mint-glow), transparent 70%);
+      pointer-events: none;
+    }
+
+    .pitch-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: var(--secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.75rem;
+    }
+
+    .pitch-title {
+      font-size: 2.35rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: var(--primary);
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      max-width: 920px;
+    }
+
+    [data-theme="dark"] .pitch-title {
+      color: var(--tertiary);
+    }
+
+    .pitch-subtitle {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 860px;
+      line-height: 1.6;
+    }
+
+    .pitch-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .stat-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--secondary);
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: baseline;
+      gap: 0.35rem;
+    }
+
+    [data-theme="dark"] .stat-number {
+      color: var(--tertiary);
+    }
+
+    .stat-label {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      margin-top: 0.25rem;
+    }
+
+    /* Section Headers */
+    .section-header {
+      margin-bottom: 1.75rem;
+    }
+
+    .section-eyebrow {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--secondary);
+      background: var(--mint-soft);
+      padding: 0.25rem 0.75rem;
+      border-radius: var(--radius-pill);
+      display: inline-block;
+      margin-bottom: 0.5rem;
+    }
+
+    .section-heading {
+      font-size: 1.75rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+
+    .section-subheading {
+      font-size: 1rem;
+      color: var(--text-muted);
+      margin-top: 0.25rem;
+    }
+
+    /* Cards & Layouts */
+    .slide-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 2.2rem;
+      margin-bottom: 2.5rem;
+      box-shadow: var(--shadow-sm);
+      page-break-inside: avoid;
+      break-inside: avoid;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .slide-card:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    .slide-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .slide-number {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--secondary);
+      background: var(--mint-soft);
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--quaternary);
+    }
+
+    .slide-headline {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-top: 0.2rem;
+    }
+
+    .role-tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--radius-pill);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .role-admin { background: #fee2e2; color: #991b1b; }
+    .role-vet { background: #e0e7ff; color: #3730a3; }
+    .role-rec { background: #fef3c7; color: #92400e; }
+    .role-system { background: var(--mint-soft); color: var(--primary); }
+
+    /* Comparativo Problema x Solução */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    @media (max-width: 850px) {
+      .compare-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card-problem {
+      background: #fdf6f6;
+      border: 1px solid #fecaca;
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+    }
+
+    [data-theme="dark"] .card-problem {
+      background: #201313;
+      border-color: #5c1d1d;
+    }
+
+    .card-solution {
+      background: var(--mint-soft);
+      border: 1px solid var(--quaternary);
+      border-radius: var(--radius-lg);
+      padding: 2rem;
+      box-shadow: 0 8px 24px rgba(19, 78, 63, 0.08);
+    }
+
+    [data-theme="dark"] .card-solution {
+      background: #0f241d;
+      border-color: #1a4d3e;
+    }
+
+    .card-title-icon {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin-bottom: 1.25rem;
+    }
+
+    .card-problem .card-title-icon { color: #991b1b; }
+    .card-solution .card-title-icon { color: var(--primary); }
+    [data-theme="dark"] .card-solution .card-title-icon { color: var(--tertiary); }
+
+    .pain-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .pain-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.95rem;
+    }
+
+    .pain-icon {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 0.8rem;
+    }
+
+    .card-problem .pain-icon { background: #fee2e2; color: #991b1b; }
+    .card-solution .pain-icon { background: var(--quaternary); color: var(--primary-dark); }
+
+    /* Jornada 4 Passos */
+    .steps-journey {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .journey-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .journey-number {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: var(--tertiary);
+      font-size: 1.2rem;
+      font-weight: 800;
+      display: grid;
+      place-items: center;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 4px 12px rgba(19, 78, 63, 0.2);
+    }
+
+    .journey-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+
+    .journey-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    .journey-analogy {
+      margin-top: 1.25rem;
+      padding: 0.75rem 1rem;
+      background: var(--surface-subtle);
+      border-left: 3px solid var(--secondary);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-size: 0.82rem;
+      color: var(--text);
+      font-style: italic;
+    }
+
+    /* FAQ Grid */
+    .faq-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .faq-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .faq-question {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    [data-theme="dark"] .faq-question { color: var(--tertiary); }
+
+    .faq-answer {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    /* Personas */
+    .personas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 3.5rem;
+    }
+
+    .persona-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .persona-badge {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--radius-pill);
+      margin-bottom: 0.75rem;
+    }
+
+    .badge-admin { background: #fee2e2; color: #991b1b; }
+    .badge-vet { background: #e0e7ff; color: #3730a3; }
+    .badge-rec { background: #fef3c7; color: #92400e; }
+
+    .persona-name {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 0.35rem;
+    }
+
+    .persona-focus {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Flowchart Container Styles (Blindado contra preenchimento preto) */
+    .flowchart-wrapper {
+      width: 100%;
+      background: var(--surface-subtle);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      overflow-x: auto;
+      margin: 1.5rem 0;
+      display: flex;
+      justify-content: center;
+    }
+
+    .flowchart-svg {
+      max-width: 100%;
+      height: auto;
+      font-family: var(--font-base);
+    }
+
+    .flowchart-svg path:not(marker path) {
+      fill: none !important;
+    }
+
+    .flowchart-svg marker path {
+      stroke: none !important;
+    }
+
+    /* Architecture Layers (Data Flow) */
+    .arch-layers {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      margin: 1.5rem 0;
+    }
+
+    .arch-layer {
+      border: 1px solid var(--border);
+      background: var(--surface-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1.5rem;
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    @media (max-width: 900px) {
+      .arch-layer { grid-template-columns: 1fr; }
+    }
+
+    .layer-info h4 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .layer-info p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 0.2rem;
+    }
+
+    .layer-components {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+    }
+
+    .comp-pill {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.55rem 0.85rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    .comp-pill strong { color: var(--primary); }
+    [data-theme="dark"] .comp-pill strong { color: var(--tertiary); }
+
+    .comp-pill code {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      background: var(--surface-subtle);
+      padding: 0.15rem 0.35rem;
+      border-radius: 4px;
+      color: var(--secondary);
+    }
+
+    /* Sequence Flow Table */
+    .seq-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+      font-size: 0.85rem;
+    }
+
+    .seq-table th {
+      text-align: left;
+      padding: 0.75rem 1rem;
+      background: var(--surface-subtle);
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .seq-table td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    .seq-table tr:hover td { background: var(--surface-subtle); }
+
+    .badge-protocol {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      background: var(--mint-soft);
+      color: var(--primary);
+      border: 1px solid var(--quaternary);
+    }
+
+    .slide-footer-notes {
+      margin-top: 1.25rem;
+      padding-top: 1rem;
+      border-top: 1px dashed var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .highlight-pill {
+      font-weight: 700;
+      color: var(--success);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    /* Modo Apresentação (Slides 16:9) */
+    body.presentation-mode {
+      background-color: #0d1412;
+      padding: 1rem;
+    }
+
+    body.presentation-mode .container {
+      max-width: 1280px;
+    }
+
+    body.presentation-mode .slide-card,
+    body.presentation-mode .pitch-hero {
+      border: 2px solid var(--secondary);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      margin-bottom: 3rem;
+    }
+
+    /* Print Styles */
+    @media print {
+      .top-bar, .top-actions, .nav-tabs, .btn { display: none !important; }
+      body { background: #ffffff !important; color: #000000 !important; padding: 0 !important; }
+      .container { max-width: 100% !important; margin: 0 !important; padding: 0 !important; }
+      .slide-card, .pitch-hero {
+        border: 1px solid #ccc !important;
+        box-shadow: none !important;
+        page-break-after: always;
+        break-after: page;
+        padding: 1.5rem !important;
+        margin-bottom: 0 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <header class="top-bar">
+    <div class="top-bar__inner">
+      <a href="#" class="brand">
+        <div class="brand-logo">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 18h8a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2Z"></path>
+            <path d="M10 2v4"></path>
+            <path d="M14 2v4"></path>
+            <path d="M10 18v4"></path>
+            <path d="M14 18v4"></path>
+            <path d="M10 12h4"></path>
+          </svg>
+        </div>
+        <div class="brand-title">NFC<span>are</span>Vet</div>
+        <div class="brand-badge">UPX-6 FACENS</div>
+      </a>
+
+      <!-- Menu Principal de Visualização Unificada -->
+      <nav class="nav-tabs" role="tablist">
+        <button class="nav-tab active" data-view="value" onclick="switchView('value')">
+          🌟 Visão Geral & Valor (Não Técnico)
+        </button>
+        <button class="nav-tab" data-view="flowcharts" onclick="switchView('flowcharts')">
+          📊 Fluxogramas Visuais
+        </button>
+        <button class="nav-tab" data-view="tech" onclick="switchView('tech')">
+          ⚙️ Engenharia & Dados
+        </button>
+        <button class="nav-tab" data-view="all" onclick="switchView('all')">
+          📑 Documento Completo
+        </button>
+      </nav>
+
+      <div class="top-actions">
+        <button class="btn" id="btn-theme" onclick="toggleTheme()" title="Alternar Modo Escuro / Claro">
+          🌓 Tema
+        </button>
+        <button class="btn" id="btn-presentation" onclick="togglePresentationMode()" title="Formatação para Captura de Slides (16:9)">
+          🖥️ Modo Slides
+        </button>
+        <button class="btn btn-primary" onclick="window.print()" title="Imprimir ou Salvar como PDF">
+          🖨️ Exportar PDF
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- ============================================================== -->
+    <!-- SEÇÃO 1: VISÃO DE NEGÓCIO, VALOR & GUIA DO PROJETO (NÃO TÉCNICO)-->
+    <!-- ============================================================== -->
+    <div class="view-section" id="section-value">
+      
+      <!-- Hero Pitch -->
+      <section class="pitch-hero">
+        <div class="pitch-tag">🏥 Tecnologia Hospitalar Veterinária com Identificação NFC</div>
+        <h1 class="pitch-title">Prontuário Veterinário na Ponta dos Dedos: O Fim do Erro de Medicação em Animais Internados</h1>
+        <p class="pitch-subtitle">
+          O <strong>NFCareVet</strong> substitui pranchetas de papel por <strong>coleiras inteligentes com chip NFC</strong>. Ao encostar o smartphone na coleira do pet internado, o veterinário abre instantaneamente o prontuário, checa a medicação correta e registra a aplicação em tempo real com segurança absoluta.
+        </p>
+
+        <div class="pitch-stats-grid">
+          <div class="stat-box">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">Certeza do paciente correto (zero risco de homonímia)</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-number">&lt; 1s</div>
+            <div class="stat-label">Tempo para abrir o prontuário com um toque de celular</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-number">R$ 0</div>
+            <div class="stat-label">Custo de bateria (chips passivos duram décadas e são laváveis)</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-number">100%</div>
+            <div class="stat-label">Auditoria digital (quem aplicou o remédio, dosagem e horário)</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Problema vs Solução -->
+      <section>
+        <div class="section-header">
+          <span class="section-eyebrow">Por Que Este Projeto Existe?</span>
+          <h2 class="section-heading">O Desafio Clínico nas Internações Veterinárias</h2>
+          <p class="section-subheading">Entenda as dores diárias de hospitais veterinários e como a nossa solução transforma o plantão.</p>
+        </div>
+
+        <div class="compare-grid">
+          <div class="card-problem">
+            <div class="card-title-icon">
+              <span>❌</span>
+              <h3>Como Funciona Hoje (Tradicional / Papel)</h3>
+            </div>
+            <ul class="pain-list">
+              <li class="pain-item">
+                <span class="pain-icon">!</span>
+                <div>
+                  <strong>Confusão de Animais Parecidos:</strong> Em um hospital com 3 labradores pretos chamados "Thor", o risco de ministrar a dosagem do pet errado por troca de baia é crítico.
+                </div>
+              </li>
+              <li class="pain-item">
+                <span class="pain-icon">!</span>
+                <div>
+                  <strong>Pranchetas Danificadas e Ilegíveis:</strong> Fichas de papel presas nas baias molham com urina/soro, rasgam e sofrem com caligrafias difíceis de ler.
+                </div>
+              </li>
+              <li class="pain-item">
+                <span class="pain-icon">!</span>
+                <div>
+                  <strong>Falta de Rastreabilidade em Plantões:</strong> Não há como auditar com certeza se o antibiótico das 04h00 da manhã foi realmente injetado ou esquecido.
+                </div>
+              </li>
+              <li class="pain-item">
+                <span class="pain-icon">!</span>
+                <div>
+                  <strong>Risco Biológico e Contaminação:</strong> Tocar em teclados de computador com luvas cirúrgicas contaminadas espalha bactérias entre baias.
+                </div>
+              </li>
+            </ul>
+          </div>
+
+          <div class="card-solution">
+            <div class="card-title-icon">
+              <span>✅</span>
+              <h3>Com o NFCareVet (Coleira Inteligente)</h3>
+            </div>
+            <ul class="pain-list">
+              <li class="pain-item">
+                <span class="pain-icon">✓</span>
+                <div>
+                  <strong>Identificação Inequívoca à Beira-Leito:</strong> A coleira tem um identificador único de silício. Encostou o celular, abre exatamente o prontuário do animal físico.
+                </div>
+              </li>
+              <li class="pain-item">
+                <span class="pain-icon">✓</span>
+                <div>
+                  <strong>Prontuário 100% Digital e em Nuvem:</strong> Prescrições, peso, exames e sinais vitais atualizados em tempo real, sem papel e sem perda de dados.
+                </div>
+              </li>
+              <li class="pain-item">
+                <span class="pain-icon">✓</span>
+                <div>
+                  <strong>Carimbo Digital Inviolável:</strong> A baixa do medicamento registra automaticamente o nome do enfermeiro/veterinário, o minuto exato e observações.
+                </div>
+              </li>
+              <li class="pain-item">
+                <span class="pain-icon">✓</span>
+                <div>
+                  <strong>Crachá por Aproximação:</strong> O médico veterinário faz login encostando seu crachá pessoal no smartphone, sem digitar senhas em áreas estéreis.
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Jornada em 4 Passos -->
+      <section>
+        <div class="section-header">
+          <span class="section-eyebrow">Experiência Simples & Intuitiva</span>
+          <h2 class="section-heading">Como Funciona na Rotina do Hospital</h2>
+          <p class="section-subheading">A tecnologia foi desenhada para não exigir treinamento complexo: é tão simples quanto pagar por aproximação.</p>
+        </div>
+
+        <div class="steps-journey">
+          <div class="journey-card">
+            <div class="journey-number">1</div>
+            <h3 class="journey-title">Admissão & Coleira</h3>
+            <p class="journey-desc">O pet dá entrada na clínica. A recepção cadastra o tutor e coloca uma coleira NFC higienizada no pescoço do animal, associando à baia livre.</p>
+            <div class="journey-analogy">💡 <em>Como colocar uma pulseira de identificação em um paciente humano no hospital.</em></div>
+          </div>
+
+          <div class="journey-card">
+            <div class="journey-number">2</div>
+            <h3 class="journey-title">Prescrição Médica</h3>
+            <p class="journey-desc">O médico veterinário prescreve os medicamentos (antibióticos, anti-inflamatórios, soro) e os horários no painel web do hospital.</p>
+            <div class="journey-analogy">💡 <em>O sistema cria a agenda de tarefas do turno automaticamente.</em></div>
+          </div>
+
+          <div class="journey-card">
+            <div class="journey-number">3</div>
+            <h3 class="journey-title">Checagem Beira-Leito</h3>
+            <p class="journey-desc">O enfermeiro do plantão vai até a baia e encosta o smartphone na coleira do pet. O prontuário abre em 1 segundo com os remédios do horário.</p>
+            <div class="journey-analogy">💡 <em>Como pagar um café encostando o celular na maquininha de cartão.</em></div>
+          </div>
+
+          <div class="journey-card">
+            <div class="journey-number">4</div>
+            <h3 class="journey-title">Alta & Reuso da Tag</h3>
+            <p class="journey-desc">Ao receber alta curado, o vínculo é desfeito no sistema. A coleira é higienizada com álcool 70% e volta para o estoque pronta para o próximo paciente.</p>
+            <div class="journey-analogy">💡 <em>Custo de reposição zero: a mesma coleira pode ser reutilizada milhares de vezes.</em></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Perfis Explicados -->
+      <section>
+        <div class="section-header">
+          <span class="section-eyebrow">Divisão de Responsabilidades</span>
+          <h2 class="section-heading">Quem Usa o Quê no Sistema?</h2>
+          <p class="section-subheading">Controle de acesso por função (RBAC) para garantir que cada profissional veja apenas o que compete ao seu trabalho.</p>
+        </div>
+
+        <div class="personas-grid">
+          <div class="persona-card">
+            <span class="persona-badge badge-admin">ADMINISTRADOR</span>
+            <h3 class="persona-name">Gestor da Clínica / TI</h3>
+            <p class="persona-focus">
+              Responsável por cadastrar novos colaboradores, crachás de funcionários e <strong>gerenciar o estoque de coleiras inteligentes (`/tags`)</strong>, gravando a URL física no chip NFC para uso hospitalar.
+            </p>
+          </div>
+
+          <div class="persona-card">
+            <span class="persona-badge badge-vet">VETERINÁRIO</span>
+            <h3 class="persona-name">Corpo Clínico & Cirurgiões</h3>
+            <p class="persona-focus">
+              Cria prescrições médicas, realiza a checagem à beira-leito, administra medicamentos, anota evolução clínica, avalia altas e consulta a linha do tempo do pet.
+            </p>
+          </div>
+
+          <div class="persona-card">
+            <span class="persona-badge badge-rec">RECEPÇÃO</span>
+            <h3 class="persona-name">Atendimento & Triagem</h3>
+            <p class="persona-focus">
+              Realiza o acolhimento dos tutores, cadastro de novos pacientes, busca rápida de cadastros e triagem inicial antes da consulta ou internação.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ Banca -->
+      <section>
+        <div class="section-header">
+          <span class="section-eyebrow">Dúvidas Frequentes da Banca e Equipe</span>
+          <h2 class="section-heading">Perguntas Essenciais para Apresentação</h2>
+          <p class="section-subheading">Respostas diretas e esclarecedoras para as perguntas mais comuns em apresentações técnicas e bancas examinadoras.</p>
+        </div>
+
+        <div class="faq-grid">
+          <div class="faq-box">
+            <h4 class="faq-question">🔋 A coleira precisa de bateria ou pilha?</h4>
+            <p class="faq-answer">
+              <strong>Não!</strong> As tags NFC utilizadas (chips NTAG213/215) são componentes <em>passivos</em>. Elas são energizadas momentaneamente pelo campo eletromagnético emitido pela antena do próprio smartphone na hora da aproximação. Duram décadas sem qualquer manutenção.
+            </p>
+          </div>
+
+          <div class="faq-box">
+            <h4 class="faq-question">💧 E se o animal molhar a coleira com água ou urina?</h4>
+            <p class="faq-answer">
+              <strong>Sem problemas!</strong> Os chips NFC são encapsulados em silicone médico ou resina epóxi selada (grau de proteção IP68). Podem ser lavados com água e sabão e desinfetados com álcool 70% entre internações sem perder dados.
+            </p>
+          </div>
+
+          <div class="faq-box">
+            <h4 class="faq-question">📱 Funciona em qualquer aparelho celular?</h4>
+            <p class="faq-answer">
+              <strong>Sim!</strong> Praticamente todos os smartphones Android modernos com suporte a NFC (via navegador Google Chrome com Web NFC API nativa) e iPhones conseguem ler as tags e abrir o prontuário instantaneamente.
+            </p>
+          </div>
+
+          <div class="faq-box">
+            <h4 class="faq-question">🌐 Precisa digitar o prontuário na memória da coleira?</h4>
+            <p class="faq-answer">
+              <strong>Não!</strong> A coleira armazena apenas um identificador permanente e um link (`/bedside/:codigo`). Todas as informações clínicas ficam protegidas e criptografadas no servidor em nuvem. Se a coleira for perdida, nenhum dado de saúde do animal vaza.
+            </p>
+          </div>
+
+          <div class="faq-box">
+            <h4 class="faq-question">💻 Como testar no computador se não tenho leitor NFC?</h4>
+            <p class="faq-answer">
+              O NFCareVet possui um <strong>Modo de Simulação Integrado</strong>. Na tela de login e no leitor, botões de simulação permitem demonstrar todas as funcionalidades mesmo em notebooks de desenvolvimento sem hardware NFC.
+            </p>
+          </div>
+
+          <div class="faq-box">
+            <h4 class="faq-question">🎓 Qual o diferencial para o UPX (Engenharia)?</h4>
+            <p class="faq-answer">
+              Integração completa entre <strong>hardware de radiofrequência (NFC/NDEF)</strong>, <strong>desenvolvimento web moderno de alta performance (React 19, TypeScript, NestJS)</strong>, <strong>banco de dados relacional (PostgreSQL)</strong> e <strong>DevOps automatizado (Docker, Nginx, CI/CD GitHub Actions)</strong>.
+            </p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- SEÇÃO 2: FLUXOGRAMAS TÉCNICOS VISUAIS (FLOWCHARTS FORMAIS)     -->
+    <!-- ============================================================== -->
+    <div class="view-section" id="section-flowcharts">
+      <div class="section-header">
+        <span class="section-eyebrow">Modelagem Formal</span>
+        <h2 class="section-heading">Fluxogramas Técnicos do Sistema (Flowcharts)</h2>
+        <p class="section-subheading">Diagramas formais com nós de decisão, processamento e conectores ortogonais limpos (sem polígonos pretos e perfeitamente alinhados).</p>
+      </div>
+
+      <!-- Flowchart 1: Geral de Usuário -->
+      <article class="slide-card">
+        <header class="slide-header">
+          <div>
+            <span class="slide-number">FLOWCHART 01</span>
+            <h3 class="slide-headline">Fluxograma Geral do Usuário: Autenticação, Triagem, Beira-Leito e Alta</h3>
+          </div>
+          <div class="slide-target-roles">
+            <span class="role-tag role-admin">ADMIN</span>
+            <span class="role-tag role-vet">VET</span>
+            <span class="role-tag role-rec">REC</span>
+          </div>
+        </header>
+
+        <div class="flowchart-wrapper">
+          <svg class="flowchart-svg" viewBox="0 0 1100 840" width="1100" height="840" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 9 5 L 0 9 z" fill="#134E3F" />
+              </marker>
+              <marker id="arrow-danger" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 9 5 L 0 9 z" fill="#ba1a1a" />
+              </marker>
+              <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 9 5 L 0 9 z" fill="#047857" />
+              </marker>
+              <filter id="card-shadow" x="-5%" y="-5%" width="110%" height="110%">
+                <feDropShadow dx="0" dy="3" stdDeviation="4" flood-opacity="0.1" flood-color="#134E3F"/>
+              </filter>
+            </defs>
+
+            <!-- 1. START: Acesso ao Sistema -->
+            <rect x="440" y="20" width="220" height="50" rx="25" fill="#134E3F" stroke="#00362A" stroke-width="2" filter="url(#card-shadow)"/>
+            <text x="550" y="51" fill="#ffffff" font-size="14" font-weight="700" text-anchor="middle">Início: Acesso ao Sistema</text>
+
+            <!-- Line Start -> Decision Login -->
+            <path d="M 550 70 L 550 110" fill="none" stroke="#134E3F" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+            <!-- 2. DECISION: Método de Login -->
+            <polygon points="550,110 680,165 550,220 420,165" fill="#f1f5f3" stroke="#134E3F" stroke-width="2" filter="url(#card-shadow)"/>
+            <text x="550" y="160" fill="#1a2723" font-size="12" font-weight="700" text-anchor="middle">Aproximar Crachá</text>
+            <text x="550" y="176" fill="#1a2723" font-size="12" font-weight="700" text-anchor="middle">NFC físico?</text>
+
+            <!-- Decision branch: Sim (NFC) -->
+            <path d="M 680 165 L 810 165" fill="none" stroke="#047857" stroke-width="2" marker-end="url(#arrow-green)"/>
+            <text x="735" y="155" fill="#047857" font-size="12" font-weight="700">Sim [NFC]</text>
+
+            <rect x="810" y="135" width="220" height="60" rx="8" fill="#ffffff" stroke="#006D40" stroke-width="1.8" filter="url(#card-shadow)"/>
+            <text x="920" y="160" fill="#134E3F" font-size="12" font-weight="700" text-anchor="middle">Leitura do UID via Web NFC</text>
+            <text x="920" y="178" fill="#64746f" font-size="11" text-anchor="middle">POST /auth/badge-login</text>
+
+            <!-- Decision branch: Não (Senha) -->
+            <path d="M 420 165 L 290 165" fill="none" stroke="#134E3F" stroke-width="2" marker-end="url(#arrow)"/>
+            <text x="340" y="155" fill="#134E3F" font-size="12" font-weight="700">Não [Credenciais]</text>
+
+            <rect x="70" y="135" width="220" height="60" rx="8" fill="#ffffff" stroke="#134E3F" stroke-width="1.8" filter="url(#card-shadow)"/>
+            <text x="180" y="160" fill="#134E3F" font-size="12" font-weight="700" text-anchor="middle">Digita E-mail e Senha</text>
+            <text x="180" y="178" fill="#64746f" font-size="11" text-anchor="middle">POST /auth/login (JWT)</text>
+
+            <!-- Connect to Auth Validation (Convergência Perfeita em T) -->
+            <path d="M 180 195 L 180 240 L 550 240" fill="none" stroke="#134E3F" stroke-width="2"/>
+            <path d="M 920 195 L 920 240 L 550 240" fill="none" stroke="#134E3F" stroke-width="2"/>
+            <path d="M 550 240 L 550 280" fill="none" stroke="#134E3F" stroke-width="2.5" marker-end="url(#arrow)"/>
+
+            <!-- 3. DECISION: Autenticado com Sucesso? -->
+            <polygon points="550,280 670,330 550,380 430,330" fill="#f1f5f3" stroke="#134E3F" stroke-width="2" filter="url(#card-shadow)"/>
+            <text x="550" y="325" fill="#1a2723" font-size="12" font-weight="700" text-anchor="middle">Credenciais</text>
+            <text x="550" y="341" fill="#1a2723" font-size="12" font-weight="700" text-anchor="middle">Válidas?</text>
+
+            <!-- Inválido -> Volta para login -->
+            <path d="M 670 330 L 1050 330 L 1050 45 L 660 45" fill="none" stroke="#ba1a1a" stroke-width="2" stroke-dasharray="5 5" marker-end="url(#arrow-danger)"/>
+            <text x="730" y="320" fill="#ba1a1a" font-size="12" font-weight="700">Não (Exibe Erro 401/403)</text>
+
+            <!-- Válido -> Sessão Ativa -->
+            <path d="M 550 380 L 550 420" fill="none" stroke="#047857" stroke-width="2.5" marker-end="url(#arrow-green)"/>
+            <text x="560" y="405" fill="#047857" font-size="12" font-weight="700">Sim (Token JWT)</text>
+
+            <!-- 4. DECISION: Papel do Usuário (RBAC) -->
+            <polygon points="550,420 680,475 550,530 420,475" fill="#e8f7f0" stroke="#006D40" stroke-width="2" filter="url(#card-shadow)"/>
+            <text x="550" y="470" fill="#00362A" font-size="12" font-weight="700" text-anchor="middle">Perfil = ADMIN?</text>
+            <text x="550" y="486" fill="#00362A" font-size="11" text-anchor="middle">(Gestão Restrita)</text>
+
+            <!-- Admin Flow (Direita) -->
+            <path d="M 680 475 L 820 475" fill="none" stroke="#006D40" stroke-width="2" marker-end="url(#arrow)"/>
+            <text x="715" y="465" fill="#006D40" font-size="12" font-weight="700">Sim [Admin]</text>
+
+            <rect x="820" y="440" width="240" height="70" rx="8" fill="#ffffff" stroke="#ba1a1a" stroke-width="1.8" filter="url(#card-shadow)"/>
+            <text x="940" y="465" fill="#ba1a1a" font-size="12" font-weight="700" text-anchor="middle">Painel de Tags (/tags)</text>
+            <text x="940" y="483" fill="#64746f" font-size="11" text-anchor="middle">Cadastrar UID + Gravar NDEF URL</text>
+            <text x="940" y="499" fill="#64746f" font-size="10" text-anchor="middle">(NDEFReader.write URL /bedside/...)</text>
+
+            <!-- Vet / Recepção Flow (Abaixo) -->
+            <path d="M 550 530 L 550 570" fill="none" stroke="#134E3F" stroke-width="2.5" marker-end="url(#arrow)"/>
+            <text x="560" y="555" fill="#134E3F" font-size="12" font-weight="700">Não [VET / REC]</text>
+
+            <!-- 5. DECISION: Ação Operacional Clínica -->
+            <polygon points="550,570 690,625 550,680 410,625" fill="#f1f5f3" stroke="#134E3F" stroke-width="2" filter="url(#card-shadow)"/>
+            <text x="550" y="620" fill="#1a2723" font-size="12" font-weight="700" text-anchor="middle">Qual a operação</text>
+            <text x="550" y="636" fill="#1a2723" font-size="12" font-weight="700" text-anchor="middle">clínica desejada?</text>
+
+            <!-- Branch A: Admissão (Esquerda) -->
+            <path d="M 410 625 L 250 625 L 250 670" fill="none" stroke="#134E3F" stroke-width="2" marker-end="url(#arrow)"/>
+            <text x="270" y="615" fill="#134E3F" font-size="12" font-weight="700">Admissão de Pet</text>
+
+            <rect x="140" y="670" width="220" height="75" rx="8" fill="#ffffff" stroke="#134E3F" stroke-width="1.8" filter="url(#card-shadow)"/>
+            <text x="250" y="695" fill="#134E3F" font-size="12" font-weight="700" text-anchor="middle">Cadastrar Pet & Tutor</text>
+            <text x="250" y="713" fill="#64746f" font-size="11" text-anchor="middle">Alocar Baia Livre</text>
+            <text x="250" y="731" fill="#006D40" font-size="11" font-weight="700" text-anchor="middle">Vincular Coleira NFC</text>
+
+            <!-- Branch B: Beira-Leito / Bedside (Centro) -->
+            <path d="M 550 680 L 550 720" fill="none" stroke="#047857" stroke-width="2.5" marker-end="url(#arrow-green)"/>
+            <text x="560" y="705" fill="#047857" font-size="12" font-weight="700">Beira-Leito (Bedside)</text>
+
+            <rect x="420" y="720" width="260" height="85" rx="8" fill="#e8f7f0" stroke="#006D40" stroke-width="2" filter="url(#card-shadow)"/>
+            <text x="550" y="745" fill="#00362A" font-size="12" font-weight="700" text-anchor="middle">Aproximar Celular na Coleira</text>
+            <text x="550" y="763" fill="#134E3F" font-size="11" text-anchor="middle">Abertura Imediata do Prontuário</text>
+            <text x="550" y="781" fill="#047857" font-size="11" font-weight="700" text-anchor="middle">Checagem & Baixa de Prescrição</text>
+
+            <!-- Branch C: Alta Hospitalar (Direita) -->
+            <path d="M 690 625 L 840 625 L 840 670" fill="none" stroke="#134E3F" stroke-width="2" marker-end="url(#arrow)"/>
+            <text x="730" y="615" fill="#134E3F" font-size="12" font-weight="700">Alta Hospitalar</text>
+
+            <rect x="730" y="670" width="220" height="75" rx="8" fill="#ffffff" stroke="#134E3F" stroke-width="1.8" filter="url(#card-shadow)"/>
+            <text x="840" y="695" fill="#134E3F" font-size="12" font-weight="700" text-anchor="middle">Conclusão da Internação</text>
+            <text x="840" y="713" fill="#64746f" font-size="11" text-anchor="middle">Baia torna-se Disponível</text>
+            <text x="840" y="731" fill="#047857" font-size="11" font-weight="700" text-anchor="middle">Desvincula Tag p/ Reuso</text>
+          </svg>
+        </div>
+      </article>
+
+      <!-- Flowchart 2: Pipeline de Dados Alinhado -->
+      <article class="slide-card">
+        <header class="slide-header">
+          <div>
+            <span class="slide-number">FLOWCHART 02</span>
+            <h3 class="slide-headline">Fluxograma de Dados: Pipeline de Leitura e Resolução NDEF (/bedside)</h3>
+          </div>
+          <div class="slide-target-roles">
+            <span class="role-tag role-system">PIPELINE DE DADOS</span>
+          </div>
+        </header>
+
+        <div class="flowchart-wrapper">
+          <svg class="flowchart-svg" viewBox="0 0 1100 680" width="1100" height="680" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="df-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 9 5 L 0 9 z" fill="#006D40" />
+              </marker>
+              <marker id="df-arrow-err" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 9 5 L 0 9 z" fill="#ba1a1a" />
+              </marker>
+            </defs>
+
+            <!-- 1. Chip Físico -->
+            <rect x="50" y="60" width="180" height="70" rx="10" fill="#134E3F" stroke="#00362A" stroke-width="2" filter="url(#card-shadow)"/>
+            <text x="140" y="90" fill="#7FE9AC" font-size="11" font-weight="700" text-anchor="middle">TAG FÍSICA (NTAG213)</text>
+            <text x="140" y="110" fill="#ffffff" font-size="13" font-weight="700" text-anchor="middle">Sinal RF 13.56 MHz</text>
+
+            <path d="M 230 95 L 300 95" fill="none" stroke="#006D40" stroke-width="2.5" marker-end="url(#df-arrow)"/>
+
+            <!-- 2. Mobile Browser -->
+            <rect x="300" y="50" width="220" height="90" rx="8" fill="#ffffff" stroke="#134E3F" stroke-width="1.8" filter="url(#card-shadow)"/>
+            <text x="410" y="75" fill="#134E3F" font-size="11" font-weight="700" text-anchor="middle">SMARTPHONE / BROWSER</text>
+            <text x="410" y="95" fill="#1a2723" font-size="12" font-weight="700" text-anchor="middle">Web NFC / Leitor NDEF</text>
+            <text x="410" y="115" fill="#64746f" font-size="11" font-family="monospace" text-anchor="middle">URL: /bedside/VET-9005</text>
+
+            <path d="M 520 95 L 590 95" fill="none" stroke="#006D40" stroke-width="2.5" marker-end="url(#df-arrow)"/>
+
+            <!-- 3. React Router Loader -->
+            <rect x="590" y="50" width="220" height="90" rx="8" fill="#ffffff" stroke="#006D40" stroke-width="1.8" filter="url(#card-shadow)"/>
+            <text x="700" y="75" fill="#006D40" font-size="11" font-weight="700" text-anchor="middle">FRONTEND (REACT ROUTER v7)</text>
+            <text x="700" y="95" fill="#1a2723" font-size="12" font-weight="700" text-anchor="middle">bedsideLoader(:identifier)</text>
+            <text x="700" y="115" fill="#64746f" font-size="11" text-anchor="middle">Intercepta rota antes do render</text>
+
+            <!-- Arrow 3 -> 4 (Baixo) -->
+            <path d="M 700 140 L 700 200" fill="none" stroke="#006D40" stroke-width="2.5" marker-end="url(#df-arrow)"/>
+            <text x="715" y="175" fill="#006D40" font-size="11" font-family="monospace">GET /api/patients/by-tag/...</text>
+
+            <!-- 4. Nginx Reverse Proxy -->
+            <rect x="580" y="200" width="240" height="75" rx="8" fill="#f1f5f3" stroke="#134E3F" stroke-width="1.8" filter="url(#card-shadow)"/>
+            <text x="700" y="225" fill="#134E3F" font-size="11" font-weight="700" text-anchor="middle">NGINX REVERSE PROXY (SSL/TLS)</text>
+            <text x="700" y="245" fill="#1a2723" font-size="12" font-weight="700" text-anchor="middle">Valida Certificado HTTPS</text>
+            <text x="700" y="262" fill="#64746f" font-size="11" font-family="monospace" text-anchor="middle">proxy_pass http://backend:3000</text>
+
+            <!-- Arrow 4 -> 5 -->
+            <path d="M 700 275 L 700 367" fill="none" stroke="#006D40" stroke-width="2.5" marker-end="url(#df-arrow)"/>
+
+            <!-- 5. NestJS API Controller & Guards (Alinhado em Y=410) -->
+            <rect x="560" y="367" width="280" height="86" rx="8" fill="#ffffff" stroke="#134E3F" stroke-width="2" filter="url(#card-shadow)"/>
+            <text x="700" y="392" fill="#134E3F" font-size="11" font-weight="700" text-anchor="middle">BACKEND NESTJS (API GATEWAY)</text>
+            <text x="700" y="412" fill="#1a2723" font-size="12" font-weight="700" text-anchor="middle">JwtAuthGuard + ValidationPipe</text>
+            <text x="700" y="432" fill="#64746f" font-size="11" text-anchor="middle">NfcTagsService.resolveTag()</text>
+
+            <!-- Arrow 5 -> 6 (Banco) -->
+            <path d="M 840 410 L 910 410" fill="none" stroke="#006D40" stroke-width="2.5" marker-end="url(#df-arrow)"/>
+
+            <!-- 6. PostgreSQL & Prisma (Alinhado em Y=410) -->
+            <rect x="910" y="367" width="160" height="86" rx="8" fill="#134E3F" stroke="#00362A" stroke-width="2" filter="url(#card-shadow)"/>
+            <text x="990" y="397" fill="#7FE9AC" font-size="11" font-weight="700" text-anchor="middle">POSTGRESQL 16</text>
+            <text x="990" y="417" fill="#ffffff" font-size="12" font-weight="700" text-anchor="middle">Prisma ORM</text>
+            <text x="990" y="435" fill="#99D2BE" font-size="10" text-anchor="middle">JOIN Hosp + Patient</text>
+
+            <path d="M 910 425 L 840 425" fill="none" stroke="#7FE9AC" stroke-width="2" stroke-dasharray="4 4"/>
+
+            <!-- 7. DECISION: Tag Ativa e Vinculada? (Alinhado em Y=410) -->
+            <path d="M 560 410 L 440 410" fill="none" stroke="#006D40" stroke-width="2.5" marker-end="url(#df-arrow)"/>
+
+            <polygon points="340,360 440,410 340,460 240,410" fill="#f1f5f3" stroke="#134E3F" stroke-width="2" filter="url(#card-shadow)"/>
+            <text x="340" y="406" fill="#1a2723" font-size="11" font-weight="700" text-anchor="middle">Tag vinculada a</text>
+            <text x="340" y="422" fill="#1a2723" font-size="11" font-weight="700" text-anchor="middle">paciente ativo?</text>
+
+            <!-- Branch: Não (404 Not Found) -->
+            <path d="M 240 410 L 130 410 L 130 520" fill="none" stroke="#ba1a1a" stroke-width="2" marker-end="url(#df-arrow-err)"/>
+            <text x="145" y="450" fill="#ba1a1a" font-size="11" font-weight="700">Não (404)</text>
+
+            <rect x="30" y="520" width="200" height="75" rx="8" fill="#fffbeb" stroke="#b45309" stroke-width="1.8" filter="url(#card-shadow)"/>
+            <text x="130" y="545" fill="#b45309" font-size="11" font-weight="700" text-anchor="middle">Tag Livre / Desvinculada</text>
+            <text x="130" y="563" fill="#64746f" font-size="11" text-anchor="middle">Toast de aviso</text>
+            <text x="130" y="581" fill="#134E3F" font-size="10" font-family="monospace" text-anchor="middle">Redirect: /reader?mode=link</text>
+
+            <!-- Branch: Sim (200 OK) -->
+            <path d="M 340 460 L 340 520" fill="none" stroke="#047857" stroke-width="2.5" marker-end="url(#df-arrow)"/>
+            <text x="355" y="490" fill="#047857" font-size="11" font-weight="700">Sim (200 OK)</text>
+
+            <rect x="230" y="520" width="220" height="85" rx="8" fill="#e8f7f0" stroke="#006D40" stroke-width="2" filter="url(#card-shadow)"/>
+            <text x="340" y="545" fill="#00362A" font-size="11" font-weight="700" text-anchor="middle">PREFETCH REACT QUERY</text>
+            <text x="340" y="565" fill="#134E3F" font-size="12" font-weight="700" text-anchor="middle">Popula Cache Local</text>
+            <text x="340" y="585" fill="#006D40" font-size="11" font-family="monospace" text-anchor="middle">Redirect: /patient/:id</text>
+
+            <!-- 8. Renderização Final -->
+            <path d="M 450 562 L 540 562" fill="none" stroke="#006D40" stroke-width="2.5" marker-end="url(#df-arrow)"/>
+
+            <rect x="540" y="520" width="260" height="85" rx="8" fill="#ffffff" stroke="#134E3F" stroke-width="2" filter="url(#card-shadow)"/>
+            <text x="670" y="545" fill="#134E3F" font-size="11" font-weight="700" text-anchor="middle">TELA DO PRONTUÁRIO</text>
+            <text x="670" y="565" fill="#1a2723" font-size="12" font-weight="700" text-anchor="middle">Exibe Paciente & Baia</text>
+            <text x="670" y="585" fill="#047857" font-size="11" font-weight="700" text-anchor="middle">Zero Loading Time (Instantâneo)</text>
+          </svg>
+        </div>
+      </article>
+
+      <!-- Flowchart 3: Transação Atômica -->
+      <article class="slide-card">
+        <header class="slide-header">
+          <div>
+            <span class="slide-number">FLOWCHART 03</span>
+            <h3 class="slide-headline">Fluxograma de Dados: Transação Atômica de Aplicação Clínica</h3>
+          </div>
+          <div class="slide-target-roles">
+            <span class="role-tag role-system">TRANSAÇÃO ACID</span>
+          </div>
+        </header>
+
+        <div class="flowchart-wrapper">
+          <svg class="flowchart-svg" viewBox="0 0 1000 480" width="1000" height="480" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <marker id="tx-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 9 5 L 0 9 z" fill="#134E3F" />
+              </marker>
+              <marker id="tx-arrow-err" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 9 5 L 0 9 z" fill="#ba1a1a" />
+              </marker>
+              <marker id="tx-arrow-ok" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 9 5 L 0 9 z" fill="#047857" />
+              </marker>
+            </defs>
+
+            <!-- Início Req -->
+            <rect x="30" y="190" width="180" height="60" rx="8" fill="#ffffff" stroke="#134E3F" stroke-width="2" filter="url(#card-shadow)"/>
+            <text x="120" y="215" fill="#134E3F" font-size="11" font-weight="700" text-anchor="middle">POST /bedside/apply</text>
+            <text x="120" y="235" fill="#64746f" font-size="10" text-anchor="middle">Payload de Checagem</text>
+
+            <path d="M 210 220 L 270 220" fill="none" stroke="#134E3F" stroke-width="2" marker-end="url(#tx-arrow)"/>
+
+            <!-- Validação 1 -->
+            <polygon points="340,170 410,220 340,270 270,220" fill="#f1f5f3" stroke="#134E3F" stroke-width="1.8"/>
+            <text x="340" y="215" fill="#1a2723" font-size="10" font-weight="700" text-anchor="middle">Internação</text>
+            <text x="340" y="230" fill="#1a2723" font-size="10" font-weight="700" text-anchor="middle">Ativa?</text>
+
+            <path d="M 340 170 L 340 90 L 800 90 L 800 130" fill="none" stroke="#ba1a1a" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#tx-arrow-err)"/>
+            <text x="350" y="130" fill="#ba1a1a" font-size="10" font-weight="700">Não (400)</text>
+
+            <path d="M 410 220 L 470 220" fill="none" stroke="#047857" stroke-width="2" marker-end="url(#tx-arrow-ok)"/>
+            <text x="430" y="210" fill="#047857" font-size="10" font-weight="700">Sim</text>
+
+            <!-- Validação 2 -->
+            <polygon points="540,170 610,220 540,270 470,220" fill="#f1f5f3" stroke="#134E3F" stroke-width="1.8"/>
+            <text x="540" y="215" fill="#1a2723" font-size="10" font-weight="700" text-anchor="middle">Prescrição</text>
+            <text x="540" y="230" fill="#1a2723" font-size="10" font-weight="700" text-anchor="middle">Ativa?</text>
+
+            <path d="M 540 170 L 540 110 L 800 110" fill="none" stroke="#ba1a1a" stroke-width="2" stroke-dasharray="4 4"/>
+            <text x="550" y="140" fill="#ba1a1a" font-size="10" font-weight="700">Não (400)</text>
+
+            <path d="M 610 220 L 670 220" fill="none" stroke="#047857" stroke-width="2" marker-end="url(#tx-arrow-ok)"/>
+            <text x="630" y="210" fill="#047857" font-size="10" font-weight="700">Sim</text>
+
+            <!-- Validação 3 -->
+            <polygon points="740,170 810,220 740,270 670,220" fill="#f1f5f3" stroke="#134E3F" stroke-width="1.8"/>
+            <text x="740" y="215" fill="#1a2723" font-size="10" font-weight="700" text-anchor="middle">Item Não</text>
+            <text x="740" y="230" fill="#1a2723" font-size="10" font-weight="700" text-anchor="middle">Cancelado?</text>
+
+            <path d="M 740 170 L 740 130" fill="none" stroke="#ba1a1a" stroke-width="2" stroke-dasharray="4 4"/>
+            <text x="750" y="150" fill="#ba1a1a" font-size="10" font-weight="700">Não (400)</text>
+
+            <!-- Caixa de Erro Consolidada -->
+            <rect x="730" y="130" width="140" height="35" rx="6" fill="#fdf2f2" stroke="#ba1a1a" stroke-width="1.5"/>
+            <text x="800" y="152" fill="#ba1a1a" font-size="11" font-weight="700" text-anchor="middle">Abort: 400 Bad Request</text>
+
+            <!-- Passou em Todas -> Transação Prisma -->
+            <path d="M 740 270 L 740 340" fill="none" stroke="#047857" stroke-width="2.5" marker-end="url(#tx-arrow-ok)"/>
+            <text x="750" y="305" fill="#047857" font-size="11" font-weight="700">Todas Sim</text>
+
+            <!-- Bloco de Transação Atômica -->
+            <rect x="230" y="340" width="670" height="95" rx="10" fill="#e8f7f0" stroke="#006D40" stroke-width="2" filter="url(#card-shadow)"/>
+            <text x="250" y="365" fill="#00362A" font-size="12" font-weight="700">TRANSAÇÃO ATÔMICA ACID (prisma.$transaction):</text>
+            <text x="250" y="390" fill="#134E3F" font-size="11">1. INSERT INTO "ClinicalEvent" (hospitalizationId, type=MEDICATION_APPLICATION, userId, timestamp)</text>
+            <text x="250" y="415" fill="#134E3F" font-size="11">2. UPDATE "PrescriptionItem" SET status=COMPLETED, completedAt=NOW() WHERE id = itemId</text>
+          </svg>
+        </div>
+      </article>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- SEÇÃO 3: DOCUMENTAÇÃO TÉCNICA DETALHADA (ARQUITETURA & DADOS)   -->
+    <!-- ============================================================== -->
+    <div class="view-section" id="section-tech">
+      <div class="section-header">
+        <span class="section-eyebrow">Engenharia de Software</span>
+        <h2 class="section-heading">Arquitetura de Dados em Camadas & Ciclo E2E</h2>
+        <p class="section-subheading">Detalhamento dos protocolos de rede, encapsulamento de dados, ciclo de vida e payloads.</p>
+      </div>
+
+      <!-- Camadas do Sistema -->
+      <article class="slide-card">
+        <header class="slide-header">
+          <div>
+            <span class="slide-number">DATA-FLOW 01</span>
+            <h3 class="slide-headline">Arquitetura de Dados em 5 Camadas (Do Silício ao Banco de Dados)</h3>
+          </div>
+          <div class="slide-target-roles">
+            <span class="role-tag role-system">ARQUITETURA COMPLETA</span>
+          </div>
+        </header>
+
+        <div class="arch-layers">
+          <div class="arch-layer">
+            <div class="layer-info">
+              <h4>1. Camada Física & Hardware</h4>
+              <p>Chips de radiofrequência a 13.56 MHz.</p>
+            </div>
+            <div class="layer-components">
+              <div class="comp-pill"><strong>Chip NFC:</strong> NTAG213 / NTAG215</div>
+              <div class="comp-pill"><strong>Padrão:</strong> <code>ISO/IEC 14443-A</code></div>
+              <div class="comp-pill"><strong>Payload Físico:</strong> UID 7-byte + Bloco NDEF URI</div>
+              <div class="comp-pill"><strong>Leitores:</strong> Sensor NFC Mobile / Leitor USB Desktop</div>
+            </div>
+          </div>
+
+          <div class="arch-layer">
+            <div class="layer-info">
+              <h4>2. Camada Cliente (Frontend SPA)</h4>
+              <p>Aplicação em React 19 executando no navegador do cliente.</p>
+            </div>
+            <div class="layer-components">
+              <div class="comp-pill"><strong>Engine:</strong> React 19 + TypeScript + Vite 8</div>
+              <div class="comp-pill"><strong>Hardware Bridge:</strong> <code>navigator.NDEFReader</code></div>
+              <div class="comp-pill"><strong>Estado Global:</strong> Zustand (Session, NFC, Toasts)</div>
+              <div class="comp-pill"><strong>Data Fetching:</strong> TanStack Query v5 (Prefetch + Cache)</div>
+              <div class="comp-pill"><strong>Network Client:</strong> Axios com Interceptor Bearer JWT</div>
+            </div>
+          </div>
+
+          <div class="arch-layer">
+            <div class="layer-info">
+              <h4>3. Borda & Proxy Reverso</h4>
+              <p>Servidor Nginx gerenciando terminação SSL e roteamento de portas.</p>
+            </div>
+            <div class="layer-components">
+              <div class="comp-pill"><strong>Nginx Host:</strong> Porta 80 / 443 (Certbot Let's Encrypt)</div>
+              <div class="comp-pill"><strong>Frontend Proxy:</strong> <code>proxy_pass 127.0.0.1:8085</code></div>
+              <div class="comp-pill"><strong>API Routing:</strong> Encaminha <code>/api/*</code> para <code>backend:3000</code></div>
+              <div class="comp-pill"><strong>Compressão:</strong> Gzip ativado para chunks JS/CSS</div>
+            </div>
+          </div>
+
+          <div class="arch-layer">
+            <div class="layer-info">
+              <h4>4. Aplicação Backend (NestJS 11)</h4>
+              <p>Servidor RESTful corporativo modular em TypeScript.</p>
+            </div>
+            <div class="layer-components">
+              <div class="comp-pill"><strong>Guards:</strong> <code>JwtAuthGuard</code> + <code>RolesGuard</code></div>
+              <div class="comp-pill"><strong>DTO Validation:</strong> class-validator + class-transformer</div>
+              <div class="comp-pill"><strong>Módulos Centrais:</strong> Auth, Users, NfcTags, Bedside, Hospitalizations</div>
+              <div class="comp-pill"><strong>Documentação:</strong> Swagger OpenAPI (<code>/api/docs</code>)</div>
+            </div>
+          </div>
+
+          <div class="arch-layer">
+            <div class="layer-info">
+              <h4>5. Persistência & Banco de Dados</h4>
+              <p>PostgreSQL relacional com transações atômicas ACID.</p>
+            </div>
+            <div class="layer-components">
+              <div class="comp-pill"><strong>Banco:</strong> PostgreSQL 16 Alpine</div>
+              <div class="comp-pill"><strong>ORM:</strong> Prisma ORM Client</div>
+              <div class="comp-pill"><strong>Índices:</strong> <code>NfcTag(uid, publicCode)</code>, <code>User(badgeUid)</code></div>
+              <div class="comp-pill"><strong>Transações:</strong> <code>prisma.$transaction</code> para checagem clínica</div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Tabela Sequencial -->
+      <article class="slide-card">
+        <header class="slide-header">
+          <div>
+            <span class="slide-number">DATA-FLOW 02</span>
+            <h3 class="slide-headline">Sequência Detalhada de Dados: Checagem e Aplicação à Beira-Leito</h3>
+          </div>
+          <div class="slide-target-roles">
+            <span class="role-tag role-vet">VET</span>
+            <span class="role-tag role-system">SISTEMA</span>
+          </div>
+        </header>
+
+        <table class="seq-table">
+          <thead>
+            <tr>
+              <th style="width: 80px;">Passo</th>
+              <th style="width: 170px;">Origem ➔ Destino</th>
+              <th style="width: 120px;">Protocolo</th>
+              <th>Carga de Dados (Payload / Request)</th>
+              <th>Processamento & Resposta (Response)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1. Read</strong></td>
+              <td>Chip ➔ Mobile Chrome</td>
+              <td><span class="badge-protocol">NFC-A / NDEF</span></td>
+              <td><code>recordType: "url", data: "https://.../bedside/VET-9005"</code></td>
+              <td>O navegador aciona o Router do React SPA no endpoint do loader.</td>
+            </tr>
+            <tr>
+              <td><strong>2. Resolve</strong></td>
+              <td>React ➔ NestJS API</td>
+              <td><span class="badge-protocol">HTTPS REST</span></td>
+              <td><code>GET /patients/by-tag/VET-9005</code><br>Header: <code>Authorization: Bearer &lt;JWT&gt;</code></td>
+              <td>API consulta <code>NfcTag</code> ativa vinculada à <code>Hospitalization</code>. Retorna dados completos do paciente (200 OK).</td>
+            </tr>
+            <tr>
+              <td><strong>3. Prefetch</strong></td>
+              <td>React Query ➔ Cache</td>
+              <td><span class="badge-protocol">In-Memory</span></td>
+              <td><code>queryClient.setQueryData(['patient', id], data)</code></td>
+              <td>Prontuário abre instantaneamente sem tela de carregamento travada.</td>
+            </tr>
+            <tr>
+              <td><strong>4. Execute</strong></td>
+              <td>Frontend ➔ Bedside API</td>
+              <td><span class="badge-protocol">POST JSON</span></td>
+              <td>
+                <code>{ "hospitalizationId": "uuid-hosp", "prescriptionItemId": "uuid-item", "dose": "5ml", "notes": "Animal estável" }</code>
+              </td>
+              <td>
+                <strong>Transação Atômica:</strong><br>
+                1. Valida se internação e prescrição estão ATIVAS.<br>
+                2. Cria <code>ClinicalEvent</code> tipo <code>MEDICATION_APPLICATION</code>.<br>
+                3. Atualiza <code>PrescriptionItem</code> para <code>COMPLETED</code>.<br>
+                4. Retorna confirmação e carimbo de data/hora (201 Created).
+              </td>
+            </tr>
+            <tr>
+              <td><strong>5. Invalidate</strong></td>
+              <td>Zustand / QueryCache</td>
+              <td><span class="badge-protocol">Reactive</span></td>
+              <td><code>queryClient.invalidateQueries({ queryKey: ['patient'] })</code></td>
+              <td>Linha do tempo é atualizada; Toast de sucesso exibido ao veterinário.</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+
+      <!-- Ciclo E2E -->
+      <article class="slide-card">
+        <header class="slide-header">
+          <div>
+            <span class="slide-number">LIFECYCLE E2E</span>
+            <h3 class="slide-headline">Jornada da Coleira Inteligente: Do Almoxarifado à Alta Médica</h3>
+          </div>
+          <div class="slide-target-roles">
+            <span class="role-tag role-system">CICLO FECHADO</span>
+          </div>
+        </header>
+
+        <div class="steps-journey" style="margin-bottom: 0;">
+          <div class="journey-card">
+            <div class="journey-number">1</div>
+            <h4 class="journey-title">Provisionamento</h4>
+            <p class="journey-desc">Tag física recebida. Admin cadastra UID e grava URL NDEF no chip através de <code>/tags</code>.</p>
+            <div class="journey-analogy">Status: DISPONÍVEL</div>
+          </div>
+
+          <div class="journey-card">
+            <div class="journey-number">2</div>
+            <h4 class="journey-title">Admissão & Vínculo</h4>
+            <p class="journey-desc">Paciente internado em baia clínica; tag é colocada no animal e associada à internação.</p>
+            <div class="journey-analogy">Status: EM USO (Lock)</div>
+          </div>
+
+          <div class="journey-card">
+            <div class="journey-number">3</div>
+            <h4 class="journey-title">Checagem Beira-Leito</h4>
+            <p class="journey-desc">Múltiplas leituras diárias por aproximação de smartphone para aprazamento de prescrições.</p>
+            <div class="journey-analogy">N Eventos Auditados</div>
+          </div>
+
+          <div class="journey-card">
+            <div class="journey-number">4</div>
+            <h4 class="journey-title">Alta & Reuso</h4>
+            <p class="journey-desc">Veterinário concede alta; internação concluída e coleira volta para o estoque sem regravação.</p>
+            <div class="journey-analogy">Custo Marginal Zero</div>
+          </div>
+        </div>
+      </article>
+    </div>
+
+  </main>
+
+  <script>
+    // Gerenciador de Visualização Unificada
+    function switchView(viewName) {
+      document.querySelectorAll('.nav-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.getAttribute('data-view') === viewName);
+      });
+
+      const secValue = document.getElementById('section-value');
+      const secFlow = document.getElementById('section-flowcharts');
+      const secTech = document.getElementById('section-tech');
+
+      if (viewName === 'value') {
+        secValue.style.display = 'block';
+        secFlow.style.display = 'none';
+        secTech.style.display = 'none';
+      } else if (viewName === 'flowcharts') {
+        secValue.style.display = 'none';
+        secFlow.style.display = 'block';
+        secTech.style.display = 'none';
+      } else if (viewName === 'tech') {
+        secValue.style.display = 'none';
+        secFlow.style.display = 'none';
+        secTech.style.display = 'block';
+      } else if (viewName === 'all') {
+        secValue.style.display = 'block';
+        secFlow.style.display = 'block';
+        secTech.style.display = 'block';
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Alternar Modo Apresentação (Slides 16:9 / Documento)
+    function togglePresentationMode() {
+      document.body.classList.toggle('presentation-mode');
+      const isPresentation = document.body.classList.contains('presentation-mode');
+      const btn = document.getElementById('btn-presentation');
+      if (isPresentation) {
+        btn.classList.add('btn-primary');
+        btn.innerHTML = `✕ Modo Normal`;
+      } else {
+        btn.classList.remove('btn-primary');
+        btn.innerHTML = `🖥️ Modo Slides`;
+      }
+    }
+
+    // Alternar Tema Claro / Escuro
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+    }
+  </script>
+</body>
+</html>
