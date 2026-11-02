@@ -7,6 +7,7 @@ export const ROUTES = {
   search: '/search',
   reader: '/reader',
   tags: '/tags',
+  users: '/users',
   bedside: '/bedside/:identifier',
   history: '/history',
   tasks: '/tasks',

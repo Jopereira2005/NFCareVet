@@ -11,6 +11,7 @@ import { kennelService } from './kennel.service';
 import { nfcTagService } from './nfc-tag.service';
 import { patientService, type PatientSearchParams } from './patient.service';
 import { prescriptionService } from './prescription.service';
+import { userService } from './user.service';
 
 /**
  * Query options factories: each entry pairs a cache key with its request, so the same definition
@@ -93,4 +94,10 @@ export const dashboardQueries = {
       queryKey: [...dashboardQueries.all(), 'recent-registrations'],
       queryFn: () => dashboardService.listRecentRegistrations(),
     }),
+};
+
+export const userQueries = {
+  all: () => ['users'] as const,
+  list: () => queryOptions({ queryKey: [...userQueries.all(), 'list'], queryFn: () => userService.list() }),
+  detail: (id: string) => queryOptions({ queryKey: [...userQueries.all(), 'detail', id], queryFn: () => userService.getById(id) }),
 };

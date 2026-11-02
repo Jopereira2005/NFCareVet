@@ -36,6 +36,7 @@ export const router = createBrowserRouter([
           { path: ROUTES.search, lazy: lazyPage(() => import('@/pages/search')), handle: navSection(ROUTES.search) },
           { path: ROUTES.reader, lazy: lazyPage(() => import('@/pages/reader')), handle: navSection(ROUTES.reader) },
           { path: ROUTES.tags, loader: requireAdmin, lazy: lazyPage(() => import('@/pages/tags')), handle: navSection(ROUTES.reader) },
+          { path: ROUTES.users, loader: requireAdmin, lazy: lazyPage(() => import('@/pages/users')), handle: navSection(ROUTES.home) },
           { path: ROUTES.bedside, loader: bedsideLoader, element: <Navigate to={ROUTES.reader} replace /> },
           { path: ROUTES.history, lazy: lazyPage(() => import('@/pages/history')), handle: navSection(ROUTES.history) },
           { path: ROUTES.tasks, loader: tasksLoader, lazy: lazyPage(() => import('@/pages/tasks')), handle: navSection(ROUTES.tasks) },

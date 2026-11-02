@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { UserRole } from '@nfcarevet/common';
-import { Tag, UserPlus } from 'lucide-react';
+import { Tag, UserPlus, Users } from 'lucide-react';
 import { useNavigate } from 'react-router';
 
 import { PawIcon } from '@/assets/icons/paw-icon';
@@ -34,7 +34,10 @@ export default function Home() {
             <ActionCard variant="primary" title="Novo Paciente" description="Cadastrar pet" icon={PawIcon} onClick={() => setOpenModal('patient')} />
             <ActionCard title="Novo Tutor" description="Vínculo direto" icon={UserPlus} onClick={() => setOpenModal('guardian')} />
             {isAdmin && (
-              <ActionCard title="Gerenciar Tags" description="Inventário NFC" icon={Tag} onClick={() => navigate(ROUTES.tags)} />
+              <>
+                <ActionCard title="Gerenciar Tags" description="Inventário NFC" icon={Tag} onClick={() => navigate(ROUTES.tags)} />
+                <ActionCard title="Colaboradores" description="Equipe & Crachás" icon={Users} onClick={() => navigate(ROUTES.users)} />
+              </>
             )}
           </div>
         </section>

@@ -15,11 +15,18 @@ type SegmentedControlProps<TValue extends string> = {
   value: TValue;
   onChange: (value: TValue) => void;
   label: string;
+  className?: string;
 };
 
-export function SegmentedControl<TValue extends string>({ options, value, onChange, label }: SegmentedControlProps<TValue>) {
+export function SegmentedControl<TValue extends string>({
+  options,
+  value,
+  onChange,
+  label,
+  className,
+}: SegmentedControlProps<TValue>) {
   return (
-    <div className={styles['segmented-control']} role="tablist" aria-label={label}>
+    <div className={clsx(styles['segmented-control'], className)} role="tablist" aria-label={label}>
       {options.map(({ value: optionValue, label: optionLabel, icon: Icon }) => {
         const isSelected = optionValue === value;
 

@@ -7,15 +7,24 @@
   border-radius: $radius-full;
   background: $gray-scale-light;
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .segmented-control__option {
   @include flex(row, center, center);
   @include transition(background-color, color, box-shadow);
 
-  flex: 1 1 0;
+  flex: 1 0 auto;
   gap: 0.6rem;
-  min-width: 0;
+  min-width: max-content;
   min-height: 3.8rem;
   padding: 0 $space-md;
   border: 0;
@@ -27,6 +36,7 @@
   line-height: 1.8rem;
   white-space: nowrap;
   cursor: pointer;
+  user-select: none;
 
   @include hover {
     color: $gray-scale-dark;
