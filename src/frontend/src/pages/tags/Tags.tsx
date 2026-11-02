@@ -131,6 +131,9 @@ export default function Tags() {
           url: getTagBedsideUrl(createdTag.publicCode),
         });
       },
+      onError: (error) => {
+        setFormError(error.message);
+      },
     });
   };
 

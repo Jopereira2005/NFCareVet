@@ -1,6 +1,9 @@
 import type { ICreateUserPayload, IUpdateUserPayload, IUser } from '@nfcarevet/common';
 import { UserRole } from '@nfcarevet/common';
 
+import { findMockCollarByUid, setMockUserBadge } from '@/mocks/nfc-registry.mock';
+
+import { ApiError } from './api-error';
 import { httpClient } from './http-client';
 import { mockResponse, USE_MOCKS } from './mock-response';
 
@@ -88,16 +91,47 @@ export const userService = {
 
   async create(payload: ICreateUserPayload): Promise<IUser> {
     if (USE_MOCKS) {
+      if (payload.badgeUid) {
+        const sanitized = payload.badgeUid.replace(/[:\s-]/g, '').toUpperCase();
+        const existingCollar = findMockCollarByUid(sanitized);
+        if (existingCollar) {
+          const patient = existingCollar.patientName
+            ? `coleira do paciente "${existingCollar.patientName}"`
+            : `coleira no inventário (#${existingCollar.publicCode})`;
+          return Promise.reject(
+            new ApiError(
+              `A tag [${sanitized}] já está cadastrada como ${patient} e não pode ser vinculada como crachá de colaborador.`,
+              409,
+            ),
+          );
+        }
+
+        const existingBadge = mockUsersList.find(
+          (u) => u.badgeUid && u.badgeUid.replace(/[:\s-]/g, '').toUpperCase() === sanitized,
+        );
+        if (existingBadge) {
+          return Promise.reject(
+            new ApiError(
+              `O crachá [${sanitized}] já está associado a outro colaborador (${existingBadge.name}).`,
+              409,
+            ),
+          );
+        }
+      }
+
       const newUser: IUser = {
         id: `user-${Date.now()}`,
         name: payload.name,
         email: payload.email,
         role: payload.role,
-        badgeUid: payload.badgeUid ?? null,
+        badgeUid: payload.badgeUid ? payload.badgeUid.replace(/[:\s-]/g, '').toUpperCase() : null,
         avatarUrl: payload.avatarUrl ?? null,
         active: payload.active ?? true,
         createdAt: new Date().toISOString(),
       };
+      if (newUser.badgeUid) {
+        setMockUserBadge(newUser.id, newUser.name, newUser.badgeUid);
+      }
       mockUsersList = [newUser, ...mockUsersList];
       return mockResponse(newUser);
     }
@@ -107,9 +141,58 @@ export const userService = {
 
   async update(id: string, payload: IUpdateUserPayload): Promise<IUser> {
     if (USE_MOCKS) {
-      mockUsersList = mockUsersList.map((u) => (u.id === id ? { ...u, ...payload } : u));
+      if (payload.badgeUid) {
+        const sanitized = payload.badgeUid.replace(/[:\s-]/g, '').toUpperCase();
+        const existingCollar = findMockCollarByUid(sanitized);
+        if (existingCollar) {
+          const patient = existingCollar.patientName
+            ? `coleira do paciente "${existingCollar.patientName}"`
+            : `coleira no inventário (#${existingCollar.publicCode})`;
+          return Promise.reject(
+            new ApiError(
+              `A tag [${sanitized}] já está cadastrada como ${patient} e não pode ser vinculada como crachá de colaborador.`,
+              409,
+            ),
+          );
+        }
+
+        const existingBadge = mockUsersList.find(
+          (u) =>
+            u.id !== id &&
+            u.badgeUid &&
+            u.badgeUid.replace(/[:\s-]/g, '').toUpperCase() === sanitized,
+        );
+        if (existingBadge) {
+          return Promise.reject(
+            new ApiError(
+              `O crachá [${sanitized}] já está associado a outro colaborador (${existingBadge.name}).`,
+              409,
+            ),
+          );
+        }
+      }
+
+      const updatedBadge =
+        payload.badgeUid !== undefined
+          ? payload.badgeUid
+            ? payload.badgeUid.replace(/[:\s-]/g, '').toUpperCase()
+            : null
+          : undefined;
+
+      mockUsersList = mockUsersList.map((u) =>
+        u.id === id
+          ? {
+              ...u,
+              ...payload,
+              ...(updatedBadge !== undefined && { badgeUid: updatedBadge }),
+            }
+          : u,
+      );
       const updated = mockUsersList.find((u) => u.id === id);
       if (!updated) throw new Error('Usuário não encontrado');
+      if (updatedBadge !== undefined) {
+        setMockUserBadge(updated.id, updated.name, updated.badgeUid ?? null);
+      }
       return mockResponse(updated);
     }
     const { data } = await httpClient.patch<IUser>(`/users/${id}`, payload);

@@ -439,6 +439,7 @@ function UserFormModal({ user, onClose }: UserFormModalProps) {
         },
         {
           onSuccess: () => onClose(),
+          onError: (error) => setFormError(error.message),
         },
       );
     } else {
@@ -453,6 +454,7 @@ function UserFormModal({ user, onClose }: UserFormModalProps) {
         },
         {
           onSuccess: () => onClose(),
+          onError: (error) => setFormError(error.message),
         },
       );
     }

@@ -1,4 +1,5 @@
 import type { NfcTagInventoryItem } from '@/interfaces/nfc.types';
+import { addMockCollarTag, findMockUserBadgeByUid } from '@/mocks/nfc-registry.mock';
 import { PATIENTS_MOCK } from '@/mocks/patients.mock';
 
 import { ApiError } from './api-error';
@@ -53,6 +54,16 @@ export const nfcTagService = {
     const sanitizedUid = tagUid.replace(/[:\s-]/g, '').toUpperCase();
 
     if (USE_MOCKS) {
+      const userBadge = findMockUserBadgeByUid(sanitizedUid);
+      if (userBadge) {
+        return Promise.reject(
+          new ApiError(
+            `A tag [${sanitizedUid}] já está cadastrada como crachá do colaborador "${userBadge.userName}" e não pode ser usada como coleira de paciente.`,
+            409,
+          ),
+        );
+      }
+
       const existing = buildMockInventory().find((tag) => tag.tagUid === sanitizedUid);
       if (existing) {
         return Promise.reject(new ApiError(`Tag física [${sanitizedUid}] já cadastrada no inventário.`, 409));
@@ -66,6 +77,7 @@ export const nfcTagService = {
         occupant: null,
       };
       EXTRA_TAGS_MOCK.unshift(created);
+      addMockCollarTag({ tagUid: created.tagUid, publicCode: created.publicCode });
       return mockResponse(created);
     }
 

@@ -56,6 +56,20 @@ export class AuthService {
     const user = await this.usersRepository.findByBadgeUid(sanitizedBadgeUid);
 
     if (!user) {
+      const collarTag =
+        await this.usersRepository.findCollarTagByUid(sanitizedBadgeUid);
+      if (collarTag) {
+        const patientName = collarTag.hospitalization?.patient?.name;
+        this.logger.warn(
+          `[AUTH-NFC] Tentativa de login com tag de coleira de paciente: [${sanitizedBadgeUid}].`,
+        );
+        throw new UnauthorizedException(
+          patientName
+            ? `A tag aproximada pertence à coleira do paciente "${patientName}" e não pode ser usada como crachá de login.`
+            : `A tag aproximada é uma coleira de paciente cadastrada no inventário (#${collarTag.publicCode}) e não pode ser usada como crachá de login.`,
+        );
+      }
+
       this.logger.warn(
         `[AUTH-NFC] Falha na autenticação: crachá [${sanitizedBadgeUid}] não reconhecido.`,
       );

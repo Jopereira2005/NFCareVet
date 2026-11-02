@@ -53,4 +53,20 @@ export class UsersRepository {
       where: { id },
     });
   }
+
+  async findCollarTagByUid(tagUid: string) {
+    const sanitized = tagUid.replace(/[:\s-]/g, '').toUpperCase();
+    return this.prisma.nfcTag.findFirst({
+      where: {
+        OR: [{ tagUid: sanitized }, { tagUid }],
+      },
+      include: {
+        hospitalization: {
+          include: {
+            patient: { select: { id: true, name: true, species: true } },
+          },
+        },
+      },
+    });
+  }
 }

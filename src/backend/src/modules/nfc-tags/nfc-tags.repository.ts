@@ -110,4 +110,19 @@ export class NfcTagsRepository implements INfcTagsRepository {
       where: { id },
     });
   }
+
+  async findUserBadgeByUid(badgeUid: string) {
+    const sanitized = badgeUid.replace(/[:\s-]/g, '').toUpperCase();
+    return this.prisma.user.findFirst({
+      where: {
+        OR: [{ badgeUid: sanitized }, { badgeUid }],
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+      },
+    });
+  }
 }

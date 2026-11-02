@@ -36,6 +36,17 @@ export class UsersService {
           'Este crachá NFC (badgeUid) já está associado a outro usuário.',
         );
       }
+
+      const existingCollar =
+        await this.usersRepository.findCollarTagByUid(sanitizedBadgeUid);
+      if (existingCollar) {
+        const patientName = existingCollar.hospitalization?.patient?.name;
+        throw new ConflictException(
+          patientName
+            ? `A tag [${sanitizedBadgeUid}] já está cadastrada como coleira do paciente "${patientName}" e não pode ser vinculada como crachá de colaborador.`
+            : `A tag [${sanitizedBadgeUid}] já está cadastrada como coleira no inventário de tags (#${existingCollar.publicCode}) e não pode ser vinculada como crachá de colaborador.`,
+        );
+      }
     }
 
     const passwordHash = await bcrypt.hash(createUserDto.password, 10);
@@ -106,6 +117,17 @@ export class UsersService {
       if (badgeConflict) {
         throw new ConflictException(
           'Este crachá NFC (badgeUid) já está associado a outro usuário.',
+        );
+      }
+
+      const existingCollar =
+        await this.usersRepository.findCollarTagByUid(sanitizedUpdateBadgeUid);
+      if (existingCollar) {
+        const patientName = existingCollar.hospitalization?.patient?.name;
+        throw new ConflictException(
+          patientName
+            ? `A tag [${sanitizedUpdateBadgeUid}] já está cadastrada como coleira do paciente "${patientName}" e não pode ser vinculada como crachá de colaborador.`
+            : `A tag [${sanitizedUpdateBadgeUid}] já está cadastrada como coleira no inventário de tags (#${existingCollar.publicCode}) e não pode ser vinculada como crachá de colaborador.`,
         );
       }
     }

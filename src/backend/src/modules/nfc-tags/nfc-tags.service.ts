@@ -38,6 +38,17 @@ export class NfcTagsService {
       );
     }
 
+    const existingUserBadge =
+      await this.nfcTagsRepository.findUserBadgeByUid(sanitizedUid);
+    if (existingUserBadge) {
+      this.logger.warn(
+        `[NFC] Falha ao cadastrar coleira: tag [${sanitizedUid}] já pertence ao crachá do colaborador [${existingUserBadge.name}].`,
+      );
+      throw new ConflictException(
+        `A tag [${sanitizedUid}] já está cadastrada como crachá do colaborador "${existingUserBadge.name}" e não pode ser cadastrada como coleira de paciente.`,
+      );
+    }
+
     try {
       const publicCode = await this.generateUniquePublicCode();
       const newTag = await this.nfcTagsRepository.create({
