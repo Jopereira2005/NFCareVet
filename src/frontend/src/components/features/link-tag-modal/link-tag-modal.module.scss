@@ -9,6 +9,8 @@
   border-radius: $radius-lg;
   background: $light-color;
   box-shadow: $shadow-xs;
+  min-width: 0;
+  max-width: 100%;
 }
 
 .link-tag-modal__tag__icon {
@@ -17,6 +19,14 @@
 
   background: $tertiary-color;
   color: $primary-color;
+  flex-shrink: 0;
+}
+
+.link-tag-modal__tag__info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .link-tag-modal__tag__label {
@@ -34,4 +44,5 @@
   font-size: $text-md;
   line-height: 2.2rem;
   word-break: break-all;
+  overflow-wrap: break-word;
 }

@@ -51,9 +51,9 @@ export function LinkTagModal({ tagUid, onClose }: LinkTagModalProps) {
         <span className={styles['link-tag-modal__tag__icon']}>
           <Nfc aria-hidden="true" />
         </span>
-        <span>
+        <span className={styles['link-tag-modal__tag__info']}>
           <span className={styles['link-tag-modal__tag__label']}>UID da tag</span>
-          <strong className={styles['link-tag-modal__tag__uid']}>{tagUid}</strong>
+          <strong className={styles['link-tag-modal__tag__uid']} title={tagUid}>{tagUid}</strong>
         </span>
       </p>
       <LinkTagForm

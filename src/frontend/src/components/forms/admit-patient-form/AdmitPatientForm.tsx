@@ -65,7 +65,9 @@ export function AdmitPatientForm({ formId, kennelOptions, currentTagCode, onSubm
       {currentTagCode ? (
         <p className={styles['admit-patient-form__tag']}>
           <Nfc aria-hidden="true" />
-          Tag vinculada: <strong>#{currentTagCode}</strong>
+          <span className={styles['admit-patient-form__tag__text']}>
+            Tag vinculada: <strong title={`#${currentTagCode}`}>#{currentTagCode}</strong>
+          </span>
         </p>
       ) : (
         <Input

@@ -3,7 +3,6 @@
 .tag-info {
   @include flex(row, space-between, center);
 
-  flex-wrap: wrap;
   gap: $space-xs;
   padding: 0.6rem $space-sm;
   border-radius: $radius-md;
@@ -11,7 +10,8 @@
   font-family: $font-family-mono;
   font-size: $text-xs;
   line-height: 1.6rem;
-  white-space: nowrap;
+  min-width: 0;
+  max-width: 100%;
 
   @include icon-size(1.2rem);
 }
@@ -25,16 +25,27 @@
 }
 
 .tag-info__identifier {
+  flex: 1 1 auto;
   color: $dark-color;
   font-weight: $font-semibold;
+  overflow: hidden;
+}
+
+.tag-info__identifier__text {
+  @include text-truncate;
+
+  min-width: 0;
 }
 
 .tag-info__identifier__icon {
+  flex-shrink: 0;
   color: $secondary-color;
 }
 
 .tag-info__status {
+  flex-shrink: 0;
   font-weight: $font-medium;
+  white-space: nowrap;
 
   &--highlight {
     color: $secondary-color;
@@ -43,4 +54,12 @@
   &--muted {
     color: $gray-scale-medium;
   }
+}
+
+.tag-info__status__icon {
+  flex-shrink: 0;
+}
+
+.tag-info__status__text {
+  white-space: nowrap;
 }

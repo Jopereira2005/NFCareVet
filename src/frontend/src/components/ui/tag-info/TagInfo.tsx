@@ -23,13 +23,13 @@ export function TagInfo({ identifier, status }: TagInfoProps) {
 
   return (
     <div className={styles['tag-info']}>
-      <span className={styles['tag-info__identifier']}>
+      <span className={styles['tag-info__identifier']} title={identifier.label}>
         <IdentifierIcon className={styles['tag-info__identifier__icon']} aria-hidden="true" />
-        <span>{identifier.label}</span>
+        <span className={styles['tag-info__identifier__text']}>{identifier.label}</span>
       </span>
-      <span className={clsx(styles['tag-info__status'], styles[`tag-info__status--${tone}`])}>
-        <StatusIcon aria-hidden="true" />
-        <span>{status.label}</span>
+      <span className={clsx(styles['tag-info__status'], styles[`tag-info__status--${tone}`])} title={status.label}>
+        <StatusIcon className={styles['tag-info__status__icon']} aria-hidden="true" />
+        <span className={styles['tag-info__status__text']}>{status.label}</span>
       </span>
     </div>
   );

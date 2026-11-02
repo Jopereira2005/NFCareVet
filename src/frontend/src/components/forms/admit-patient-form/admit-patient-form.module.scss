@@ -17,13 +17,24 @@
   background: $gray-scale-light;
   color: $gray-scale-dark;
   font-size: $text-xs;
+  min-width: 0;
+  max-width: 100%;
 
   svg {
     color: $secondary-color;
+    flex-shrink: 0;
   }
 
   strong {
     color: $dark-color;
     font-family: $font-family-mono;
+    word-break: break-all;
+    overflow-wrap: break-word;
   }
+}
+
+.admit-patient-form__tag__text {
+  min-width: 0;
+  word-break: break-all;
+  overflow-wrap: break-word;
 }

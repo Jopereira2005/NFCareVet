@@ -122,6 +122,7 @@
 .tag-card__header {
   @include flex(row, space-between, center);
   gap: $space-sm;
+  min-width: 0;
 }
 
 .tag-card__identity {
@@ -129,10 +130,13 @@
   align-items: center;
   gap: $space-md;
   min-width: 0;
+  flex: 1 1 auto;
 }
 
 .tag-card__identity__text {
   min-width: 0;
+  flex: 1 1 auto;
+  overflow: hidden;
 }
 
 .tag-card__header__aside {
@@ -146,9 +150,12 @@
   @include circle(4rem);
   @include icon-size(2rem);
   @include tinted($primary-color, 0.1);
+  flex-shrink: 0;
 }
 
 .tag-card__code {
+  @include text-truncate;
+
   margin: 0;
   color: $dark-color;
   font-family: $font-family-mono;
@@ -186,6 +193,7 @@
 
     > svg {
       color: $secondary-color;
+      flex-shrink: 0;
     }
 
     strong {

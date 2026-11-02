@@ -356,8 +356,8 @@ export default function Tags() {
                                   <Tag aria-hidden="true" />
                                 </span>
                                 <div className={styles['tag-card__identity__text']}>
-                                  <h3 className={styles['tag-card__code']}>#{tag.publicCode}</h3>
-                                  <p className={styles['tag-card__uid']}>UID: {tag.tagUid}</p>
+                                  <h3 className={styles['tag-card__code']} title={`#${tag.publicCode}`}>#{tag.publicCode}</h3>
+                                  <p className={styles['tag-card__uid']} title={`UID: ${tag.tagUid}`}>UID: {tag.tagUid}</p>
                                 </div>
                               </div>
 

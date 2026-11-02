@@ -1287,7 +1287,7 @@ export default function App() {
                         }}
                       >
                         <span>Coleira NFC Vinculada: <strong>{quickRecord.nfcTag.tagUid}</strong></span>
-                        <span style={{ fontFamily: 'monospace', color: '#047857' }}>{quickRecord.nfcTag.publicCode}</span>
+                        <span style={{ fontFamily: 'monospace', color: '#047857', maxWidth: '180px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={quickRecord.nfcTag.publicCode}>{quickRecord.nfcTag.publicCode}</span>
                       </div>
                     )}
                   </div>
@@ -2495,9 +2495,9 @@ export default function App() {
                           fontSize: '12px',
                         }}
                       >
-                        <div>
+                        <div style={{ minWidth: 0, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                           <strong style={{ fontFamily: 'monospace' }}>{t.tagUid}</strong>
-                          <span style={{ fontSize: '11px', color: '#64748b', marginLeft: '6px' }}>({t.publicCode})</span>
+                          <span style={{ fontSize: '11px', color: '#64748b', marginLeft: '6px' }} title={t.publicCode}>({t.publicCode})</span>
                         </div>
                         <button
                           onClick={() => {
@@ -2544,3 +2544,5 @@ export default function App() {
     </div>
   );
 }
+
+
