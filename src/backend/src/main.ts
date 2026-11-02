@@ -17,42 +17,47 @@ async function bootstrap() {
 
   app.enableCors();
 
-  const swaggerConfig = new DocumentBuilder()
-    .setTitle('NFCareVet API')
-    .setDescription(
-      'Documentação interativa da API do sistema NFCareVet - Gestão Hospitalar Veterinária e Leito com NFC.',
-    )
-    .setVersion('1.0.0')
-    .addBearerAuth(
-      {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'Authorization',
-        description: 'Insira o token JWT gerado nos endpoints de login para autenticar as requisições.',
-        in: 'header',
-      },
-      'JWT-auth',
-    )
-    .addTag('Autenticação', 'Endpoints de login convencional e autenticação rápida por crachá NFC')
-    .addTag('Beira de Leito (Bedside)', 'Consultas rápidas por tag NFC de leito e checagem/aplicação de medicações')
-    .addTag('Tags NFC', 'Gestão e provisionamento de tags NFC do leito hospitalar')
-    .addTag('Baias / Leitos (Kennels)', 'Listagem de baias ativas e ocupação em tempo real')
-    .addTag('Tutores (Guardians)', 'Cadastro, busca e perfil de tutores responsáveis')
-    .addTag('Pacientes (Patients)', 'Cadastro, busca, histórico de atendimentos e prontuário de pacientes')
-    .addTag('Dashboard & Cadastros Recentes (Registrations)', 'Listagem unificada de últimos pacientes e tutores cadastrados')
-    .addTag('Internações (Hospitalizations)', 'Gestão de internações de pacientes, leitos e vínculo de tags NFC')
-    .addTag('Usuários', 'Gerenciamento de colaboradores e permissões (Exclusivo ADMIN)')
-    .addTag('Health & Diagnóstico', 'Monitoramento de integridade e testes de autorização RBAC')
-    .build();
+  if (
+    process.env.NODE_ENV !== 'production' ||
+    process.env.ENABLE_SWAGGER === 'true'
+  ) {
+    const swaggerConfig = new DocumentBuilder()
+      .setTitle('NFCareVet API')
+      .setDescription(
+        'Documentação interativa da API do sistema NFCareVet - Gestão Hospitalar Veterinária e Leito com NFC.',
+      )
+      .setVersion('1.0.0')
+      .addBearerAuth(
+        {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          name: 'Authorization',
+          description: 'Insira o token JWT gerado nos endpoints de login para autenticar as requisições.',
+          in: 'header',
+        },
+        'JWT-auth',
+      )
+      .addTag('Autenticação', 'Endpoints de login convencional e autenticação rápida por crachá NFC')
+      .addTag('Beira de Leito (Bedside)', 'Consultas rápidas por tag NFC de leito e checagem/aplicação de medicações')
+      .addTag('Tags NFC', 'Gestão e provisionamento de tags NFC do leito hospitalar')
+      .addTag('Baias / Leitos (Kennels)', 'Listagem de baias ativas e ocupação em tempo real')
+      .addTag('Tutores (Guardians)', 'Cadastro, busca e perfil de tutores responsáveis')
+      .addTag('Pacientes (Patients)', 'Cadastro, busca, histórico de atendimentos e prontuário de pacientes')
+      .addTag('Dashboard & Cadastros Recentes (Registrations)', 'Listagem unificada de últimos pacientes e tutores cadastrados')
+      .addTag('Internações (Hospitalizations)', 'Gestão de internações de pacientes, leitos e vínculo de tags NFC')
+      .addTag('Usuários', 'Gerenciamento de colaboradores e permissões (Exclusivo ADMIN)')
+      .addTag('Health & Diagnóstico', 'Monitoramento de integridade e testes de autorização RBAC')
+      .build();
 
-  const document = SwaggerModule.createDocument(app, swaggerConfig);
-  SwaggerModule.setup('api/docs', app, document, {
-    swaggerOptions: {
-      persistAuthorization: true,
-    },
-    customSiteTitle: 'NFCareVet API Docs',
-  });
+    const document = SwaggerModule.createDocument(app, swaggerConfig);
+    SwaggerModule.setup('api/docs', app, document, {
+      swaggerOptions: {
+        persistAuthorization: true,
+      },
+      customSiteTitle: 'NFCareVet API Docs',
+    });
+  }
 
   const port = process.env.PORT ?? 3000;
   await app.listen(port, '0.0.0.0');

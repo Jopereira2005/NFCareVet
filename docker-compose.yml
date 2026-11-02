@@ -2,7 +2,7 @@ services:
   postgres:
     image: postgres:16-alpine
     container_name: nfcarevet_postgres
-    restart: always
+    restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
@@ -11,6 +11,43 @@ services:
       - '5432:5432'
     volumes:
       - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d nfcarevet']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+      dockerfile: src/backend/Dockerfile
+    container_name: nfcarevet_backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://postgres:password@postgres:5432/nfcarevet?schema=public
+      PORT: 3000
+      JWT_SECRET: nfcarevet_default_jwt_secret_key_2026
+      JWT_EXPIRES_IN: 1d
+      APP_BASE_URL: http://localhost:5173
+    ports:
+      - '3000:3000'
+
+  frontend:
+    build:
+      context: .
+      dockerfile: src/frontend/Dockerfile
+      args:
+        VITE_USE_MOCKS: 'false'
+    container_name: nfcarevet_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - '5173:80'
 
 volumes:
   pgdata:

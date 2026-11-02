@@ -20,6 +20,7 @@ out/
 .env
 .env.*
 !.env.example
+!.env.prod.example
 
 # 4. Dados locais do PostgreSQL e Docker
 pgdata/

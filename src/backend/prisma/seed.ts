@@ -14,10 +14,13 @@ import * as bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 async function main() {
-  // 1. Verificação de ambiente: O seed deve rodar estritamente em desenvolvimento
-  if (process.env.NODE_ENV === 'production') {
+  // 1. Verificação de ambiente: O seed deve rodar em desenvolvimento ou quando ALLOW_DEMO_SEED=true
+  if (
+    process.env.NODE_ENV === 'production' &&
+    process.env.ALLOW_DEMO_SEED !== 'true'
+  ) {
     console.warn(
-      '⚠️ [AVISO DE SEGURANÇA] O script de seed do NFCareVet é permitido exclusivamente em ambiente de desenvolvimento (NODE_ENV !== "production"). A execução foi cancelada.',
+      '⚠️ [AVISO DE SEGURANÇA] O script de seed do NFCareVet é permitido apenas em desenvolvimento ou com ALLOW_DEMO_SEED="true". A execução foi cancelada.',
     );
     return;
   }

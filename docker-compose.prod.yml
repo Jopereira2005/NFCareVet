@@ -1,0 +1,62 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: nfcarevet_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD no arquivo .env.prod}
+      POSTGRES_DB: ${POSTGRES_DB:-nfcarevet}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U $${POSTGRES_USER:-postgres} -d $${POSTGRES_DB:-nfcarevet}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - nfcarevet_internal
+
+  backend:
+    build:
+      context: .
+      dockerfile: src/backend/Dockerfile
+    container_name: nfcarevet_backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      ALLOW_DEMO_SEED: ${ALLOW_DEMO_SEED:-true}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-nfcarevet}?schema=public
+      PORT: 3000
+      JWT_SECRET: ${JWT_SECRET:?Defina JWT_SECRET no arquivo .env.prod}
+      JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-1d}
+      APP_BASE_URL: https://nfcarevet.gabrieldsrod.dev.br
+    networks:
+      - nfcarevet_internal
+
+  frontend:
+    build:
+      context: .
+      dockerfile: src/frontend/Dockerfile
+      args:
+        VITE_USE_MOCKS: 'false'
+        VITE_API_URL: '/api'
+    container_name: nfcarevet_frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    # Expõe apenas em 127.0.0.1 na VM para que somente o Nginx da máquina acesse
+    ports:
+      - '127.0.0.1:8085:80'
+    networks:
+      - nfcarevet_internal
+
+volumes:
+  pgdata:
+
+networks:
+  nfcarevet_internal:
+    driver: bridge

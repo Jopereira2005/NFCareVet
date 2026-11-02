@@ -1,0 +1,12 @@
+node_modules
+**/node_modules
+**/dist
+.git
+.gitignore
+.gemini
+**/.env
+**/.env.*
+!**/.env.example
+**/*.log
+coverage
+**/coverage
