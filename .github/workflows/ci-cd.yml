@@ -1,0 +1,104 @@
+name: CI/CD NFCareVet
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: Build, Lint & Typecheck
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Instalar dependências do monorepo
+        run: npm ci
+
+      - name: Build do pacote compartilhado (@nfcarevet/common)
+        run: npm run build:common
+
+      - name: Gerar Prisma Client
+        run: npm run prisma generate --workspace=backend
+
+      - name: Lint do Backend
+        run: npm run lint --workspace=backend
+
+      - name: Build do Backend
+        run: npm run build --workspace=backend
+
+      - name: Lint do Frontend
+        run: npm run lint --workspace=frontend
+
+      - name: Build do Frontend
+        run: npm run build --workspace=frontend
+
+  deploy:
+    name: Deploy em Produção (Oracle Cloud VM)
+    needs: ci
+    if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH na VM da Oracle
+        uses: appleboy/ssh-action@v1.1.0
+        with:
+          host: ${{ secrets.ORACLE_SSH_HOST }}
+          username: ${{ secrets.ORACLE_SSH_USER || 'ubuntu' }}
+          key: ${{ secrets.ORACLE_SSH_PRIVATE_KEY }}
+          port: ${{ secrets.ORACLE_SSH_PORT || 22 }}
+          script_stop: true
+          script: |
+            set -e
+
+            # Localiza automaticamente a pasta do projeto na VM (ou usa ORACLE_APP_DIR se definido)
+            APP_DIR="${{ secrets.ORACLE_APP_DIR }}"
+            if [ -z "$APP_DIR" ]; then
+              FOUND_COMPOSE=$(find "$HOME" -maxdepth 3 -name "docker-compose.prod.yml" | head -n 1)
+              if [ -n "$FOUND_COMPOSE" ]; then
+                APP_DIR=$(dirname "$FOUND_COMPOSE")
+              else
+                echo "❌ Erro: pasta do NFCareVet com docker-compose.prod.yml não encontrada em $HOME."
+                exit 1
+              fi
+            fi
+
+            echo "📂 Entrando no diretório: $APP_DIR"
+            cd "$APP_DIR"
+
+            echo "🔄 Atualizando código da branch main..."
+            git fetch origin main
+            git reset --hard origin/main
+
+            if [ ! -f .env.prod ]; then
+              echo "⚙️ Criando .env.prod inicial a partir de .env.prod.example..."
+              cp .env.prod.example .env.prod
+              sed -i "s/troque_por_uma_senha_forte_do_banco/$(openssl rand -hex 16)/" .env.prod
+              sed -i "s/troque_por_uma_chave_jwt_aleatoria_longa/$(openssl rand -hex 32)/" .env.prod
+            fi
+
+            echo "🐳 Recriando containers de produção..."
+            docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --build --remove-orphans
+
+            echo "🧹 Limpando imagens Docker antigas não utilizadas..."
+            docker image prune -f
+
+            echo "✅ Deploy do NFCareVet concluído com sucesso!"
