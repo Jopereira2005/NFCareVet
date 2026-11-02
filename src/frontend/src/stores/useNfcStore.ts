@@ -18,7 +18,27 @@ const UNSUPPORTED_MESSAGE = 'Web NFC não é suportado neste navegador. Use o Go
 const KEYBOARD_READER_MAX_KEY_INTERVAL_MS = 50;
 const KEYBOARD_READER_UID_PATTERN = /^[0-9a-f:]{8,}$/i;
 
-const isWebNfcSupported = () => typeof window !== 'undefined' && 'NDEFReader' in window;
+export const isWebNfcSupported = () => typeof window !== 'undefined' && 'NDEFReader' in window;
+
+/** Writes a physical NDEF URL record onto an NFC tag (Chrome on Android over HTTPS). */
+export const writeUrlToNfcTag = async (url: string, signal?: AbortSignal): Promise<void> => {
+  if (!window.NDEFReader) {
+    throw new Error(UNSUPPORTED_MESSAGE);
+  }
+
+  const reader = new window.NDEFReader();
+  await reader.write(
+    {
+      records: [
+        {
+          recordType: 'url',
+          data: url,
+        },
+      ],
+    },
+    { signal },
+  );
+};
 
 const toNfcReading = (serialNumber: string): NfcReading => ({ serialNumber, uid: serialNumber.replace(/[:\s-]/g, '').toUpperCase() });
 
@@ -103,7 +123,7 @@ let lastKeyAt = 0;
 
 if (typeof window !== 'undefined') {
   window.addEventListener('keydown', (event) => {
-    // Inside a field the reader's output is the user's input (e.g. typing a UID by hand)
+    // Inside a field the reader's reader output is the user's input (e.g. typing a UID by hand)
     if (isTypingTarget(event.target)) return;
 
     const now = performance.now();

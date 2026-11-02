@@ -1,0 +1,247 @@
+@use 'abstracts' as *;
+
+.tags {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xl;
+}
+
+.tags__summary {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: $space-sm;
+
+  @include respond-to('sm') {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.tags__summary__card {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+  padding: $space-md $space-lg;
+  border: 1px solid $gray-scale-light;
+  border-radius: $radius-base;
+  background: $light-color;
+  box-shadow: $shadow-xs;
+}
+
+.tags__summary__label {
+  color: $gray-scale-medium;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.tags__summary__value {
+  color: $dark-color;
+  font-family: $font-family-mono;
+  font-size: $text-xl;
+  font-weight: $font-bold;
+
+  &[data-tone='success'] {
+    color: $secondary-color;
+  }
+
+  &[data-tone='info'] {
+    color: $primary-color;
+  }
+
+  &[data-tone='muted'] {
+    color: $gray-scale-medium;
+  }
+}
+
+.tags__register {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+  padding: $space-lg;
+  border-radius: $radius-lg;
+  background: $light-color;
+  box-shadow: $shadow-xs;
+}
+
+.tags__register__form {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+}
+
+.tags__register__actions {
+  display: flex;
+  gap: $space-sm;
+
+  > * {
+    flex: 1 1 0;
+  }
+}
+
+.tags__register__error {
+  margin: 0;
+  color: $danger-color;
+  font-size: $text-xs;
+  font-weight: $font-medium;
+}
+
+.tags__inventory {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+}
+
+.tags__empty {
+  margin: 0;
+  padding: $space-xl;
+  border: 1px dashed $gray-scale-light;
+  border-radius: $radius-base;
+  background: $light-color;
+  color: $gray-scale-medium;
+  font-size: $text-sm;
+  text-align: center;
+}
+
+.tags__list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+}
+
+.tag-card {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+  padding: $space-lg;
+  border-radius: $radius-lg;
+  background: $light-color;
+  box-shadow: $shadow-xs;
+}
+
+.tag-card__header {
+  @include flex(row, space-between, center);
+  gap: $space-sm;
+}
+
+.tag-card__identity {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+  min-width: 0;
+}
+
+.tag-card__identity__text {
+  min-width: 0;
+}
+
+.tag-card__header__aside {
+  display: flex;
+  align-items: center;
+  gap: $space-xs;
+  flex-shrink: 0;
+}
+
+.tag-card__icon {
+  @include circle(4rem);
+  @include icon-size(2rem);
+  @include tinted($primary-color, 0.1);
+}
+
+.tag-card__code {
+  margin: 0;
+  color: $dark-color;
+  font-family: $font-family-mono;
+  font-size: $text-md;
+  font-weight: $font-bold;
+  line-height: 2.2rem;
+}
+
+.tag-card__uid {
+  margin: 0;
+  color: $gray-scale-medium;
+  font-family: $font-family-mono;
+  font-size: $text-xs;
+  @include text-truncate;
+}
+
+.tag-card__details {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+  margin: 0;
+  padding: $space-md;
+  border-radius: $radius-base;
+  background: $gray-scale-light;
+  list-style: none;
+
+  li {
+    @include flex(row, flex-start, center);
+    @include icon-size(1.5rem);
+    gap: $space-sm;
+    color: $gray-scale-dark;
+    font-size: $text-xs;
+    line-height: 1.6rem;
+    min-width: 0;
+
+    > svg {
+      color: $secondary-color;
+    }
+
+    strong {
+      color: $dark-color;
+      font-weight: $font-bold;
+    }
+  }
+}
+
+.tag-card__details__url-row {
+  justify-content: space-between !important;
+  padding-top: $space-xs;
+  border-top: 1px solid rgba($gray-scale-medium, 0.15);
+}
+
+.tag-card__details__url {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  min-width: 0;
+  font-family: $font-family-mono;
+
+  > svg {
+    color: $secondary-color;
+  }
+
+  > span {
+    @include text-truncate;
+  }
+}
+
+.tag-card__details__url-actions {
+  display: flex;
+  align-items: center;
+  gap: $space-xxs;
+  flex-shrink: 0;
+}
+
+.tag-card__actions {
+  display: flex;
+  gap: $space-sm;
+
+  > * {
+    flex: 1 1 0;
+  }
+}
+
+.write-modal {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+}
+
+.write-modal__hint {
+  margin: 0;
+  color: $gray-scale-medium;
+  font-size: $text-xs;
+  line-height: 1.5;
+}

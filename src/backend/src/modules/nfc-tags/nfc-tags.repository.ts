@@ -8,19 +8,37 @@ import {
 } from '@prisma/client';
 
 export type NfcTagWithHospitalization = NfcTag & {
-  hospitalization: Hospitalization | null;
+  hospitalization:
+    | (Hospitalization & {
+        patient?: { id: string; name: string; species: string } | null;
+        kennel?: { id: string; name: string } | null;
+      })
+    | null;
 };
 
 export interface INfcTagsRepository {
   findById(id: string): Promise<NfcTagWithHospitalization | null>;
   findByTagUid(tagUid: string): Promise<NfcTagWithHospitalization | null>;
   findByPublicCode(publicCode: string): Promise<NfcTagWithHospitalization | null>;
-  findAll(): Promise<NfcTag[]>;
+  findAll(): Promise<NfcTagWithHospitalization[]>;
   getUsage(): Promise<{ total: number; linked: number }>;
   create(data: Prisma.NfcTagCreateInput): Promise<NfcTag>;
   update(id: string, data: Prisma.NfcTagUpdateInput): Promise<NfcTag>;
   delete(id: string): Promise<NfcTag>;
 }
+
+const hospitalizationWithOccupantInclude = {
+  hospitalization: {
+    include: {
+      patient: {
+        select: { id: true, name: true, species: true },
+      },
+      kennel: {
+        select: { id: true, name: true },
+      },
+    },
+  },
+} as const;
 
 @Injectable()
 export class NfcTagsRepository implements INfcTagsRepository {
@@ -29,36 +47,28 @@ export class NfcTagsRepository implements INfcTagsRepository {
   async findById(id: string): Promise<NfcTagWithHospitalization | null> {
     return this.prisma.nfcTag.findUnique({
       where: { id },
-      include: {
-        hospitalization: true,
-      },
+      include: hospitalizationWithOccupantInclude,
     });
   }
 
   async findByTagUid(tagUid: string): Promise<NfcTagWithHospitalization | null> {
     return this.prisma.nfcTag.findUnique({
       where: { tagUid },
-      include: {
-        hospitalization: true,
-      },
+      include: hospitalizationWithOccupantInclude,
     });
   }
 
   async findByPublicCode(publicCode: string): Promise<NfcTagWithHospitalization | null> {
     return this.prisma.nfcTag.findUnique({
       where: { publicCode },
-      include: {
-        hospitalization: true,
-      },
+      include: hospitalizationWithOccupantInclude,
     });
   }
 
-  async findAll(): Promise<NfcTag[]> {
+  async findAll(): Promise<NfcTagWithHospitalization[]> {
     return this.prisma.nfcTag.findMany({
       orderBy: { createdAt: 'desc' },
-      include: {
-        hospitalization: true,
-      },
+      include: hospitalizationWithOccupantInclude,
     });
   }
 

@@ -40,6 +40,7 @@
 
 .button--primary {
   min-height: 4.2rem;
+  padding: 0 $space-md;
   border: 0;
   background: $primary-color;
   color: $light-color;
@@ -65,6 +66,7 @@
 
 .button--danger {
   min-height: 4.2rem;
+  padding: 0 $space-md;
   border: 0;
   background: $danger-color;
   color: $light-color;
@@ -79,7 +81,8 @@
 }
 
 .button--outlined {
-  min-height: 3.8rem;
+  min-height: 4.2rem;
+  padding: 0 $space-md;
   border: 1px solid $gray-scale-light;
   background: $light-color;
   color: $dark-color;

@@ -6,6 +6,8 @@ export const ROUTES = {
   home: '/home',
   search: '/search',
   reader: '/reader',
+  tags: '/tags',
+  bedside: '/bedside/:identifier',
   history: '/history',
   tasks: '/tasks',
   guardianProfile: '/guardians/:guardianId',
@@ -22,3 +24,5 @@ export interface RouteHandle {
 export const getPatientRecordPath = (patientId: string) => generatePath(ROUTES.patientRecord, { patientId });
 
 export const getGuardianProfilePath = (guardianId: string) => generatePath(ROUTES.guardianProfile, { guardianId });
+
+export const getBedsidePath = (identifier: string) => generatePath(ROUTES.bedside, { identifier });

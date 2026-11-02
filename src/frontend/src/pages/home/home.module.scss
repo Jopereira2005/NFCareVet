@@ -15,6 +15,19 @@
 }
 
 .home__actions__grid {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: $space-sm;
+
+  > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  @include respond-to('sm') {
+    grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+
+    > :last-child:nth-child(odd) {
+      grid-column: auto;
+    }
+  }
 }

@@ -8,6 +8,7 @@ import { dashboardService } from './dashboard.service';
 import { guardianService } from './guardian.service';
 import { hospitalizationService } from './hospitalization.service';
 import { kennelService } from './kennel.service';
+import { nfcTagService } from './nfc-tag.service';
 import { patientService, type PatientSearchParams } from './patient.service';
 import { prescriptionService } from './prescription.service';
 
@@ -74,6 +75,11 @@ export const scheduleQueries = {
 export const kennelQueries = {
   all: () => ['kennels'] as const,
   list: () => queryOptions({ queryKey: [...kennelQueries.all(), 'list'], queryFn: () => kennelService.list() }),
+};
+
+export const nfcTagQueries = {
+  all: () => ['nfc-tags'] as const,
+  list: () => queryOptions({ queryKey: [...nfcTagQueries.all(), 'list'], queryFn: () => nfcTagService.list() }),
 };
 
 export const dashboardQueries = {

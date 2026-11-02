@@ -7,7 +7,10 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { randomUUID } from 'crypto';
 import { CreateNfcTagDto } from './dto/create-nfc-tag.dto';
-import { NfcTagsRepository } from './nfc-tags.repository';
+import {
+  NfcTagsRepository,
+  NfcTagWithHospitalization,
+} from './nfc-tags.repository';
 import { NfcTagResponseDto } from './dto/nfc-tag-response.dto';
 import { NfcTagUsageResponseDto } from './dto/nfc-tag-usage-response.dto';
 import { NfcTag } from '@prisma/client';
@@ -187,12 +190,25 @@ export class NfcTagsService {
     return tag;
   }
 
-  private toResponseDto(tag: NfcTag): NfcTagResponseDto {
+  private toResponseDto(
+    tag: NfcTag | NfcTagWithHospitalization,
+  ): NfcTagResponseDto {
     const appBaseUrl = this.configService.get<string>(
       'APP_BASE_URL',
       'https://app.suaclinica.com',
     );
     const targetUrl = `${appBaseUrl}/bedside/${tag.publicCode}`;
+    const hosp = 'hospitalization' in tag ? tag.hospitalization : null;
+    const occupant =
+      hosp && hosp.status === 'ACTIVE' && hosp.patient && hosp.kennel
+        ? {
+            hospitalizationId: hosp.id,
+            patientId: hosp.patient.id,
+            patientName: hosp.patient.name,
+            species: hosp.patient.species,
+            kennelName: hosp.kennel.name,
+          }
+        : null;
 
     return {
       id: tag.id,
@@ -201,6 +217,7 @@ export class NfcTagsService {
       active: tag.active,
       targetUrl,
       createdAt: tag.createdAt,
+      occupant,
     };
   }
 }

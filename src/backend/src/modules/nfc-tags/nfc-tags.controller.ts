@@ -19,11 +19,14 @@ import {
   ApiBadRequestResponse,
   ApiNotFoundResponse,
   ApiUnauthorizedResponse,
+  ApiForbiddenResponse,
 } from '@nestjs/swagger';
+import { UserRole } from '@prisma/client';
 import { NfcTagsService } from './nfc-tags.service';
 import { CreateNfcTagDto } from './dto/create-nfc-tag.dto';
 import { NfcTagResponseDto } from './dto/nfc-tag-response.dto';
 import { NfcTagUsageResponseDto } from './dto/nfc-tag-usage-response.dto';
+import { Roles } from '../../common/decorators/roles.decorator';
 
 @ApiTags('Tags NFC')
 @ApiBearerAuth('JWT-auth')
@@ -32,6 +35,7 @@ export class NfcTagsController {
   constructor(private readonly nfcTagsService: NfcTagsService) {}
 
   @Post()
+  @Roles(UserRole.ADMIN)
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({
     summary: 'Registrar nova tag NFC',
@@ -48,11 +52,15 @@ export class NfcTagsController {
   @ApiUnauthorizedResponse({
     description: 'Não autenticado.',
   })
+  @ApiForbiddenResponse({
+    description: 'Acesso restrito a administradores (ADMIN).',
+  })
   async create(@Body() createNfcTagDto: CreateNfcTagDto) {
     return this.nfcTagsService.registerTag(createNfcTagDto);
   }
 
   @Get()
+  @Roles(UserRole.ADMIN)
   @ApiOperation({
     summary: 'Listar todas as tags NFC',
     description: 'Retorna todas as tags cadastradas no sistema com seus respectivos códigos e URLs de destino.',
@@ -63,6 +71,9 @@ export class NfcTagsController {
   })
   @ApiUnauthorizedResponse({
     description: 'Não autenticado.',
+  })
+  @ApiForbiddenResponse({
+    description: 'Acesso restrito a administradores (ADMIN).',
   })
   async findAll() {
     return this.nfcTagsService.findAll();
@@ -86,6 +97,7 @@ export class NfcTagsController {
   }
 
   @Get(':id')
+  @Roles(UserRole.ADMIN)
   @ApiOperation({
     summary: 'Buscar tag NFC por ID',
     description: 'Obtém detalhes e status de uma tag NFC a partir de seu ID interno.',
@@ -105,11 +117,15 @@ export class NfcTagsController {
   @ApiUnauthorizedResponse({
     description: 'Não autenticado.',
   })
+  @ApiForbiddenResponse({
+    description: 'Acesso restrito a administradores (ADMIN).',
+  })
   async findOne(@Param('id') id: string) {
     return this.nfcTagsService.findOne(id);
   }
 
   @Patch(':id/inactivate')
+  @Roles(UserRole.ADMIN)
   @ApiOperation({
     summary: 'Inativar tag NFC',
     description: 'Desativa a tag NFC informada, impedindo novas leituras operacionais.',
@@ -129,11 +145,15 @@ export class NfcTagsController {
   @ApiUnauthorizedResponse({
     description: 'Não autenticado.',
   })
+  @ApiForbiddenResponse({
+    description: 'Acesso restrito a administradores (ADMIN).',
+  })
   async inactivate(@Param('id') id: string) {
     return this.nfcTagsService.inactivateTag(id);
   }
 
   @Patch(':id/activate')
+  @Roles(UserRole.ADMIN)
   @ApiOperation({
     summary: 'Ativar tag NFC',
     description: 'Reativa uma tag NFC que estava desativada.',
@@ -153,11 +173,15 @@ export class NfcTagsController {
   @ApiUnauthorizedResponse({
     description: 'Não autenticado.',
   })
+  @ApiForbiddenResponse({
+    description: 'Acesso restrito a administradores (ADMIN).',
+  })
   async activate(@Param('id') id: string) {
     return this.nfcTagsService.activateTag(id);
   }
 
   @Delete(':id')
+  @Roles(UserRole.ADMIN)
   @ApiOperation({
     summary: 'Excluir tag NFC',
     description: 'Remove definitivamente o registro da tag NFC do banco de dados.',
@@ -175,6 +199,9 @@ export class NfcTagsController {
   })
   @ApiUnauthorizedResponse({
     description: 'Não autenticado.',
+  })
+  @ApiForbiddenResponse({
+    description: 'Acesso restrito a administradores (ADMIN).',
   })
   async remove(@Param('id') id: string) {
     return this.nfcTagsService.removeTag(id);

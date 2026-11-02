@@ -1,15 +1,19 @@
 import { useState } from 'react';
-import { Link2, Stethoscope } from 'lucide-react';
+import { UserRole } from '@nfcarevet/common';
+import { Link2, Stethoscope, Tag } from 'lucide-react';
+import { useNavigate } from 'react-router';
 
 import { LinkTagModal, NfcReaderPanel, PatientCard, UnlinkTagModal } from '@/components/features';
 import { PageHeading } from '@/components/layout';
-import { SegmentedControl, type SegmentedOption } from '@/components/ui';
+import { Button, SegmentedControl, type SegmentedOption } from '@/components/ui';
 import { useResolveNfcTag } from '@/hooks/queries/usePatientQueries';
 import { useNfcReader } from '@/hooks/useNfcReader';
 import { useSearchParamState } from '@/hooks/useSearchParamState';
 import type { NfcReading } from '@/interfaces/nfc.types';
 import type { Patient } from '@/interfaces/patient.types';
+import { ROUTES } from '@/router/paths';
 import { isNotFoundError } from '@/services/api-error';
+import { useSessionStore } from '@/stores/useSessionStore';
 import { showToast } from '@/stores/useToastStore';
 
 import styles from './reader.module.scss';
@@ -47,6 +51,9 @@ type LinkModeDialog = { kind: 'free'; tagUid: string } | { kind: 'in-use'; patie
 
 export default function Reader() {
   const [mode, setMode] = useSearchParamState<ReaderMode>('mode', 'consult', READER_MODES);
+  const navigate = useNavigate();
+  const user = useSessionStore((state) => state.user);
+  const isAdmin = user?.role === UserRole.ADMIN;
   const resolveTag = useResolveNfcTag();
   const detectedPatient = mode === 'consult' ? resolveTag.data : undefined;
   const [linkDialog, setLinkDialog] = useState<LinkModeDialog | null>(null);
@@ -108,6 +115,13 @@ export default function Reader() {
               </>
             }
           />
+        )}
+
+        {isAdmin && (
+          <Button variant="outlined" onClick={() => navigate(ROUTES.tags)}>
+            <Tag aria-hidden="true" />
+            <span>Gerenciar Inventário de Tags NFC</span>
+          </Button>
         )}
       </div>
 
