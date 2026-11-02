@@ -307,7 +307,7 @@ async function main() {
     }),
     // Tag inativa para testar bloqueio de vínculo
     prisma.nfcTag.create({
-      data: { tagUid: '04DEAD00009999', publicCode: 'VET-INATIVA', active: false },
+      data: { tagUid: '04DEAD00009999', publicCode: 'VET-9999', active: false },
     }),
   ]);
 
@@ -1857,3 +1857,4 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+

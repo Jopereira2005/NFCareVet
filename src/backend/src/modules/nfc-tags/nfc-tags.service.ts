@@ -5,7 +5,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { randomUUID } from 'crypto';
+import { randomBytes, randomInt } from 'crypto';
 import { CreateNfcTagDto } from './dto/create-nfc-tag.dto';
 import {
   NfcTagsRepository,
@@ -39,7 +39,7 @@ export class NfcTagsService {
     }
 
     try {
-      const publicCode = `tag-${randomUUID()}`;
+      const publicCode = await this.generateUniquePublicCode();
       const newTag = await this.nfcTagsRepository.create({
         tagUid: sanitizedUid,
         publicCode,
@@ -169,6 +169,26 @@ export class NfcTagsService {
       );
       throw error;
     }
+  }
+
+  private async generateUniquePublicCode(): Promise<string> {
+    for (let attempts = 0; attempts < 10; attempts++) {
+      const code = `VET-${randomInt(1000, 10000)}`;
+      const existing = await this.nfcTagsRepository.findByPublicCode(code);
+      if (!existing) {
+        return code;
+      }
+    }
+
+    for (let attempts = 0; attempts < 10; attempts++) {
+      const code = `VET-${randomBytes(2).toString('hex').toUpperCase()}`;
+      const existing = await this.nfcTagsRepository.findByPublicCode(code);
+      if (!existing) {
+        return code;
+      }
+    }
+
+    return `VET-${randomBytes(3).toString('hex').toUpperCase()}`;
   }
 
   private async findTagByIdentifier(identifier: string) {

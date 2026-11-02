@@ -24,14 +24,14 @@ export class NfcTagResponseDto {
   @ApiProperty({ example: '04A1B2C3D4E5F6', description: 'UID hexadecimal da tag física' })
   tagUid: string;
 
-  @ApiProperty({ example: 'K-01-A9F3', description: 'Código público/slug gravado na URL da tag' })
+  @ApiProperty({ example: 'VET-8831', description: 'Código público da coleira no padrão clínico (ex: VET-8831)' })
   publicCode: string;
 
   @ApiProperty({ example: true, description: 'Status de ativação da tag' })
   active: boolean;
 
   @ApiProperty({
-    example: 'http://localhost:3000/bedside/K-01-A9F3',
+    example: 'https://app.suaclinica.com/bedside/VET-8831',
     description: 'URL completa apontada pelo NDEF da tag',
   })
   targetUrl: string;
@@ -46,4 +46,3 @@ export class NfcTagResponseDto {
   })
   occupant?: NfcTagOccupantDto | null;
 }
-
