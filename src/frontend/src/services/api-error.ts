@@ -14,6 +14,14 @@ export class ApiError extends Error {
   get isNotFound() {
     return this.status === 404;
   }
+
+  get isUnauthorized() {
+    return this.status === 401;
+  }
+
+  get isForbidden() {
+    return this.status === 403;
+  }
 }
 
 export function toApiError(error: unknown): ApiError {
@@ -31,3 +39,5 @@ export function toApiError(error: unknown): ApiError {
 }
 
 export const isNotFoundError = (error: unknown) => error instanceof ApiError && error.isNotFound;
+export const isUnauthorizedError = (error: unknown) => error instanceof ApiError && error.isUnauthorized;
+export const isForbiddenError = (error: unknown) => error instanceof ApiError && error.isForbidden;

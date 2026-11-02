@@ -22,6 +22,7 @@ export default function LoginScreen() {
 
   // Only internal paths, so a crafted link can't send the user to another site after login
   const redirectTo = searchParams.get('redirectTo');
+  const isBedsideRedirect = Boolean(redirectTo?.startsWith('/bedside/'));
   const enterApp = () => navigate(redirectTo?.startsWith('/') ? redirectTo : ROUTES.home, { replace: true });
 
   const badgeReader = useNfcReader({
@@ -58,6 +59,16 @@ export default function LoginScreen() {
           </h1>
           <p className="login-brand__tagline">Gestão Clínica Veterinária</p>
         </header>
+
+        {isBedsideRedirect && (
+          <aside className="login-bedside-notice" role="status" aria-live="polite">
+            <Nfc className="login-bedside-notice__icon" aria-hidden="true" />
+            <div className="login-bedside-notice__content">
+              <strong>Coleira NFC identificada</strong>
+              <p>Faça login ou aproxime seu crachá para abrir o prontuário do paciente automaticamente.</p>
+            </div>
+          </aside>
+        )}
 
         <form className="login-form" onSubmit={handleSubmit} noValidate aria-describedby={login.isError ? 'login-error' : undefined}>
           <Input

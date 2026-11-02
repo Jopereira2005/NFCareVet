@@ -1,13 +1,14 @@
 import { UserRole } from '@nfcarevet/common';
 import { redirect, type LoaderFunctionArgs } from 'react-router';
 
+import { isForbiddenError, isNotFoundError, isUnauthorizedError } from '@/services/api-error';
 import { patientService } from '@/services/patient.service';
 import { queryClient } from '@/services/query-client';
 import { dashboardQueries, guardianQueries, patientQueries, scheduleQueries } from '@/services/query-options';
 import { getAccessToken, useSessionStore } from '@/stores/useSessionStore';
 import { showToast } from '@/stores/useToastStore';
 
-import { getPatientRecordPath, ROUTES } from './paths';
+import { getBedsidePath, getPatientRecordPath, ROUTES } from './paths';
 
 /**
  * Loaders only *start* the requests (prefetch) and return right away: the page renders its
@@ -65,6 +66,15 @@ export const bedsideLoader = async ({ params }: LoaderFunctionArgs) => {
   const identifier = params.identifier ?? '';
   if (!identifier) return redirect(ROUTES.reader);
 
+  if (!getAccessToken()) {
+    showToast({
+      tone: 'warning',
+      title: 'Autenticação necessária',
+      description: 'Faça login para acessar o prontuário deste paciente.',
+    });
+    return redirect(`${ROUTES.login}?redirectTo=${encodeURIComponent(getBedsidePath(identifier))}`);
+  }
+
   try {
     const patient = await patientService.getByTagUid(identifier);
     queryClient.setQueryData(patientQueries.detail(patient.id).queryKey, patient);
@@ -74,12 +84,39 @@ export const bedsideLoader = async ({ params }: LoaderFunctionArgs) => {
       description: `Abrindo prontuário de ${patient.name}`,
     });
     return redirect(getPatientRecordPath(patient.id));
-  } catch {
+  } catch (error) {
+    if (isUnauthorizedError(error)) {
+      showToast({
+        tone: 'warning',
+        title: 'Autenticação necessária',
+        description: 'Faça login para acessar o prontuário deste paciente.',
+      });
+      return redirect(`${ROUTES.login}?redirectTo=${encodeURIComponent(getBedsidePath(identifier))}`);
+    }
+
+    if (isForbiddenError(error)) {
+      showToast({
+        tone: 'warning',
+        title: 'Acesso restrito',
+        description: 'Seu perfil de usuário não tem permissão para acessar este prontuário.',
+      });
+      return redirect(ROUTES.home);
+    }
+
+    if (isNotFoundError(error)) {
+      showToast({
+        tone: 'warning',
+        title: 'Tag sem internação ativa',
+        description: `Identificador ${identifier} não está vinculado a um paciente internado.`,
+      });
+      return redirect(`${ROUTES.reader}?mode=link`);
+    }
+
     showToast({
       tone: 'warning',
-      title: 'Tag sem internação ativa',
-      description: `Identificador ${identifier} não está vinculado a um paciente internado.`,
+      title: 'Falha ao identificar tag',
+      description: error instanceof Error ? error.message : 'Não foi possível carregar os dados da coleira.',
     });
-    return redirect(`${ROUTES.reader}?mode=link`);
+    return redirect(ROUTES.reader);
   }
 };

@@ -53,6 +53,43 @@
   font-size: $text-sm;
 }
 
+.login-bedside-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-md;
+  padding: $space-md;
+  margin-bottom: 2rem;
+  border-radius: $radius-base;
+  background: rgba($primary-color, 0.06);
+  border: 1px solid rgba($primary-color, 0.15);
+
+  &__icon {
+    width: 2.2rem;
+    height: 2.2rem;
+    flex-shrink: 0;
+    color: $primary-color;
+    margin-top: 0.1rem;
+  }
+
+  &__content {
+    display: grid;
+    gap: 0.2rem;
+
+    strong {
+      color: $primary-color;
+      font-size: $text-sm;
+      font-weight: $font-bold;
+    }
+
+    p {
+      margin: 0;
+      color: $gray-scale-dark;
+      font-size: $text-xs;
+      line-height: 1.5;
+    }
+  }
+}
+
 .login-form {
   display: grid;
   gap: 1.2rem;
