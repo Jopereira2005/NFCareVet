@@ -12,6 +12,11 @@ import {
   PatientResponseDto,
   PatientVisitResponseDto,
 } from './dto/patient-response.dto';
+import {
+  GeneratePhotoUploadUrlDto,
+  PhotoUploadUrlResponseDto,
+} from './dto/patient-photo-upload.dto';
+import { StorageService } from '../storage/storage.service';
 
 function normalizeText(value: string): string {
   return value
@@ -23,7 +28,10 @@ function normalizeText(value: string): string {
 
 @Injectable()
 export class PatientsService {
-  constructor(private readonly patientsRepository: PatientsRepository) {}
+  constructor(
+    private readonly patientsRepository: PatientsRepository,
+    private readonly storageService: StorageService,
+  ) {}
 
   async findById(id: string): Promise<PatientResponseDto> {
     const patient = await this.patientsRepository.findById(id);
@@ -112,6 +120,25 @@ export class PatientsService {
     return this.toResponseDto(created);
   }
 
+  async generatePhotoUploadUrl(
+    patientId: string,
+    dto: GeneratePhotoUploadUrlDto,
+  ): Promise<PhotoUploadUrlResponseDto> {
+    const existing = await this.patientsRepository.findById(patientId);
+
+    if (!existing) {
+      throw new NotFoundException(
+        `Paciente com ID "${patientId}" não encontrado.`,
+      );
+    }
+
+    return this.storageService.generatePresignedUploadUrl(
+      patientId,
+      dto.mimeType,
+      dto.fileSize,
+    );
+  }
+
   async update(id: string, dto: UpdatePatientDto): Promise<PatientResponseDto> {
     const existing = await this.patientsRepository.findById(id);
 
@@ -130,6 +157,7 @@ export class PatientsService {
       }
     }
 
+    const previousPhotoUrl = existing.photoUrl;
     const data: Prisma.PatientUncheckedUpdateInput = {};
 
     if (dto.guardianId !== undefined) data.guardianId = dto.guardianId;
@@ -162,6 +190,15 @@ export class PatientsService {
     }
 
     const updated = await this.patientsRepository.update(id, data);
+
+    if (
+      dto.photoUrl !== undefined &&
+      previousPhotoUrl &&
+      previousPhotoUrl !== updated.photoUrl
+    ) {
+      await this.storageService.deleteFile(previousPhotoUrl);
+    }
+
     return this.toResponseDto(updated);
   }
 

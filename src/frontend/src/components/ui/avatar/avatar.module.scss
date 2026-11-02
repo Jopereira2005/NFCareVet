@@ -45,12 +45,16 @@
   bottom: -0.4rem;
   display: grid;
   place-items: center;
-  width: 2rem;
-  height: 2rem;
+  width: 2.2rem;
+  height: 2.2rem;
+  border: 2px solid $light-color;
   border-radius: $radius-full;
   color: $light-color;
   font-size: $text-xxxs;
   line-height: 1;
+  box-shadow: $shadow-xs;
+
+  @include icon-size(1.1rem);
 
   &--dark {
     background: $dark-color;

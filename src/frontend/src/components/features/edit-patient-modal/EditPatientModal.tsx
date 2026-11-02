@@ -1,5 +1,6 @@
 import { useId } from 'react';
 
+import { PatientPhotoUploader } from '@/components/features/patient-photo-uploader/PatientPhotoUploader';
 import { PatientForm } from '@/components/forms/patient-form/PatientForm';
 import { toPatientFormValues, toUpdatePatientPayload } from '@/components/forms/patient-form/patient-form.schema';
 import { Button, Modal } from '@/components/ui';
@@ -18,7 +19,7 @@ export function EditPatientModal({ patient, onClose }: EditPatientModalProps) {
   return (
     <Modal
       title="Editar Paciente"
-      description={`Atualize os dados de ${patient.name}. Alergias e comportamento aparecem como alertas no prontuário.`}
+      description={`Atualize os dados e a foto de ${patient.name}. Alergias e comportamento aparecem como alertas no prontuário.`}
       onClose={onClose}
       footer={
         <>
@@ -31,6 +32,7 @@ export function EditPatientModal({ patient, onClose }: EditPatientModalProps) {
         </>
       }
     >
+      <PatientPhotoUploader patient={patient} />
       <PatientForm
         formId={formId}
         defaultValues={toPatientFormValues(patient)}

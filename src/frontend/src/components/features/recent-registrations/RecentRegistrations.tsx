@@ -34,7 +34,7 @@ function PatientRegistration({ patient }: { patient: Patient }) {
           size={56}
           shape="rounded"
           fallback={<PawIcon aria-hidden="true" />}
-          badge={{ tone: 'secondary', content: '🐾' }}
+          badge={{ tone: 'secondary', content: <PawIcon aria-hidden="true" /> }}
         />
       }
       identifier={{ icon: Nfc, label: patient.nfcTag ? `#${patient.nfcTag.publicCode}` : 'Sem tag' }}
@@ -61,7 +61,13 @@ function GuardianRegistration({ guardian }: { guardian: Guardian }) {
       description={`Tutor(a) · ${pluralize(patientNames.length, 'pet', 'pets')}:`}
       descriptionHighlight={formatNameList(patientNames) || '—'}
       avatar={
-        <Avatar alt={guardian.name} size={56} shape="rounded" fallback={<User aria-hidden="true" />} badge={{ tone: 'dark', content: '👤' }} />
+        <Avatar
+          alt={guardian.name}
+          size={56}
+          shape="rounded"
+          fallback={<User aria-hidden="true" />}
+          badge={{ tone: 'dark', content: <User aria-hidden="true" /> }}
+        />
       }
       identifier={{ icon: IdCard, label: guardian.cpf ? `CPF: ${maskCpf(guardian.cpf)}` : 'CPF não informado' }}
       status={{ icon: ShieldCheck, label: guardian.cpf ? 'Verificado' : 'Pendente', tone: 'muted' }}

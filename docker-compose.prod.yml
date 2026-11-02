@@ -34,6 +34,11 @@ services:
       JWT_SECRET: ${JWT_SECRET:?Defina JWT_SECRET no arquivo .env.prod}
       JWT_EXPIRES_IN: ${JWT_EXPIRES_IN:-1d}
       APP_BASE_URL: https://nfcarevet.gabrieldsrod.dev.br
+      R2_ACCOUNT_ID: ${R2_ACCOUNT_ID:-}
+      R2_ACCESS_KEY_ID: ${R2_ACCESS_KEY_ID:-}
+      R2_SECRET_ACCESS_KEY: ${R2_SECRET_ACCESS_KEY:-}
+      R2_BUCKET_NAME: ${R2_BUCKET_NAME:-}
+      R2_PUBLIC_URL: ${R2_PUBLIC_URL:-}
     networks:
       - nfcarevet_internal
 

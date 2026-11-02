@@ -103,13 +103,14 @@ export class UpdatePatientDto implements IUpdatePatientPayload {
   weightKg?: number;
 
   @ApiPropertyOptional({
-    description: 'URL da foto do paciente',
+    description: 'URL da foto do paciente (ou null para limpar)',
     example: 'https://cdn.suaclinica.com/pets/thor.jpg',
     nullable: true,
   })
+  @Transform(({ value }) => (value === '' ? null : value))
   @IsString({ message: 'photoUrl deve ser um texto.' })
   @IsOptional()
-  photoUrl?: string;
+  photoUrl?: string | null;
 
   @ApiPropertyOptional({
     description: 'Alergias conhecidas',

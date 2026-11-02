@@ -1,11 +1,13 @@
 import { useId, useState } from 'react';
 import { useNavigate } from 'react-router';
 
+import { PatientPhotoUploader } from '@/components/features/patient-photo-uploader/PatientPhotoUploader';
 import { PatientForm } from '@/components/forms/patient-form/PatientForm';
 import { toCreatePatientPayload } from '@/components/forms/patient-form/patient-form.schema';
 import { Button, Modal } from '@/components/ui';
 import { useGuardianSearch } from '@/hooks/queries/useGuardianQueries';
 import { useCreatePatient } from '@/hooks/queries/usePatientMutations';
+import { usePatientPhotoUpload } from '@/hooks/usePatientPhotoUpload';
 import { getPatientRecordPath } from '@/router/paths';
 
 import { NewGuardianModal } from '../new-guardian-modal/NewGuardianModal';
@@ -20,11 +22,15 @@ export function NewPatientModal({ onClose, guardian }: NewPatientModalProps) {
   const formId = useId();
   const navigate = useNavigate();
   const createPatient = useCreatePatient();
+  const { uploadPhoto, step, progress, isUploading } = usePatientPhotoUpload();
+  const [stagedFile, setStagedFile] = useState<File | null>(null);
   const [isGuardianModalOpen, setIsGuardianModalOpen] = useState(false);
   const [createdGuardianId, setCreatedGuardianId] = useState<string>();
   // The selector only needs the list when no guardian came from the caller
   const guardiansQuery = useGuardianSearch('');
   const guardianOptions = (guardiansQuery.data ?? []).map(({ id, name }) => ({ value: id, label: name }));
+
+  const isBusy = createPatient.isPending || isUploading;
 
   return (
     <>
@@ -34,15 +40,24 @@ export function NewPatientModal({ onClose, guardian }: NewPatientModalProps) {
         onClose={onClose}
         footer={
           <>
-            <Button variant="outlined" onClick={onClose}>
+            <Button variant="outlined" onClick={onClose} disabled={isBusy}>
               Cancelar
             </Button>
-            <Button type="submit" form={formId} disabled={createPatient.isPending}>
-              {createPatient.isPending ? 'Salvando…' : 'Cadastrar pet'}
+            <Button type="submit" form={formId} disabled={isBusy}>
+              {isUploading ? 'Enviando foto…' : createPatient.isPending ? 'Salvando…' : 'Cadastrar pet'}
             </Button>
           </>
         }
       >
+        <PatientPhotoUploader
+          mode="staged"
+          stagedFile={stagedFile}
+          onStagedFileChange={setStagedFile}
+          step={step}
+          progress={progress}
+          disabled={createPatient.isPending}
+        />
+
         <PatientForm
           formId={formId}
           fixedGuardian={guardian}
@@ -51,7 +66,10 @@ export function NewPatientModal({ onClose, guardian }: NewPatientModalProps) {
           onRequestNewGuardian={guardian ? undefined : () => setIsGuardianModalOpen(true)}
           onSubmit={(values) =>
             createPatient.mutate(toCreatePatientPayload(values), {
-              onSuccess: (patient) => {
+              onSuccess: async (patient) => {
+                if (stagedFile) {
+                  await uploadPhoto(stagedFile, patient.id);
+                }
                 onClose();
                 navigate(getPatientRecordPath(patient.id));
               },

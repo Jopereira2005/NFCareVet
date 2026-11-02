@@ -5,9 +5,11 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -18,10 +20,15 @@ import {
   ApiOperation,
   ApiParam,
   ApiTags,
+  ApiTooManyRequestsResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import { UserRole } from '@prisma/client';
 import { Roles } from '../../common/decorators/roles.decorator';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
+import { UserThrottlerGuard } from '../../common/guards/user-throttler.guard';
 import { PatientsService } from './patients.service';
 import { CreatePatientDto } from './dto/create-patient.dto';
 import { UpdatePatientDto } from './dto/update-patient.dto';
@@ -31,9 +38,14 @@ import {
   PatientResponseDto,
   PatientVisitResponseDto,
 } from './dto/patient-response.dto';
+import {
+  GeneratePhotoUploadUrlDto,
+  PhotoUploadUrlResponseDto,
+} from './dto/patient-photo-upload.dto';
 
 @ApiTags('Pacientes (Patients)')
 @ApiBearerAuth('JWT-auth')
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(UserRole.ADMIN, UserRole.VET, UserRole.REC)
 @Controller('patients')
 export class PatientsController {
@@ -116,11 +128,47 @@ export class PatientsController {
     return this.patientsService.create(dto);
   }
 
+  @Post(':id/photo-upload-url')
+  @HttpCode(HttpStatus.CREATED)
+  @UseGuards(UserThrottlerGuard)
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
+  @ApiOperation({
+    summary: 'Gerar Presigned URL do Cloudflare R2 para upload de foto do paciente',
+    description:
+      'Gera uma URL pré-assinada restrita (Content-Type e Content-Length assinados, máx. 3 MB, validade de 2 minutos) para upload direto ao Cloudflare R2. Possui trava de Rate Limit estrito de no máximo 5 solicitações por minuto por usuário.',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'UUID do paciente',
+    example: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+  })
+  @ApiCreatedResponse({
+    description: 'URL pré-assinada gerada com sucesso.',
+    type: PhotoUploadUrlResponseDto,
+  })
+  @ApiBadRequestResponse({
+    description: 'MIME type não suportado ou arquivo maior que 3 MB.',
+  })
+  @ApiNotFoundResponse({
+    description: 'Paciente não encontrado.',
+  })
+  @ApiTooManyRequestsResponse({
+    description:
+      'Limite de 5 solicitações de upload por minuto excedido para este usuário.',
+  })
+  @ApiUnauthorizedResponse({ description: 'Não autenticado.' })
+  async generatePhotoUploadUrl(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() dto: GeneratePhotoUploadUrlDto,
+  ): Promise<PhotoUploadUrlResponseDto> {
+    return this.patientsService.generatePhotoUploadUrl(id, dto);
+  }
+
   @Patch(':id')
   @ApiOperation({
-    summary: 'Atualizar dados do paciente',
+    summary: 'Atualizar dados do paciente (e substituir/limpar foto com exclusão automática no R2)',
     description:
-      'Atualiza os dados cadastrais, clínicos e alertas (alergias, comportamento, peso, castração) de um paciente existente.',
+      'Atualiza os dados cadastrais, clínicos, alertas e a photoUrl de um paciente existente. Caso uma foto anterior exista no Cloudflare R2 e seja substituída ou removida, o objeto antigo é excluído automaticamente do bucket.',
   })
   @ApiParam({
     name: 'id',

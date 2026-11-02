@@ -17,6 +17,7 @@ export * from './new-patient-modal/NewPatientModal';
 export * from './nfc-reader-panel/NfcReaderPanel';
 export * from './nfc-status-indicator/NfcStatusIndicator';
 export * from './patient-card/PatientCard';
+export * from './patient-photo-uploader/PatientPhotoUploader';
 export * from './patient-record-header/PatientRecordHeader';
 export * from './period-selector/PeriodSelector';
 export * from './recent-registrations/RecentRegistrations';

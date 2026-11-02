@@ -3,11 +3,13 @@ import { NotFoundException } from '@nestjs/common';
 import { HospitalizationStatus, PatientSex, Prisma } from '@prisma/client';
 import { PatientsService } from './patients.service';
 import { PatientsRepository } from './patients.repository';
+import { StorageService } from '../storage/storage.service';
 import { PatientSex as CommonPatientSex } from '@nfcarevet/common';
 
 describe('PatientsService', () => {
   let service: PatientsService;
   let repository: jest.Mocked<PatientsRepository>;
+  let storageService: jest.Mocked<StorageService>;
 
   const now = new Date('2026-10-10T12:00:00.000Z');
 
@@ -36,7 +38,7 @@ describe('PatientsService', () => {
     birthDate: new Date('2022-04-10T00:00:00.000Z'),
     bloodType: 'DEA 1.1+',
     weightKg: new Prisma.Decimal(32.5),
-    photoUrl: null,
+    photoUrl: null as string | null,
     allergies: 'Dipirona',
     treatments: ['Dermatite atópica'],
     isFasting: true,
@@ -76,6 +78,7 @@ describe('PatientsService', () => {
   beforeEach(async () => {
     const mockRepo = {
       findById: jest.fn(),
+      findRecent: jest.fn(),
       findAll: jest.fn(),
       findVisitsByPeriod: jest.fn(),
       findGuardianById: jest.fn(),
@@ -83,15 +86,23 @@ describe('PatientsService', () => {
       update: jest.fn(),
     };
 
+    const mockStorage = {
+      generatePresignedUploadUrl: jest.fn(),
+      deleteFile: jest.fn(),
+      extractObjectKey: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         PatientsService,
         { provide: PatientsRepository, useValue: mockRepo },
+        { provide: StorageService, useValue: mockStorage },
       ],
     }).compile();
 
     service = module.get<PatientsService>(PatientsService);
     repository = module.get(PatientsRepository);
+    storageService = module.get(StorageService);
   });
 
   it('should be defined', () => {
@@ -195,6 +206,41 @@ describe('PatientsService', () => {
     });
   });
 
+  describe('generatePhotoUploadUrl', () => {
+    it('should generate presigned URL when patient exists', async () => {
+      repository.findById.mockResolvedValue(mockPatientRecord);
+      storageService.generatePresignedUploadUrl.mockResolvedValue({
+        uploadUrl: 'https://r2.example.com/signed-put',
+        publicUrl: 'https://cdn.example.com/patients/patient-1/new.webp',
+        key: 'patients/patient-1/new.webp',
+        expiresIn: 120,
+      });
+
+      const res = await service.generatePhotoUploadUrl('patient-1', {
+        mimeType: 'image/webp',
+        fileSize: 120_000,
+      });
+
+      expect(storageService.generatePresignedUploadUrl).toHaveBeenCalledWith(
+        'patient-1',
+        'image/webp',
+        120_000,
+      );
+      expect(res.key).toBe('patients/patient-1/new.webp');
+    });
+
+    it('should throw NotFoundException if patient does not exist', async () => {
+      repository.findById.mockResolvedValue(null);
+
+      await expect(
+        service.generatePhotoUploadUrl('missing', {
+          mimeType: 'image/webp',
+          fileSize: 120_000,
+        }),
+      ).rejects.toThrow(NotFoundException);
+    });
+  });
+
   describe('update', () => {
     it('should update patient and normalize empty strings to null', async () => {
       repository.findById.mockResolvedValue(mockPatientRecord);
@@ -217,6 +263,29 @@ describe('PatientsService', () => {
         }),
       );
       expect(updated.breed).toBeNull();
+    });
+
+    it('should delete previous photo from R2 when photoUrl is replaced', async () => {
+      const oldPhotoUrl =
+        'https://cdn.nfcarevet.com.br/patients/patient-1/11111111-2222-3333-4444-555555555555.webp';
+      const newPhotoUrl =
+        'https://cdn.nfcarevet.com.br/patients/patient-1/aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee.webp';
+
+      repository.findById.mockResolvedValue({
+        ...mockPatientRecord,
+        photoUrl: oldPhotoUrl,
+      });
+      repository.update.mockResolvedValue({
+        ...mockPatientRecord,
+        photoUrl: newPhotoUrl,
+      });
+
+      const updated = await service.update('patient-1', {
+        photoUrl: newPhotoUrl,
+      });
+
+      expect(updated.photoUrl).toBe(newPhotoUrl);
+      expect(storageService.deleteFile).toHaveBeenCalledWith(oldPhotoUrl);
     });
 
     it('should throw NotFoundException when updating non-existent patient', async () => {

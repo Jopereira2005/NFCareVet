@@ -16,6 +16,7 @@ export default defineConfig({
     allowedHosts: true,
   },
   resolve: {
+    dedupe: ['react', 'react-dom'],
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
@@ -29,7 +30,15 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: [SHARED_PACKAGE],
+    include: [
+      SHARED_PACKAGE,
+      'react',
+      'react-dom',
+      'react-dom/client',
+      'react/jsx-runtime',
+      'react/jsx-dev-runtime',
+      'react/compiler-runtime',
+    ],
   },
   build: {
     commonjsOptions: {

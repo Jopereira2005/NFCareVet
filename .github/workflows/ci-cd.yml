@@ -95,6 +95,25 @@ jobs:
               sed -i "s/troque_por_uma_chave_jwt_aleatoria_longa/$(openssl rand -hex 32)/" .env.prod
             fi
 
+            # Injeta/atualiza credenciais do Cloudflare R2 no .env.prod caso estejam nos Secrets do GitHub
+            upsert_env() {
+              local key="$1"
+              local val="$2"
+              if [ -n "$val" ]; then
+                if grep -q "^${key}=" .env.prod; then
+                  sed -i "s|^${key}=.*|${key}=${val}|" .env.prod
+                else
+                  echo "${key}=${val}" >> .env.prod
+                fi
+              fi
+            }
+
+            upsert_env "R2_ACCOUNT_ID" "${{ secrets.R2_ACCOUNT_ID }}"
+            upsert_env "R2_ACCESS_KEY_ID" "${{ secrets.R2_ACCESS_KEY_ID }}"
+            upsert_env "R2_SECRET_ACCESS_KEY" "${{ secrets.R2_SECRET_ACCESS_KEY }}"
+            upsert_env "R2_BUCKET_NAME" "${{ secrets.R2_BUCKET_NAME }}"
+            upsert_env "R2_PUBLIC_URL" "${{ secrets.R2_PUBLIC_URL }}"
+
             echo "🐳 Recriando containers de produção..."
             docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --build --remove-orphans
 

@@ -26,6 +26,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    env_file:
+      - ./src/backend/.env
     environment:
       NODE_ENV: development
       DATABASE_URL: postgresql://postgres:password@postgres:5432/nfcarevet?schema=public
