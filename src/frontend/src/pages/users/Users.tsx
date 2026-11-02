@@ -43,6 +43,7 @@ import {
 } from '@/hooks/queries/useUserQueries';
 import { useNfcReader } from '@/hooks/useNfcReader';
 import type { NfcReading } from '@/interfaces/nfc.types';
+import { findMockCollarByUid } from '@/mocks/nfc-registry.mock';
 import { useSessionStore } from '@/stores/useSessionStore';
 import { showToast } from '@/stores/useToastStore';
 import { normalizeText } from '@/utils/normalizeText';
@@ -311,6 +312,7 @@ export default function Users() {
       {editingUser !== null && (
         <UserFormModal
           user={editingUser === 'new' ? null : editingUser}
+          allUsers={allUsers}
           onClose={() => setEditingUser(null)}
         />
       )}
@@ -352,10 +354,11 @@ export default function Users() {
 
 type UserFormModalProps = {
   user: IUser | null;
+  allUsers: IUser[];
   onClose: () => void;
 };
 
-function UserFormModal({ user, onClose }: UserFormModalProps) {
+function UserFormModal({ user, allUsers, onClose }: UserFormModalProps) {
   const isEditing = Boolean(user);
   const isInitiallyInactive = Boolean(user && !user.active);
   const createUser = useCreateUser();
@@ -369,9 +372,44 @@ function UserFormModal({ user, onClose }: UserFormModalProps) {
   const [active, setActive] = useState(user ? user.active : true);
   const [formError, setFormError] = useState<string | null>(null);
 
+  const validateBadgeConflict = (rawUid: string): string | null => {
+    const sanitized = rawUid.replace(/[:\s-]/g, '').toUpperCase();
+    if (!sanitized) return null;
+
+    const conflictUser = allUsers.find(
+      (u) =>
+        u.id !== user?.id &&
+        u.badgeUid &&
+        u.badgeUid.replace(/[:\s-]/g, '').toUpperCase() === sanitized,
+    );
+    if (conflictUser) {
+      return `O crachá [${sanitized}] já pertence ao colaborador "${conflictUser.name}".`;
+    }
+
+    const collar = findMockCollarByUid(sanitized);
+    if (collar) {
+      return collar.patientName
+        ? `A tag [${sanitized}] pertence à coleira do paciente "${collar.patientName}" e não pode ser vinculada como crachá.`
+        : `A tag [${sanitized}] já está cadastrada como coleira no inventário (#${collar.publicCode}).`;
+    }
+
+    return null;
+  };
+
   const { status, isSupported, start, simulate } = useNfcReader({
     onRead: ({ uid }: NfcReading) => {
       setBadgeUid(uid);
+      const conflict = validateBadgeConflict(uid);
+      if (conflict) {
+        setFormError(conflict);
+        showToast({
+          tone: 'warning',
+          title: 'Crachá já cadastrado',
+          description: conflict,
+        });
+        return;
+      }
+
       setFormError(null);
       showToast({
         tone: 'success',
@@ -422,6 +460,21 @@ function UserFormModal({ user, onClose }: UserFormModalProps) {
       return;
     }
 
+    if (sanitizedBadge) {
+      const conflict = validateBadgeConflict(sanitizedBadge);
+      if (conflict) {
+        setFormError(conflict);
+        showToast({
+          tone: 'warning',
+          title: conflict.toLowerCase().includes('coleira')
+            ? 'Tag de coleira detectada'
+            : 'Crachá já cadastrado',
+          description: conflict,
+        });
+        return;
+      }
+    }
+
     setFormError(null);
 
     if (isEditing && user) {
@@ -439,7 +492,16 @@ function UserFormModal({ user, onClose }: UserFormModalProps) {
         },
         {
           onSuccess: () => onClose(),
-          onError: (error) => setFormError(error.message),
+          onError: (error) => {
+            setFormError(error.message);
+            showToast({
+              tone: 'warning',
+              title: error.message.toLowerCase().includes('coleira')
+                ? 'Tag de coleira detectada'
+                : 'Crachá já cadastrado',
+              description: error.message,
+            });
+          },
         },
       );
     } else {
@@ -454,7 +516,16 @@ function UserFormModal({ user, onClose }: UserFormModalProps) {
         },
         {
           onSuccess: () => onClose(),
-          onError: (error) => setFormError(error.message),
+          onError: (error) => {
+            setFormError(error.message);
+            showToast({
+              tone: 'warning',
+              title: error.message.toLowerCase().includes('coleira')
+                ? 'Tag de coleira detectada'
+                : 'Crachá já cadastrado',
+              description: error.message,
+            });
+          },
         },
       );
     }

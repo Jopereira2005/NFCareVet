@@ -8,7 +8,7 @@
   position: fixed;
   left: 50%;
   bottom: calc($navbar-height + 1.2rem + env(safe-area-inset-bottom));
-  z-index: 20;
+  z-index: 10000;
   gap: $space-md;
   width: min(calc(100% - 4rem), 35rem);
   padding: $space-md $space-lg $space-md $space-md;
@@ -20,6 +20,13 @@
 
   &--warning {
     --toast-accent: #{$warning-color};
+  }
+
+  :global(dialog) &,
+  dialog & {
+    bottom: calc(2.4rem + env(safe-area-inset-bottom));
+    z-index: 10000;
+    box-shadow: 0 1.2rem 3.6rem rgba(0, 0, 0, 0.45);
   }
 }
 
