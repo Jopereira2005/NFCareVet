@@ -6,6 +6,7 @@ import {
   Camera,
   CheckCircle2,
   Crop,
+  Image as ImageIcon,
   KeyRound,
   Nfc,
   Pencil,
@@ -22,6 +23,7 @@ import {
   UserX,
 } from 'lucide-react';
 
+import { CameraCaptureModal } from '@/components/features/camera-capture-modal/CameraCaptureModal';
 import {
   ImageCropperModal,
   type CroppingTarget,
@@ -385,6 +387,7 @@ function UserFormModal({ user, allUsers, onClose }: UserFormModalProps) {
   const [active, setActive] = useState(user ? user.active : true);
   const [formError, setFormError] = useState<string | null>(null);
   const [originalAvatarFile, setOriginalAvatarFile] = useState<File | null>(null);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [croppingTarget, setCroppingTarget] = useState<CroppingTarget | null>(null);
   const [pendingAvatarFile, setPendingAvatarFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -403,11 +406,7 @@ function UserFormModal({ user, allUsers, onClose }: UserFormModalProps) {
     };
   }, [croppingTarget]);
 
-  const handleAvatarFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    event.target.value = '';
-    if (!file) return;
-
+  const handleProcessSelectedAvatar = (file: File) => {
     try {
       validatePatientPhotoFile(file);
     } catch (err) {
@@ -423,6 +422,13 @@ function UserFormModal({ user, allUsers, onClose }: UserFormModalProps) {
     setOriginalAvatarFile(file);
     if (croppingTarget) URL.revokeObjectURL(croppingTarget.url);
     setCroppingTarget({ file, url: URL.createObjectURL(file) });
+  };
+
+  const handleAvatarFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    handleProcessSelectedAvatar(file);
   };
 
   const handleRemoveAvatar = () => {
@@ -721,10 +727,20 @@ function UserFormModal({ user, allUsers, onClose }: UserFormModalProps) {
                 type="button"
                 variant="outlined"
                 disabled={isSaving}
-                onClick={() => fileInputRef.current?.click()}
+                onClick={() => setIsCameraOpen(true)}
               >
                 <Camera aria-hidden="true" />
-                <span>{displayedAvatarUrl ? 'Trocar foto' : 'Escolher foto'}</span>
+                <span>Tirar foto</span>
+              </Button>
+
+              <Button
+                type="button"
+                variant="outlined"
+                disabled={isSaving}
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <ImageIcon aria-hidden="true" />
+                <span>{displayedAvatarUrl ? 'Trocar arquivo' : 'Arquivo'}</span>
               </Button>
 
               {pendingAvatarFile && originalAvatarFile && (
@@ -759,6 +775,19 @@ function UserFormModal({ user, allUsers, onClose }: UserFormModalProps) {
             </div>
           </div>
         </div>
+
+        {isCameraOpen && (
+          <CameraCaptureModal
+            title="Fotografar Colaborador"
+            shape="circle"
+            facingModeDefault="user"
+            onClose={() => setIsCameraOpen(false)}
+            onCapture={(file) => {
+              setIsCameraOpen(false);
+              handleProcessSelectedAvatar(file);
+            }}
+          />
+        )}
 
         {croppingTarget && (
           <ImageCropperModal

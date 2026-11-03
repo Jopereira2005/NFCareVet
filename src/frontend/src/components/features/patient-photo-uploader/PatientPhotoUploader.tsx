@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState, type ChangeEvent } from 'react';
-import { Camera, Crop, Trash2 } from 'lucide-react';
+import { Camera, Crop, Image as ImageIcon, Trash2 } from 'lucide-react';
 import { ALLOWED_PATIENT_PHOTO_MIME_TYPES } from '@nfcarevet/common';
 
 import { PawIcon } from '@/assets/icons/paw-icon';
+import { CameraCaptureModal } from '@/components/features/camera-capture-modal/CameraCaptureModal';
 import {
   ImageCropperModal,
   type CroppingTarget,
@@ -51,6 +52,7 @@ export function PatientPhotoUploader(props: PatientPhotoUploaderProps) {
 
 function ImmediatePhotoUploader({ patient }: { patient: Patient }) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [croppingTarget, setCroppingTarget] = useState<CroppingTarget | null>(null);
   const [localError, setLocalError] = useState<string | null>(null);
 
@@ -72,11 +74,7 @@ function ImmediatePhotoUploader({ patient }: { patient: Patient }) {
 
   const isBusy = isUploading || isRemoving;
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    event.target.value = '';
-    if (!file) return;
-
+  const handleProcessSelectedFile = (file: File) => {
     try {
       validatePatientPhotoFile(file);
       setLocalError(null);
@@ -87,6 +85,13 @@ function ImmediatePhotoUploader({ patient }: { patient: Patient }) {
         err instanceof Error ? err.message : 'Arquivo de imagem inválido.',
       );
     }
+  };
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    handleProcessSelectedFile(file);
   };
 
   return (
@@ -105,7 +110,7 @@ function ImmediatePhotoUploader({ patient }: { patient: Patient }) {
         <div className={styles['photo-uploader__info']}>
           <p className={styles['photo-uploader__title']}>Foto do paciente</p>
           <p className={styles['photo-uploader__hint']}>
-            JPEG, PNG ou WebP até 3 MB. Ajuste o enquadramento antes do envio.
+            JPEG, PNG ou WebP até 3 MB. Tire uma foto na baia ou envie um arquivo.
           </p>
 
           <div className={styles['photo-uploader__actions']}>
@@ -117,14 +122,25 @@ function ImmediatePhotoUploader({ patient }: { patient: Patient }) {
               onChange={handleFileChange}
               disabled={isBusy}
             />
+
+            <Button
+              type="button"
+              variant="outlined"
+              onClick={() => setIsCameraOpen(true)}
+              disabled={isBusy}
+            >
+              <Camera aria-hidden="true" />
+              <span>Tirar foto</span>
+            </Button>
+
             <Button
               type="button"
               variant="outlined"
               onClick={() => fileInputRef.current?.click()}
               disabled={isBusy}
             >
-              <Camera aria-hidden="true" />
-              <span>{patient.photoUrl ? 'Trocar foto' : 'Enviar foto'}</span>
+              <ImageIcon aria-hidden="true" />
+              <span>{patient.photoUrl ? 'Trocar arquivo' : 'Arquivo'}</span>
             </Button>
 
             {patient.photoUrl && (
@@ -171,6 +187,19 @@ function ImmediatePhotoUploader({ patient }: { patient: Patient }) {
         </p>
       )}
 
+      {isCameraOpen && (
+        <CameraCaptureModal
+          title="Fotografar Paciente"
+          shape="rounded"
+          facingModeDefault="environment"
+          onClose={() => setIsCameraOpen(false)}
+          onCapture={(file) => {
+            setIsCameraOpen(false);
+            handleProcessSelectedFile(file);
+          }}
+        />
+      )}
+
       {croppingTarget && (
         <ImageCropperModal
           target={croppingTarget}
@@ -199,6 +228,7 @@ function StagedPhotoUploader({
   disabled = false,
 }: StagedPatientProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [croppingTarget, setCroppingTarget] = useState<CroppingTarget | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>();
@@ -219,11 +249,7 @@ function StagedPhotoUploader({
   const isUploading = step !== 'idle';
   const isBusy = disabled || isUploading;
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    event.target.value = '';
-    if (!file) return;
-
+  const handleProcessSelectedFile = (file: File) => {
     try {
       validatePatientPhotoFile(file);
       setLocalError(null);
@@ -235,6 +261,13 @@ function StagedPhotoUploader({
         err instanceof Error ? err.message : 'Arquivo de imagem inválido.',
       );
     }
+  };
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    handleProcessSelectedFile(file);
   };
 
   return (
@@ -255,7 +288,7 @@ function StagedPhotoUploader({
             Foto do paciente (opcional)
           </p>
           <p className={styles['photo-uploader__hint']}>
-            JPEG, PNG ou WebP até 3 MB. Ajuste o enquadramento antes do envio.
+            JPEG, PNG ou WebP até 3 MB. Tire uma foto na baia ou envie um arquivo.
           </p>
 
           <div className={styles['photo-uploader__actions']}>
@@ -267,14 +300,25 @@ function StagedPhotoUploader({
               onChange={handleFileChange}
               disabled={isBusy}
             />
+
+            <Button
+              type="button"
+              variant="outlined"
+              onClick={() => setIsCameraOpen(true)}
+              disabled={isBusy}
+            >
+              <Camera aria-hidden="true" />
+              <span>Tirar foto</span>
+            </Button>
+
             <Button
               type="button"
               variant="outlined"
               onClick={() => fileInputRef.current?.click()}
               disabled={isBusy}
             >
-              <Camera aria-hidden="true" />
-              <span>{stagedFile ? 'Trocar foto' : 'Selecionar foto'}</span>
+              <ImageIcon aria-hidden="true" />
+              <span>{stagedFile ? 'Trocar arquivo' : 'Arquivo'}</span>
             </Button>
 
             {stagedFile && originalFile && (
@@ -343,6 +387,19 @@ function StagedPhotoUploader({
         <p className={styles['photo-uploader__error']} role="alert">
           {localError}
         </p>
+      )}
+
+      {isCameraOpen && (
+        <CameraCaptureModal
+          title="Fotografar Paciente"
+          shape="rounded"
+          facingModeDefault="environment"
+          onClose={() => setIsCameraOpen(false)}
+          onCapture={(file) => {
+            setIsCameraOpen(false);
+            handleProcessSelectedFile(file);
+          }}
+        />
       )}
 
       {croppingTarget && (
