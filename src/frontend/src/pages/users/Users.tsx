@@ -829,7 +829,7 @@ function UserFormModal({ user, allUsers, onClose }: UserFormModalProps) {
 
         <Input
           id="user-pin"
-          label={isEditing ? 'Novo PIN de Segurança (4 dígitos - Opcional)' : 'PIN de Segurança NFC (4 dígitos)'}
+          label={isEditing ? 'Novo PIN de Segurança (4 dígitos)' : 'PIN de Segurança NFC (4 dígitos)'}
           type="password"
           inputMode="numeric"
           maxLength={4}
