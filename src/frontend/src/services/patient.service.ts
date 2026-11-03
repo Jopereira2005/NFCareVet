@@ -14,7 +14,7 @@ import { PATIENTS_MOCK } from '@/mocks/patients.mock';
 import { isWithinPeriod } from '@/utils/isWithinPeriod';
 import { normalizeText } from '@/utils/normalizeText';
 
-import { toApiError } from './api-error';
+import { ApiError, toApiError } from './api-error';
 import { httpClient } from './http-client';
 import { mockNotFound, mockResponse, USE_MOCKS } from './mock-response';
 
@@ -90,8 +90,24 @@ export const patientService = {
   /** GET /bedside/:identifier — resolves the patient hospitalized with the NFC tag. */
   async getByTagUid(tagUid: string): Promise<Patient> {
     if (USE_MOCKS) {
-      const patient = PATIENTS_MOCK.find(({ nfcTag }) => nfcTag?.tagUid === tagUid);
-      return patient ? mockResponse(withGuardian(patient)) : mockNotFound('Tag');
+      const sanitized = tagUid.replace(/[:\s-]/g, '').toUpperCase();
+      const patient = PATIENTS_MOCK.find(
+        ({ nfcTag }) => nfcTag?.tagUid?.replace(/[:\s-]/g, '').toUpperCase() === sanitized,
+      );
+
+      if (patient) {
+        if (!patient.activeHospitalization) {
+          return Promise.reject(
+            new ApiError(
+              `A tag #${patient.nfcTag?.publicCode ?? sanitized} está cadastrada no inventário, mas não está vinculada a nenhuma internação ativa no momento.`,
+              404,
+            ),
+          );
+        }
+        return mockResponse(withGuardian(patient));
+      }
+
+      return mockNotFound('Tag');
     }
 
     const { data } = await httpClient.get<BedsideQuickRecordResponse>(`/bedside/${tagUid}`);

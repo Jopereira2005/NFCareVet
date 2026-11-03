@@ -68,7 +68,13 @@ export default function Reader() {
         if (!isNotFoundError(error)) return showToast({ tone: 'warning', title: 'Falha na leitura', description: error.message });
         // An unknown tag is exactly what link mode is waiting for
         if (mode === 'link') return setLinkDialog({ kind: 'free', tagUid: uid });
-        showToast({ tone: 'warning', title: 'Tag não cadastrada', description: `UID ${uid}` });
+        
+        const isNotLinked = error.message.toLowerCase().includes('inventário') || error.message.toLowerCase().includes('vinculada');
+        showToast({
+          tone: 'warning',
+          title: isNotLinked ? 'Tag sem internação ativa' : 'Tag não cadastrada',
+          description: isNotLinked ? error.message : `UID ${uid}`,
+        });
       },
     });
   };

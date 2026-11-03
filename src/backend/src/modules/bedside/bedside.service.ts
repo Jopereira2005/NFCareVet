@@ -28,12 +28,21 @@ export class BedsideService {
   async getBriefRecordByTag(identifier: string): Promise<QuickRecordResponseDto> {
     const tag = await this.bedsideRepository.findBriefRecordByTag(identifier);
 
-    if (!tag || !tag.hospitalization) {
+    if (!tag) {
       this.logger.warn(
-        `[BEDSIDE] Consulta rápida falhou: nenhuma internação ativa vinculada à coleira NFC [${identifier}].`,
+        `[BEDSIDE] Consulta rápida falhou: tag [${identifier}] não cadastrada no inventário.`,
       );
       throw new NotFoundException(
-        `Nenhuma internação ativa encontrada para a coleira NFC informada ("${identifier}").`,
+        `Tag NFC não cadastrada no inventário ("${identifier}").`,
+      );
+    }
+
+    if (!tag.hospitalization) {
+      this.logger.warn(
+        `[BEDSIDE] Consulta rápida: tag [${identifier}] está cadastrada no inventário (#${tag.publicCode}), mas não está vinculada a nenhuma internação ativa.`,
+      );
+      throw new NotFoundException(
+        `A tag #${tag.publicCode} está cadastrada no inventário, mas não está vinculada a nenhuma internação ativa no momento.`,
       );
     }
 
