@@ -1,0 +1,96 @@
+@use 'abstracts' as *;
+
+.pin-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-lg;
+  padding: $space-sm 0;
+}
+
+.pin-modal__badge-preview {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  padding: $space-xs $space-md;
+  border-radius: $radius-full;
+  background: rgba($primary-color, 0.08);
+  color: $primary-color;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
+
+  > svg {
+    @include icon-size(1.6rem);
+  }
+
+  code {
+    font-family: $font-family-mono;
+    font-weight: $font-bold;
+  }
+}
+
+.pin-modal__instruction {
+  margin: 0;
+  text-align: center;
+  color: $gray-scale-dark;
+  font-size: $text-sm;
+  line-height: 1.5;
+}
+
+.pin-modal__inputs {
+  display: flex;
+  justify-content: center;
+  gap: $space-sm;
+}
+
+.pin-modal__digit {
+  width: 5rem;
+  height: 6rem;
+  border: 2px solid $gray-scale-medium;
+  border-radius: $radius-base;
+  background: $light-color;
+  color: $dark-color;
+  font-family: $font-family-mono;
+  font-size: 2.8rem;
+  font-weight: $font-bold;
+  text-align: center;
+  outline: none;
+  transition: all 0.15s ease;
+
+  &:focus {
+    border-color: $primary-color;
+    box-shadow: 0 0 0 3px rgba($primary-color, 0.15);
+  }
+
+  &--filled {
+    border-color: $primary-color;
+    background: rgba($primary-color, 0.04);
+  }
+
+  &--error {
+    border-color: $danger-color;
+    color: $danger-color;
+    animation: shake 0.35s ease;
+  }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.pin-modal__error {
+  margin: 0;
+  color: $danger-color;
+  font-size: $text-xs;
+  font-weight: $font-medium;
+  text-align: center;
+}
+
+.pin-modal__hint {
+  margin: 0;
+  color: $gray-scale-medium;
+  font-size: $text-xs;
+  text-align: center;
+}

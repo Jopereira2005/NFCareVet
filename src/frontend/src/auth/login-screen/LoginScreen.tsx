@@ -3,6 +3,7 @@ import { ArrowRight, Eye, EyeOff, LockKeyhole, Mail, Nfc } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router';
 
 import { Logo } from '@/assets/Logo.tsx';
+import { BadgePinModal } from '@/components/features/pin-modal/BadgePinModal';
 import { Button, Checkbox, Input } from '@/components/ui';
 import { useBadgeLogin, useLogin } from '@/hooks/queries/useSessionMutations';
 import { useNfcReader } from '@/hooks/useNfcReader';
@@ -11,10 +12,12 @@ import { ROUTES } from '@/router/paths';
 import './LoginScreen.scss';
 
 /** Badge used when the browser has no Web NFC (desktop development). */
-const SIMULATED_BADGE_SERIAL = 'BA:DG:E0:01';
+const SIMULATED_BADGE_SERIAL = 'BADGE001';
 
 export default function LoginScreen() {
   const [passwordVisible, setPasswordVisible] = useState(false);
+  const [pendingBadgeUid, setPendingBadgeUid] = useState<string | null>(null);
+  const [pinErrorMessage, setPinErrorMessage] = useState<string | null>(null);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const login = useLogin();
@@ -25,8 +28,30 @@ export default function LoginScreen() {
   const isBedsideRedirect = Boolean(redirectTo?.startsWith('/bedside/'));
   const enterApp = () => navigate(redirectTo?.startsWith('/') ? redirectTo : ROUTES.home, { replace: true });
 
+  const executeBadgeAuth = (uid: string, pin?: string) => {
+    setPinErrorMessage(null);
+    badgeLogin.mutate(
+      { badgeUid: uid, pin },
+      {
+        onSuccess: () => {
+          setPendingBadgeUid(null);
+          enterApp();
+        },
+        onError: (err) => {
+          if (err.message === 'PIN_REQUIRED') {
+            setPendingBadgeUid(uid);
+            return;
+          }
+          if (pendingBadgeUid) {
+            setPinErrorMessage(err.message);
+          }
+        },
+      },
+    );
+  };
+
   const badgeReader = useNfcReader({
-    onRead: ({ uid }) => badgeLogin.mutate({ badgeUid: uid }, { onSuccess: enterApp }),
+    onRead: ({ uid }) => executeBadgeAuth(uid),
   });
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -44,7 +69,8 @@ export default function LoginScreen() {
       void badgeReader.start();
       return;
     }
-    badgeReader.simulate(SIMULATED_BADGE_SERIAL);
+    // No desktop/computador sem leitor Web NFC, abre o fluxo com o crachá de simulação BADGE001
+    executeBadgeAuth(SIMULATED_BADGE_SERIAL);
   };
 
   const isBadgeReading = badgeReader.status === 'scanning' || badgeLogin.isPending;
@@ -137,6 +163,16 @@ export default function LoginScreen() {
           </p>
         )}
       </section>
+
+      {pendingBadgeUid && (
+        <BadgePinModal
+          badgeUid={pendingBadgeUid}
+          isPending={badgeLogin.isPending}
+          errorMessage={pinErrorMessage}
+          onClose={() => setPendingBadgeUid(null)}
+          onSubmit={(pin) => executeBadgeAuth(pendingBadgeUid, pin)}
+        />
+      )}
     </main>
   );
 }

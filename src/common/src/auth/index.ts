@@ -8,6 +8,7 @@ export interface ILoginPayload {
 
 export interface IBadgeLoginPayload {
   badgeUid: string;
+  pin?: string;
 }
 
 export interface IAuthUser extends IUserSummary {

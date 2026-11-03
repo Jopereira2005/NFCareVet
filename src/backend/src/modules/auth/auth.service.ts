@@ -85,6 +85,24 @@ export class AuthService {
       throw new ForbiddenException('Usuário inativo no sistema.');
     }
 
+    // Validação de dois fatores via PIN de 4 dígitos
+    if (user.pinHash) {
+      if (!badgeLoginDto.pin) {
+        this.logger.warn(
+          `[AUTH-NFC] PIN não fornecido para o crachá [${sanitizedBadgeUid}] do colaborador [${user.name}].`,
+        );
+        throw new UnauthorizedException('PIN_REQUIRED');
+      }
+
+      const isPinValid = await bcrypt.compare(badgeLoginDto.pin, user.pinHash);
+      if (!isPinValid) {
+        this.logger.warn(
+          `[AUTH-NFC] PIN incorreto para o crachá [${sanitizedBadgeUid}] do colaborador [${user.name}].`,
+        );
+        throw new UnauthorizedException('PIN incorreto. Verifique os 4 dígitos e tente novamente.');
+      }
+    }
+
     this.logger.log(
       `[AUTH-NFC] Autenticação por crachá realizada com sucesso: crachaUid=${sanitizedBadgeUid}, usuario=${user.name}, id=${user.id}`,
     );

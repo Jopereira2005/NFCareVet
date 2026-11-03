@@ -8,6 +8,8 @@ import {
   IsString,
   MinLength,
   IsBoolean,
+  Length,
+  Matches,
 } from 'class-validator';
 import { UserRole } from '@prisma/client';
 
@@ -59,6 +61,16 @@ export class CreateUserDto {
       : value,
   )
   badgeUid?: string;
+
+  @ApiPropertyOptional({
+    example: '1234',
+    description: 'PIN de segurança numérico de 4 dígitos para autenticação rápida por crachá NFC',
+  })
+  @IsOptional()
+  @IsString()
+  @Length(4, 4, { message: 'O PIN deve conter exatamente 4 dígitos numéricos.' })
+  @Matches(/^\d{4}$/, { message: 'O PIN deve ser composto apenas por dígitos numéricos (0-9).' })
+  pin?: string;
 
   @ApiPropertyOptional({
     example: 'https://cdn.suaclinica.com/avatars/lucas.jpg',

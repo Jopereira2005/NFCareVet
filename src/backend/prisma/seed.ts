@@ -77,6 +77,7 @@ async function main() {
   const defaultPasswordHash = await bcrypt.hash('admin123', 10);
   const vetPasswordHash = await bcrypt.hash('vet12345', 10);
   const recPasswordHash = await bcrypt.hash('rec12345', 10);
+  const defaultPinHash = await bcrypt.hash('1234', 10);
 
   // Admin (BADGE001 coincide com o crachá simulado BA:DG:E0:01 da tela de login no desktop)
   const adminUser = await prisma.user.create({
@@ -84,6 +85,7 @@ async function main() {
       name: 'Dra. Camila Andrade (Admin)',
       email: 'admin@nfcarevet.com',
       passwordHash: defaultPasswordHash,
+      pinHash: defaultPinHash,
       role: UserRole.ADMIN,
       badgeUid: 'BADGE001',
       avatarUrl:
@@ -98,6 +100,7 @@ async function main() {
       name: 'Dra. Madalena Silva',
       email: 'madalena@nfcarevet.com',
       passwordHash: vetPasswordHash,
+      pinHash: defaultPinHash,
       role: UserRole.VET,
       badgeUid: 'BADGE002',
       avatarUrl:
@@ -112,6 +115,7 @@ async function main() {
       name: 'Dr. Marcos Paxe (Mr Paxe)',
       email: 'paxe@nfcarevet.com',
       passwordHash: vetPasswordHash,
+      pinHash: defaultPinHash,
       role: UserRole.VET,
       badgeUid: 'BADGE004',
       avatarUrl:
@@ -126,6 +130,7 @@ async function main() {
       name: 'Dr. Rafael Mendes',
       email: 'rafael@nfcarevet.com',
       passwordHash: vetPasswordHash,
+      pinHash: defaultPinHash,
       role: UserRole.VET,
       badgeUid: 'BADGE005',
       avatarUrl:
@@ -140,6 +145,7 @@ async function main() {
       name: 'Carlos Recepção',
       email: 'recepcao@nfcarevet.com',
       passwordHash: recPasswordHash,
+      pinHash: defaultPinHash,
       role: UserRole.REC,
       badgeUid: 'BADGE003',
       avatarUrl:
@@ -154,6 +160,7 @@ async function main() {
       name: 'Fernanda Oliveira',
       email: 'fernanda@nfcarevet.com',
       passwordHash: recPasswordHash,
+      pinHash: defaultPinHash,
       role: UserRole.REC,
       badgeUid: 'BADGE006',
       avatarUrl:
@@ -168,6 +175,7 @@ async function main() {
       name: 'Dr. Henrique Costa (Inativo)',
       email: 'inativo@nfcarevet.com',
       passwordHash: vetPasswordHash,
+      pinHash: defaultPinHash,
       role: UserRole.VET,
       badgeUid: 'BADGE999',
       avatarUrl:

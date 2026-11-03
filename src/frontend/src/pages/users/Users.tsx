@@ -380,6 +380,7 @@ function UserFormModal({ user, allUsers, onClose }: UserFormModalProps) {
   const [email, setEmail] = useState(user?.email ?? '');
   const [role, setRole] = useState<UserRole>(user?.role ?? UserRole.VET);
   const [password, setPassword] = useState('');
+  const [pin, setPin] = useState('');
   const [badgeUid, setBadgeUid] = useState(user?.badgeUid ?? '');
   const [active, setActive] = useState(user ? user.active : true);
   const [formError, setFormError] = useState<string | null>(null);
@@ -527,6 +528,11 @@ function UserFormModal({ user, allUsers, onClose }: UserFormModalProps) {
       return;
     }
 
+    if (pin && !/^\d{4}$/.test(pin)) {
+      setFormError('O PIN de segurança deve conter exatamente 4 dígitos numéricos.');
+      return;
+    }
+
     const sanitizedBadge = badgeUid.trim()
       ? badgeUid.replace(/[:\s-]/g, '').toUpperCase()
       : '';
@@ -572,6 +578,7 @@ function UserFormModal({ user, allUsers, onClose }: UserFormModalProps) {
               email: email.trim().toLowerCase(),
               role,
               ...(password ? { password } : {}),
+              ...(pin ? { pin } : {}),
               badgeUid: sanitizedBadge || '',
               active,
               ...(nextAvatarUrl !== undefined ? { avatarUrl: nextAvatarUrl } : {}),
@@ -584,6 +591,7 @@ function UserFormModal({ user, allUsers, onClose }: UserFormModalProps) {
             email: email.trim().toLowerCase(),
             role,
             password,
+            ...(pin ? { pin } : {}),
             badgeUid: sanitizedBadge || undefined,
             active,
           });
@@ -817,6 +825,24 @@ function UserFormModal({ user, allUsers, onClose }: UserFormModalProps) {
           leadingIcon={<KeyRound />}
           hint={isEditing ? 'Preencha apenas se desejar redefinir a senha do usuário.' : undefined}
           required={!isEditing}
+        />
+
+        <Input
+          id="user-pin"
+          label={isEditing ? 'Novo PIN de Segurança (4 dígitos - Opcional)' : 'PIN de Segurança NFC (4 dígitos)'}
+          type="password"
+          inputMode="numeric"
+          maxLength={4}
+          placeholder={isEditing ? 'Deixe vazio para manter o PIN atual' : 'Padrão: 1234'}
+          value={pin}
+          onChange={(e) => {
+            const onlyNums = e.target.value.replace(/\D/g, '').slice(0, 4);
+            setPin(onlyNums);
+            if (formError) setFormError(null);
+          }}
+          leadingIcon={<KeyRound />}
+          hint="Utilizado para autenticação de 2 fatores ao aproximar o crachá NFC."
+          optional={isEditing}
         />
 
         <div className={styles['user-modal-form__nfc-box']}>

@@ -35,7 +35,7 @@ export const useBadgeLogin = () => {
   return useMutation({
     mutationFn: (payload: IBadgeLoginPayload) => sessionService.badgeLogin(payload),
     onSuccess: (response) => startSession(response, true),
-    meta: { errorMessage: 'Crachá não reconhecido' },
+    meta: { silentError: true },
   });
 };
 

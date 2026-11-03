@@ -75,6 +75,7 @@ model User {
   name           String          @db.VarChar(120)
   email          String          @unique @db.VarChar(150)
   passwordHash   String          @map("password_hash") @db.VarChar(255)
+  pinHash        String?         @map("pin_hash") @db.VarChar(255)
   role           UserRole        @default(VET)
   badgeUid       String?         @unique @map("badge_uid") @db.VarChar(32)
   avatarUrl      String?         @map("avatar_url")

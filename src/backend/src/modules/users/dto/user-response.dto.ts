@@ -27,6 +27,9 @@ export class UserResponseDto {
   @ApiProperty({ example: true, description: 'Indica se o colaborador está ativo' })
   active!: boolean;
 
+  @ApiPropertyOptional({ example: true, description: 'Indica se o colaborador possui PIN de segurança configurado' })
+  hasPin?: boolean;
+
   @ApiProperty({ example: '2026-03-01T10:00:00.000Z', description: 'Data de criação do registro' })
   createdAt!: Date;
 }

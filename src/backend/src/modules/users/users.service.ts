@@ -58,11 +58,15 @@ export class UsersService {
     }
 
     const passwordHash = await bcrypt.hash(createUserDto.password, 10);
+    const pinHash = createUserDto.pin
+      ? await bcrypt.hash(createUserDto.pin, 10)
+      : await bcrypt.hash('1234', 10);
 
     const user = await this.usersRepository.create({
       name: createUserDto.name,
       email: createUserDto.email.toLowerCase(),
       passwordHash,
+      pinHash,
       role: createUserDto.role,
       badgeUid: sanitizedBadgeUid,
       avatarUrl: createUserDto.avatarUrl?.trim() || null,
@@ -181,6 +185,10 @@ export class UsersService {
       );
     }
 
+    if (updateUserDto.pin) {
+      dataToUpdate.pinHash = await bcrypt.hash(updateUserDto.pin, 10);
+    }
+
     const updatedUser = await this.usersRepository.update(id, dataToUpdate);
 
     if (
@@ -207,7 +215,10 @@ export class UsersService {
   }
 
   private toResponseDto(user: User): UserResponseDto {
-    const { passwordHash: _passwordHash, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+    const { passwordHash: _passwordHash, pinHash, ...userWithoutPassword } = user;
+    return {
+      ...userWithoutPassword,
+      hasPin: Boolean(pinHash),
+    };
   }
 }

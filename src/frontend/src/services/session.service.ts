@@ -58,7 +58,29 @@ export const sessionService = {
         return Promise.reject(new ApiError('Crachá NFC não cadastrado ou não reconhecido.', 401));
       }
 
-      return mockResponse(MOCK_AUTH_RESPONSE);
+      if (!payload.pin) {
+        return Promise.reject(new ApiError('PIN_REQUIRED', 401));
+      }
+
+      if (payload.pin !== '1234') {
+        return Promise.reject(
+          new ApiError('PIN incorreto. Verifique os 4 dígitos e tente novamente.', 401),
+        );
+      }
+
+      const mockUser = userBadge
+        ? {
+            ...MOCK_AUTH_RESPONSE.user,
+            id: userBadge.userId,
+            name: userBadge.userName,
+            badgeUid: userBadge.badgeUid,
+          }
+        : MOCK_AUTH_RESPONSE.user;
+
+      return mockResponse({
+        accessToken: MOCK_AUTH_RESPONSE.accessToken,
+        user: mockUser,
+      });
     }
 
     const { data } = await httpClient.post<IAuthResponse>('/auth/badge-login', payload);
