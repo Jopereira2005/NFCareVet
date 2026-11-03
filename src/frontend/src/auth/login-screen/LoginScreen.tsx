@@ -8,6 +8,7 @@ import { Button, Checkbox, Input } from '@/components/ui';
 import { useBadgeLogin, useLogin } from '@/hooks/queries/useSessionMutations';
 import { useNfcReader } from '@/hooks/useNfcReader';
 import { ROUTES } from '@/router/paths';
+import { showToast } from '@/stores/useToastStore';
 
 import './LoginScreen.scss';
 
@@ -42,9 +43,18 @@ export default function LoginScreen() {
             setPendingBadgeUid(uid);
             return;
           }
-          if (pendingBadgeUid) {
+
+          if (pendingBadgeUid && err.message.toLowerCase().includes('pin')) {
             setPinErrorMessage(err.message);
+            return;
           }
+
+          const isCollar = err.message.toLowerCase().includes('coleira');
+          showToast({
+            tone: 'warning',
+            title: isCollar ? 'Tag de coleira detectada' : 'Crachá não reconhecido',
+            description: err.message,
+          });
         },
       },
     );
