@@ -18,6 +18,23 @@
   &--invalid:focus-within {
     border-color: $danger-color;
   }
+
+  &--has-leading-icon .select__field {
+    padding-left: calc($space-md + 1.7rem + 1rem);
+  }
+}
+
+.select__leading-icon {
+  @include icon-size(1.7rem);
+
+  position: absolute;
+  top: 50%;
+  left: $space-md;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  color: $gray-scale-medium;
+  pointer-events: none;
 }
 
 .select__field {

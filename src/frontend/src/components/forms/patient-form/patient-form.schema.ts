@@ -7,6 +7,36 @@ export const PATIENT_SPECIES = ['Canina', 'Felina'] as const;
 const PATIENT_SEXES = ['MALE', 'FEMALE'] as const;
 const MAX_WEIGHT_KG = 150;
 
+export type BloodTypeOption = {
+  value: string;
+  label: string;
+};
+
+export const CANINE_BLOOD_TYPES: readonly BloodTypeOption[] = [
+  { value: 'DEA 1.1+', label: 'DEA 1.1+ (Positivo)' },
+  { value: 'DEA 1.1-', label: 'DEA 1.1- (Negativo - Doador)' },
+  { value: 'DEA 1.2+', label: 'DEA 1.2+ (Positivo)' },
+  { value: 'DEA 1.2-', label: 'DEA 1.2- (Negativo)' },
+  { value: 'DEA 3', label: 'DEA 3' },
+  { value: 'DEA 4+', label: 'DEA 4+ (Doador universal)' },
+  { value: 'DEA 5', label: 'DEA 5' },
+  { value: 'DEA 7', label: 'DEA 7' },
+  { value: 'Desconhecido', label: 'Desconhecido / Não tipado' },
+] as const;
+
+export const FELINE_BLOOD_TYPES: readonly BloodTypeOption[] = [
+  { value: 'Tipo A', label: 'Tipo A (Mais comum)' },
+  { value: 'Tipo B', label: 'Tipo B' },
+  { value: 'Tipo AB', label: 'Tipo AB (Raro)' },
+  { value: 'Desconhecido', label: 'Desconhecido / Não tipado' },
+] as const;
+
+export const getBloodTypeOptions = (species?: string): readonly BloodTypeOption[] => {
+  if (species?.toLowerCase() === 'canina') return CANINE_BLOOD_TYPES;
+  if (species?.toLowerCase() === 'felina') return FELINE_BLOOD_TYPES;
+  return [];
+};
+
 // Plain boolean (not a type guard), so the form keeps `string` values and can start empty
 const isOneOf = (options: readonly string[]) => (value: string) => options.includes(value);
 

@@ -1,7 +1,7 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Ban, CalendarDays, Droplet, Mars, UserPlus, Venus, Weight } from 'lucide-react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 
 import { PawIcon } from '@/assets/icons/paw-icon';
 import { Checkbox } from '@/components/ui/checkbox/Checkbox';
@@ -12,7 +12,7 @@ import { Select, type SelectOption } from '@/components/ui/select/Select';
 import { Textarea } from '@/components/ui/textarea/Textarea';
 import { toDateTimeLocalValue } from '@/utils/toDateTimeLocalValue';
 
-import { getPatientFormDefaults, patientFormSchema, type PatientFormValues } from './patient-form.schema';
+import { getBloodTypeOptions, getPatientFormDefaults, patientFormSchema, type PatientFormValues } from './patient-form.schema';
 import styles from './patient-form.module.scss';
 
 const SPECIES_OPTIONS: ChoiceOption<string>[] = [
@@ -53,6 +53,36 @@ export function PatientForm({ formId, onSubmit, defaultValues, fixedGuardian, gu
   useEffect(() => {
     if (createdGuardianId) setValue('guardianId', createdGuardianId, { shouldValidate: true });
   }, [createdGuardianId, setValue]);
+
+  const selectedSpecies = useWatch({ control, name: 'species' });
+  const currentBloodType = useWatch({ control, name: 'bloodType' });
+
+  // When species changes, reset bloodType to avoid invalid cross-species blood types
+  const prevSpeciesRef = useRef(selectedSpecies);
+  useEffect(() => {
+    if (prevSpeciesRef.current && prevSpeciesRef.current !== selectedSpecies) {
+      setValue('bloodType', '', { shouldValidate: true });
+    }
+    prevSpeciesRef.current = selectedSpecies;
+  }, [selectedSpecies, setValue]);
+
+  const bloodTypeOptions = useMemo(() => {
+    const baseOptions = [...getBloodTypeOptions(selectedSpecies)];
+    if (
+      currentBloodType &&
+      currentBloodType.trim() !== '' &&
+      !baseOptions.some((opt) => opt.value.toLowerCase() === currentBloodType.trim().toLowerCase())
+    ) {
+      return [{ value: currentBloodType, label: `${currentBloodType} (Cadastrado)` }, ...baseOptions];
+    }
+    return baseOptions;
+  }, [selectedSpecies, currentBloodType]);
+
+  const bloodTypePlaceholder = !selectedSpecies
+    ? 'Selecione a espécie primeiro'
+    : selectedSpecies === 'Canina'
+      ? 'Selecione o tipo sanguíneo (DEA)'
+      : 'Selecione o tipo sanguíneo (A, B, AB)';
 
   const today = toDateTimeLocalValue(new Date()).slice(0, 10);
 
@@ -122,12 +152,14 @@ export function PatientForm({ formId, onSubmit, defaultValues, fixedGuardian, gu
           error={errors.weightKg?.message}
           {...register('weightKg')}
         />
-        <Input
+        <Select
           id="patient-blood-type"
           label="Tipo sanguíneo"
           optional
-          placeholder="Ex.: DEA 1.1+"
           leadingIcon={<Droplet />}
+          placeholder={bloodTypePlaceholder}
+          options={bloodTypeOptions}
+          disabled={!selectedSpecies}
           error={errors.bloodType?.message}
           {...register('bloodType')}
         />

@@ -1,4 +1,4 @@
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import clsx from 'clsx';
 import { ChevronDown } from 'lucide-react';
 
@@ -24,13 +24,19 @@ type SelectProps = ComponentProps<'select'> & {
   hint?: string;
   error?: string;
   optional?: boolean;
+  leadingIcon?: ReactNode;
 };
 
 /** Native select (best mobile UX: the OS picker) styled like the text inputs. */
-export function Select({ id, label, options, placeholder, hint, error, optional, className, ...selectProps }: SelectProps) {
+export function Select({ id, label, options, placeholder, hint, error, optional, leadingIcon, className, ...selectProps }: SelectProps) {
   return (
     <FormField id={id} label={label} hint={hint} error={error} optional={optional}>
-      <div className={clsx(styles['select'], error && styles['select--invalid'])}>
+      <div className={clsx(styles['select'], leadingIcon && styles['select--has-leading-icon'], error && styles['select--invalid'])}>
+        {leadingIcon && (
+          <span className={styles['select__leading-icon']} aria-hidden="true">
+            {leadingIcon}
+          </span>
+        )}
         <select
           {...selectProps}
           id={id}
