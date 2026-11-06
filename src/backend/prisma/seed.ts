@@ -344,6 +344,8 @@ async function main() {
       email: 'lucas.silva@email.com',
       phone: '(15) 99123-4567',
       address: 'Rua das Palmeiras, 450 - Apto 82, Campolim - Sorocaba/SP',
+      photoUrl:
+        'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&h=300&q=80',
       isActive: true,
       financialStatus: FinancialStatus.PAID,
       paymentMethod: 'Boleto',
@@ -358,6 +360,8 @@ async function main() {
       email: 'mariana.costa@email.com',
       phone: '(15) 98111-2233',
       address: 'Av. Brasil, 1200 - Jardim América, Sorocaba/SP',
+      photoUrl:
+        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&h=300&q=80',
       isActive: true,
       financialStatus: FinancialStatus.PENDING,
       paymentMethod: 'Pix',
@@ -372,6 +376,8 @@ async function main() {
       email: 'roberto.alves@email.com',
       phone: '(15) 97222-3344',
       address: 'Rua Sete de Setembro, 310 - Centro, Sorocaba/SP',
+      photoUrl:
+        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=300&h=300&q=80',
       isActive: true,
       financialStatus: FinancialStatus.PAID,
       paymentMethod: 'Cartão de Crédito',
@@ -386,6 +392,8 @@ async function main() {
       email: 'juliana.martins@email.com',
       phone: '(15) 96333-4455',
       address: 'Rua Santa Clara, 88 - Mangal, Sorocaba/SP',
+      photoUrl:
+        'https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&h=300&q=80',
       isActive: true,
       financialStatus: FinancialStatus.OVERDUE,
       paymentMethod: 'Boleto',
@@ -400,6 +408,8 @@ async function main() {
       email: 'fernando.rocha@email.com',
       phone: '(15) 95444-5566',
       address: 'Av. General Carneiro, 950 - Cerrado, Sorocaba/SP',
+      photoUrl:
+        'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&h=300&q=80',
       isActive: true,
       financialStatus: FinancialStatus.PAID,
       paymentMethod: 'Cartão de Débito',
@@ -414,6 +424,8 @@ async function main() {
       email: 'carlos.santos@email.com',
       phone: '(15) 99234-5678',
       address: 'Alameda dos Ipês, 210 - Condomínio Ibiti Royal, Sorocaba/SP',
+      photoUrl:
+        'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=300&h=300&q=80',
       isActive: true,
       financialStatus: FinancialStatus.PAID,
       paymentMethod: 'Cartão de Crédito',
@@ -428,6 +440,8 @@ async function main() {
       email: 'beatriz.nogueira@email.com',
       phone: '(15) 98877-6655',
       address: 'Rua Aparecida, 640 - Santa Rosália, Sorocaba/SP',
+      photoUrl:
+        'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=300&h=300&q=80',
       isActive: true,
       financialStatus: FinancialStatus.PENDING,
       paymentMethod: 'Pix',
@@ -442,6 +456,8 @@ async function main() {
       email: 'gabriel.souza@email.com',
       phone: '(15) 99765-4321',
       address: 'Av. Professora Izoraida Marques Peres, 800 - Campolim, Sorocaba/SP',
+      photoUrl:
+        'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&h=300&q=80',
       isActive: true,
       financialStatus: FinancialStatus.PAID,
       paymentMethod: 'Pix',
@@ -456,6 +472,8 @@ async function main() {
       email: 'patricia.gomes@email.com',
       phone: '(15) 99654-3210',
       address: 'Rua Barão de Tatuí, 512 - Vergueiro, Sorocaba/SP',
+      photoUrl:
+        'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300&h=300&q=80',
       isActive: true,
       financialStatus: FinancialStatus.OVERDUE,
       paymentMethod: 'Cartão de Crédito',
@@ -474,6 +492,8 @@ async function main() {
       breed: 'Golden Retriever',
       sex: PatientSex.MALE,
       weightKg: 32.5,
+      photoUrl:
+        'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=500&h=500&q=80',
       birthDate: new Date('2022-04-10'),
       bloodType: 'DEA 1.1+',
       allergies: 'Alérgico a Dipirona e Sulfas',
@@ -493,6 +513,8 @@ async function main() {
       breed: 'Shih-tzu',
       sex: PatientSex.MALE,
       weightKg: 6.1,
+      photoUrl:
+        'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=500&h=500&q=80',
       birthDate: new Date('2019-07-22'),
       bloodType: 'DEA 1.1-',
       allergies: null,
@@ -512,6 +534,8 @@ async function main() {
       breed: 'Siamês',
       sex: PatientSex.FEMALE,
       weightKg: 4.2,
+      photoUrl:
+        'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=500&h=500&q=80',
       birthDate: new Date('2024-03-15'),
       bloodType: 'Tipo A',
       allergies: 'Cefalexina',
@@ -531,6 +555,8 @@ async function main() {
       breed: 'Labrador Retriever',
       sex: PatientSex.MALE,
       weightKg: 29.0,
+      photoUrl:
+        'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=500&h=500&q=80',
       birthDate: new Date('2020-11-20'),
       bloodType: 'DEA 1.1-',
       allergies: 'Penicilina e derivados beta-lactâmicos',
@@ -550,6 +576,8 @@ async function main() {
       breed: 'Boxer',
       sex: PatientSex.MALE,
       weightKg: 31.2,
+      photoUrl:
+        'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=500&h=500&q=80',
       birthDate: new Date('2018-05-03'),
       bloodType: 'DEA 1.1+',
       allergies: 'AINEs (Meloxicam / Carprofeno)',
@@ -569,6 +597,8 @@ async function main() {
       breed: 'Persa',
       sex: PatientSex.FEMALE,
       weightKg: 3.6,
+      photoUrl:
+        'https://images.unsplash.com/photo-1573865526739-10659fec78a5?auto=format&fit=crop&w=500&h=500&q=80',
       birthDate: new Date('2023-06-01'),
       bloodType: 'Tipo B',
       allergies: null,
@@ -588,6 +618,8 @@ async function main() {
       breed: 'Poodle Toy',
       sex: PatientSex.MALE,
       weightKg: 6.2,
+      photoUrl:
+        'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&w=500&h=500&q=80',
       birthDate: new Date('2021-08-14'),
       bloodType: 'DEA 1.2+',
       allergies: null,
@@ -607,6 +639,8 @@ async function main() {
       breed: 'Beagle',
       sex: PatientSex.FEMALE,
       weightKg: 12.0,
+      photoUrl:
+        'https://images.unsplash.com/photo-1505628346881-b72b27e84530?auto=format&fit=crop&w=500&h=500&q=80',
       birthDate: new Date('2023-01-20'),
       bloodType: 'DEA 1.1+',
       allergies: 'Proteína de frango (dieta hipoalergênica)',
@@ -626,6 +660,8 @@ async function main() {
       breed: 'Pastor Alemão',
       sex: PatientSex.MALE,
       weightKg: 38.4,
+      photoUrl:
+        'https://images.unsplash.com/photo-1589941013453-ec89f33b5e95?auto=format&fit=crop&w=500&h=500&q=80',
       birthDate: new Date('2020-02-11'),
       bloodType: 'DEA 1.1+',
       allergies: null,
@@ -645,6 +681,8 @@ async function main() {
       breed: 'Bulldog Francês',
       sex: PatientSex.FEMALE,
       weightKg: 11.2,
+      photoUrl:
+        'https://images.unsplash.com/photo-1583511655826-05700d52f4d9?auto=format&fit=crop&w=500&h=500&q=80',
       birthDate: new Date('2023-09-08'),
       bloodType: 'DEA 1.1-',
       allergies: 'Picada de insetos e contraste iodado',
@@ -664,6 +702,8 @@ async function main() {
       breed: 'Ragdoll',
       sex: PatientSex.FEMALE,
       weightKg: 4.9,
+      photoUrl:
+        'https://images.unsplash.com/photo-1513360309081-38f07627399e?auto=format&fit=crop&w=500&h=500&q=80',
       birthDate: new Date('2022-12-03'),
       bloodType: 'Tipo AB',
       allergies: null,
@@ -683,6 +723,8 @@ async function main() {
       breed: 'Maine Coon',
       sex: PatientSex.MALE,
       weightKg: 7.8,
+      photoUrl:
+        'https://images.unsplash.com/photo-1518791841217-8f162f1e1131?auto=format&fit=crop&w=500&h=500&q=80',
       birthDate: new Date('2021-05-19'),
       bloodType: 'Tipo A',
       allergies: 'Quetamina (histórico de taquicardia severa)',
@@ -702,6 +744,8 @@ async function main() {
       breed: 'Husky Siberiano',
       sex: PatientSex.MALE,
       weightKg: 26.5,
+      photoUrl:
+        'https://images.unsplash.com/photo-1605568427561-40dd23c2acea?auto=format&fit=crop&w=500&h=500&q=80',
       birthDate: new Date('2024-01-12'),
       bloodType: 'DEA 1.1+',
       allergies: null,
@@ -721,6 +765,8 @@ async function main() {
       breed: 'Dachshund',
       sex: PatientSex.FEMALE,
       weightKg: 8.5,
+      photoUrl:
+        'https://images.unsplash.com/photo-1612195583950-b8fd34c87093?auto=format&fit=crop&w=500&h=500&q=80',
       birthDate: new Date('2019-10-25'),
       bloodType: 'DEA 4+',
       allergies: 'Tramadol (causa disforia e êmese)',
@@ -740,6 +786,8 @@ async function main() {
       breed: 'Yorkshire Terrier',
       sex: PatientSex.FEMALE,
       weightKg: 2.8,
+      photoUrl:
+        'https://images.unsplash.com/photo-1546527868-ccb7ee7dfa6a?auto=format&fit=crop&w=500&h=500&q=80',
       birthDate: new Date('2025-02-10'),
       bloodType: 'DEA 1.1-',
       allergies: null,
@@ -759,6 +807,8 @@ async function main() {
       breed: 'SRD (Pelo Curto Brasileiro)',
       sex: PatientSex.FEMALE,
       weightKg: 3.4,
+      photoUrl:
+        'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?auto=format&fit=crop&w=500&h=500&q=80',
       birthDate: new Date('2020-03-08'),
       bloodType: 'Tipo A',
       allergies: null,
@@ -1090,9 +1140,35 @@ async function main() {
       hospitalizationId: hospMel.id,
       prescribedById: vetUser.id,
       generalRecommendations:
-        'Controle álgico multimodal. Acompanhar débito urinário em sistema fechado (meta: 1 a 2 ml/kg/h) e monitorar curva glicêmica.',
+        'Controle álgico multimodal. Acompanhar débito urinário em sistema fechado (meta: 1 a 2 ml/kg/h) e monitorar curva glicêmica. ATENÇÃO: Alérgica a Cefalexina!',
       isActive: true,
       validUntil: minutesFromNow(24 * 60),
+    },
+  });
+
+  const itemMelSondaCheckOverdue = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescMel.id,
+      itemType: PrescriptionItemType.PROCEDURE,
+      title: 'Checagem de Permeabilidade da Sonda TomCat e Linha Coletora',
+      dosage: null,
+      route: null,
+      scheduledTime: minutesAgo(15), // ATRASADA -> Prioridade ALTA
+      status: PrescriptionStatus.PENDING,
+      instructions: 'Inspecionar fixação no prepúcio/vulva, ausência de dobras e desobstrução suave com 1ml de SF se necessário.',
+    },
+  });
+
+  const itemMelBuprenorfina = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescMel.id,
+      itemType: PrescriptionItemType.MEDICATION,
+      title: 'Buprenorfina 0.3 mg/ml',
+      dosage: '0.02 mg/kg (0.28 ml)',
+      route: AdministrationRoute.INTRAVENOUS,
+      scheduledTime: minutesFromNow(30), // Prioridade MÉDIA
+      status: PrescriptionStatus.PENDING,
+      instructions: 'Analgesia opioide felina — administrar via intravenosa lenta.',
     },
   });
 
@@ -1100,13 +1176,13 @@ async function main() {
     data: [
       {
         prescriptionId: prescMel.id,
-        itemType: PrescriptionItemType.MEDICATION,
-        title: 'Buprenorfina 0.3 mg/ml',
-        dosage: '0.02 mg/kg (0.28 ml)',
-        route: AdministrationRoute.INTRAVENOUS,
-        scheduledTime: minutesFromNow(35), // Em 35 min -> Prioridade MÉDIA
+        itemType: PrescriptionItemType.PROCEDURE,
+        title: 'Lavagem Vesical Suave com SF 0.9% Morno (30 ml)',
+        dosage: null,
+        route: null,
+        scheduledTime: minutesFromNow(75), // Prioridade BAIXA
         status: PrescriptionStatus.PENDING,
-        instructions: 'Analgesia opioide felina — administrar via intravenosa lenta.',
+        instructions: 'Infundir lentamente 15ml, aspirar delicadamente e repetir com os 15ml restantes para remoção de microcálculos e plugue.',
       },
       {
         prescriptionId: prescMel.id,
@@ -1128,6 +1204,16 @@ async function main() {
         status: PrescriptionStatus.PENDING,
         instructions: 'Utilizar glicosímetro veterinário calibrado para felinos.',
       },
+      {
+        prescriptionId: prescMel.id,
+        itemType: PrescriptionItemType.MEDICATION,
+        title: 'Prazosina 0.5 mg (Cápsula Manipulada)',
+        dosage: '1 cápsula (0.5 mg)',
+        route: AdministrationRoute.ORAL,
+        scheduledTime: minutesFromNow(240),
+        status: PrescriptionStatus.PENDING,
+        instructions: 'Relaxante de esfíncter uretral interno — administrar com 2ml de água.',
+      },
     ],
   });
 
@@ -1144,6 +1230,32 @@ async function main() {
     },
   });
 
+  const itemMelSedacaoApplied = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescMel.id,
+      itemType: PrescriptionItemType.MEDICATION,
+      title: 'Sedação Pré-Sondagem: Midazolam 0.2 mg/kg + Cetamina 2 mg/kg IV',
+      dosage: '0.17 ml Midazolam + 0.08 ml Cetamina',
+      route: AdministrationRoute.INTRAVENOUS,
+      scheduledTime: minutesAgo(180),
+      status: PrescriptionStatus.APPLIED,
+      instructions: 'Sedação dissociativa leve para hidropropulsão e passagem de cateter TomCat sem estresse.',
+    },
+  });
+
+  const itemMelCefalexinaCancelled = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescMel.id,
+      itemType: PrescriptionItemType.MEDICATION,
+      title: 'Cefalexina Suspensão Oral 250 mg/5ml',
+      dosage: '25 mg/kg (2.1 ml)',
+      route: AdministrationRoute.ORAL,
+      scheduledTime: minutesAgo(240),
+      status: PrescriptionStatus.CANCELLED,
+      instructions: 'Cancelado pela equipe médica após confirmação de alergia a cefalosporinas pelo tutor.',
+    },
+  });
+
   // --- Prescrição 4: Apollo (Canil Grande - Pós-DVG) - Prescrita por Dra. Camila (Admin) ---
   // Garante que ao logar com admin@nfcarevet.com ou crachá simulado, a aba "Suas Atividades" tenha tarefas!
   const prescApollo = await prisma.prescription.create({
@@ -1157,18 +1269,34 @@ async function main() {
     },
   });
 
+  const itemApolloEcgOverdue = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescApollo.id,
+      itemType: PrescriptionItemType.VITAL_CHECK,
+      title: 'Eletrocardiograma (ECG) de Controle + Pressão Arterial',
+      dosage: null,
+      route: null,
+      scheduledTime: minutesAgo(12), // ATRASADA -> Prioridade ALTA (Aparece em Suas Atividades do Admin!)
+      status: PrescriptionStatus.PENDING,
+      instructions: 'Avaliar presença de taquicardia ventricular ou extrassístoles ventriculares em DII.',
+    },
+  });
+
+  const itemApolloLidocaina = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescApollo.id,
+      itemType: PrescriptionItemType.MEDICATION,
+      title: 'Infusão Contínua de Lidocaína 2% (CRI 50 mcg/kg/min)',
+      dosage: '5.76 ml/h em Bomba de Infusão',
+      route: AdministrationRoute.INTRAVENOUS,
+      scheduledTime: minutesFromNow(25), // Prioridade MÉDIA
+      status: PrescriptionStatus.PENDING,
+      instructions: 'Antiarrítmico de classe IB — manter bomba de seringa dedicada em acesso cefálico.',
+    },
+  });
+
   await prisma.prescriptionItem.createMany({
     data: [
-      {
-        prescriptionId: prescApollo.id,
-        itemType: PrescriptionItemType.VITAL_CHECK,
-        title: 'Eletrocardiograma (ECG) de Controle + Pressão Arterial',
-        dosage: null,
-        route: null,
-        scheduledTime: minutesAgo(12), // ATRASADA -> Prioridade ALTA (Aparece em Suas Atividades do Admin!)
-        status: PrescriptionStatus.PENDING,
-        instructions: 'Avaliar presença de taquicardia ventricular ou extrassístoles ventriculares em DII.',
-      },
       {
         prescriptionId: prescApollo.id,
         itemType: PrescriptionItemType.MEDICATION,
@@ -1189,7 +1317,43 @@ async function main() {
         status: PrescriptionStatus.PENDING,
         instructions: 'Inspecionar linha de sutura quanto a seroma ou deiscência; limpar com SF 0.9% estéril.',
       },
+      {
+        prescriptionId: prescApollo.id,
+        itemType: PrescriptionItemType.EXAM,
+        title: 'Dosagem Seriada de Eletrólitos (Na+, K+, Cl-) e Lactato Sérico',
+        dosage: null,
+        route: null,
+        scheduledTime: minutesFromNow(300),
+        status: PrescriptionStatus.PENDING,
+        instructions: 'Monitorar perfusão e prevenir hipocalemia secundária a estresse cirúrgico.',
+      },
     ],
+  });
+
+  const itemApolloCefazolinaApplied = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescApollo.id,
+      itemType: PrescriptionItemType.MEDICATION,
+      title: 'Cefazolina Sódica 30 mg/kg IV',
+      dosage: '1.15 g (diluído em 20 ml SF)',
+      route: AdministrationRoute.INTRAVENOUS,
+      scheduledTime: minutesAgo(120),
+      status: PrescriptionStatus.APPLIED,
+      instructions: 'Profilaxia antimicrobiana perioperatória administrada lentamente no intra/pós-operatório.',
+    },
+  });
+
+  const itemApolloCarprofenoCancelled = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescApollo.id,
+      itemType: PrescriptionItemType.MEDICATION,
+      title: 'Carprofeno 4.4 mg/kg IV',
+      dosage: '170 mg (3.4 ml)',
+      route: AdministrationRoute.INTRAVENOUS,
+      scheduledTime: minutesAgo(260),
+      status: PrescriptionStatus.CANCELLED,
+      instructions: 'AINE cancelado por risco de hemorragia gastrointestinal em mucosa gástrica pós-isquemia por torção.',
+    },
   });
 
   // --- Prescrição 5: Bob (Canil Médio - Ortopedia) - Prescrita por Dr. Rafael Mendes ---
@@ -1198,36 +1362,101 @@ async function main() {
       hospitalizationId: hospBob.id,
       prescribedById: vetRafael.id,
       generalRecommendations:
-        'Crioterapia no joelho direito operado a cada 6h por 15 minutos. Restrição de espaço na baia e uso obrigatório de colar elizabetano.',
+        'Crioterapia no joelho direito operado a cada 6h por 15 minutos. Restrição de espaço na baia e uso obrigatório de colar elizabetano. ATENÇÃO: Alérgico a Penicilinas!',
       isActive: true,
       validUntil: minutesFromNow(48 * 60),
-      items: {
-        create: [
-          {
-            itemType: PrescriptionItemType.MEDICATION,
-            title: 'Meloxicam 2 mg/ml',
-            dosage: '0.1 mg/kg (1.45 ml)',
-            route: AdministrationRoute.SUBCUTANEOUS,
-            scheduledTime: minutesFromNow(55), // Prioridade MÉDIA
-            status: PrescriptionStatus.PENDING,
-            instructions: 'Anti-inflamatório não esteroidal pós-operatório (administrar após alimentação).',
-          },
-          {
-            itemType: PrescriptionItemType.PROCEDURE,
-            title: 'Sessão de Crioterapia + Mobilização Passiva Suave',
-            dosage: null,
-            route: null,
-            scheduledTime: minutesFromNow(140), // Prioridade BAIXA
-            status: PrescriptionStatus.PENDING,
-            instructions: 'Aplicar bolsa de gelo envolta em campo cirúrgico na região tibial proximal por 15 min.',
-          },
-        ],
+    },
+  });
+
+  const itemBobCurativoOverdue = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescBob.id,
+      itemType: PrescriptionItemType.PROCEDURE,
+      title: 'Troca de Atadura de Robert-Jones e Avaliação de Edema de Joelho',
+      dosage: null,
+      route: null,
+      scheduledTime: minutesAgo(20), // ATRASADA -> Prioridade ALTA
+      status: PrescriptionStatus.PENDING,
+      instructions: 'Remover atadura, inspecionar suturas cutâneas e reaplicar curativo compressivo leve com acolchoamento.',
+    },
+  });
+
+  const itemBobMeloxicam = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescBob.id,
+      itemType: PrescriptionItemType.MEDICATION,
+      title: 'Meloxicam 2 mg/ml',
+      dosage: '0.1 mg/kg (1.45 ml)',
+      route: AdministrationRoute.SUBCUTANEOUS,
+      scheduledTime: minutesFromNow(55), // Prioridade MÉDIA
+      status: PrescriptionStatus.PENDING,
+      instructions: 'Anti-inflamatório não esteroidal pós-operatório (administrar após alimentação).',
+    },
+  });
+
+  await prisma.prescriptionItem.createMany({
+    data: [
+      {
+        prescriptionId: prescBob.id,
+        itemType: PrescriptionItemType.PROCEDURE,
+        title: 'Sessão de Crioterapia + Mobilização Passiva Suave',
+        dosage: null,
+        route: null,
+        scheduledTime: minutesFromNow(140), // Prioridade BAIXA
+        status: PrescriptionStatus.PENDING,
+        instructions: 'Aplicar bolsa de gelo envolta em campo cirúrgico na região tibial proximal por 15 min.',
       },
+      {
+        prescriptionId: prescBob.id,
+        itemType: PrescriptionItemType.MEDICATION,
+        title: 'Cloridrato de Tramadol 50 mg/ml + Dipirona 500 mg/ml IV',
+        dosage: '2.9 ml Tramadol + 1.45 ml Dipirona',
+        route: AdministrationRoute.INTRAVENOUS,
+        scheduledTime: minutesFromNow(180),
+        status: PrescriptionStatus.PENDING,
+        instructions: 'Analgesia multimodal pós-osteotomia. Infundir lentamente diluído em 15ml de SF 0.9%.',
+      },
+      {
+        prescriptionId: prescBob.id,
+        itemType: PrescriptionItemType.EXAM,
+        title: 'Radiografia Ortopédica de Controle Pós-TPLO (Projeções ML e CC)',
+        dosage: null,
+        route: null,
+        scheduledTime: minutesFromNow(300),
+        status: PrescriptionStatus.PENDING,
+        instructions: 'Verificar alinhamento da osteotomia radial e estabilidade dos parafusos corticais de titânio.',
+      },
+    ],
+  });
+
+  const itemBobCefalotinaApplied = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescBob.id,
+      itemType: PrescriptionItemType.MEDICATION,
+      title: 'Cefalotina 1g IV Profilaxia Ortopédica',
+      dosage: '30 mg/kg (870 mg)',
+      route: AdministrationRoute.INTRAVENOUS,
+      scheduledTime: minutesAgo(150),
+      status: PrescriptionStatus.APPLIED,
+      instructions: 'Antimicrobiano profilático de escolha administrado no pós-operatório imediato.',
+    },
+  });
+
+  const itemBobAmoxicilinaCancelled = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescBob.id,
+      itemType: PrescriptionItemType.MEDICATION,
+      title: 'Amoxicilina + Clavulanato de Potássio 250 mg',
+      dosage: '12.5 mg/kg (1.5 comprimido)',
+      route: AdministrationRoute.ORAL,
+      scheduledTime: minutesAgo(320),
+      status: PrescriptionStatus.CANCELLED,
+      instructions: 'Cancelado de imediato devido a alerta de alergia a penicilinas no prontuário do paciente.',
     },
   });
 
   // --- Prescrição 6: Amora (Canil Pequeno - Braquicefálica) - Prescrita por Dr. Marcos Paxe (Mr Paxe) ---
-  await prisma.prescription.create({
+  const prescAmora = await prisma.prescription.create({
     data: {
       hospitalizationId: hospAmora.id,
       prescribedById: vetPaxe.id,
@@ -1235,67 +1464,197 @@ async function main() {
         'Manter baia refrigerada a 21°C. Evitar qualquer excitação. Oxigenoterapia por máscara ou gaiola de O2 se apresentar estridor inspiratório.',
       isActive: true,
       validUntil: minutesFromNow(24 * 60),
-      items: {
-        create: [
-          {
-            itemType: PrescriptionItemType.MEDICATION,
-            title: 'Nebulização com Solução Fisiológica 0.9% + Acetilcisteína',
-            dosage: '5 ml SF 0.9% + 0.5 ml Acetilcisteína',
-            route: AdministrationRoute.INHALATION,
-            scheduledTime: minutesFromNow(20), // Prioridade MÉDIA (Prescrita por Mr Paxe!)
-            status: PrescriptionStatus.PENDING,
-            instructions: 'Realizar nebulização dentro da baia por 15 minutos sem contenção física.',
-          },
-          {
-            itemType: PrescriptionItemType.VITAL_CHECK,
-            title: 'Monitoramento de Frequência Respiratória, SpO2 e Temperatura',
-            dosage: null,
-            route: null,
-            scheduledTime: minutesFromNow(120),
-            status: PrescriptionStatus.PENDING,
-            instructions: 'Confirmar manutenção da temperatura abaixo de 39.0 °C e padrão respiratório.',
-          },
-        ],
+    },
+  });
+
+  const itemAmoraVitalOverdue = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescAmora.id,
+      itemType: PrescriptionItemType.VITAL_CHECK,
+      title: 'Aferição Emergencial de Temperatura Retal e Oximetria (SpO2)',
+      dosage: null,
+      route: null,
+      scheduledTime: minutesAgo(10), // ATRASADA -> Prioridade ALTA
+      status: PrescriptionStatus.PENDING,
+      instructions: 'Garantir que a temperatura corporal não ultrapasse 39.2 °C e SpO2 permaneça acima de 95%.',
+    },
+  });
+
+  await prisma.prescriptionItem.createMany({
+    data: [
+      {
+        prescriptionId: prescAmora.id,
+        itemType: PrescriptionItemType.MEDICATION,
+        title: 'Nebulização com Solução Fisiológica 0.9% + Acetilcisteína',
+        dosage: '5 ml SF 0.9% + 0.5 ml Acetilcisteína',
+        route: AdministrationRoute.INHALATION,
+        scheduledTime: minutesFromNow(20), // Prioridade MÉDIA (Prescrita por Mr Paxe!)
+        status: PrescriptionStatus.PENDING,
+        instructions: 'Realizar nebulização dentro da baia por 15 minutos sem contenção física.',
       },
+      {
+        prescriptionId: prescAmora.id,
+        itemType: PrescriptionItemType.MEDICATION,
+        title: 'Butorfanol 0.2 mg/kg IV (Sedação Leve e Antitussígeno)',
+        dosage: '0.22 ml Butorfanol 10 mg/ml',
+        route: AdministrationRoute.INTRAVENOUS,
+        scheduledTime: minutesFromNow(60),
+        status: PrescriptionStatus.PENDING,
+        instructions: 'Sedação leve para reduzir a frequência de esforço inspiratório.',
+      },
+      {
+        prescriptionId: prescAmora.id,
+        itemType: PrescriptionItemType.VITAL_CHECK,
+        title: 'Monitoramento de Frequência Respiratória, SpO2 e Temperatura',
+        dosage: null,
+        route: null,
+        scheduledTime: minutesFromNow(120),
+        status: PrescriptionStatus.PENDING,
+        instructions: 'Confirmar manutenção da temperatura abaixo de 39.0 °C e padrão respiratório.',
+      },
+    ],
+  });
+
+  const itemAmoraDexametasonaApplied = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescAmora.id,
+      itemType: PrescriptionItemType.MEDICATION,
+      title: 'Dexametasona Fosfato Dissódico 2 mg/ml IV',
+      dosage: '0.2 mg/kg (1.1 ml)',
+      route: AdministrationRoute.INTRAVENOUS,
+      scheduledTime: minutesAgo(110),
+      status: PrescriptionStatus.APPLIED,
+      instructions: 'Anti-inflamatório corticoide de ação rápida para redução de edema agudo de glote/palato mole.',
+    },
+  });
+
+  const itemAmoraCompressasApplied = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescAmora.id,
+      itemType: PrescriptionItemType.PROCEDURE,
+      title: 'Compressas Frias em Coxins e Região Inguinal',
+      dosage: null,
+      route: null,
+      scheduledTime: minutesAgo(180),
+      status: PrescriptionStatus.APPLIED,
+      instructions: 'Resfriamento corporal controlado com toalhas umedecidas e ventilador na baia para reverter hipertermia de 40.4 °C.',
+    },
+  });
+
+  const itemAmoraEnrofloxacinoCancelled = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescAmora.id,
+      itemType: PrescriptionItemType.MEDICATION,
+      title: 'Enrofloxacino 5% SC',
+      dosage: '5 mg/kg (1.1 ml)',
+      route: AdministrationRoute.SUBCUTANEOUS,
+      scheduledTime: minutesAgo(220),
+      status: PrescriptionStatus.CANCELLED,
+      instructions: 'Cancelado pela equipe médica por se tratar de quadro puramente obstrutivo-térmico sem foco infeccioso.',
     },
   });
 
   // --- Prescrição 7: Simba (Gatil 02 - Cardiologia) - Prescrita por Dra. Camila (Admin) ---
-  await prisma.prescription.create({
+  const prescSimba = await prisma.prescription.create({
     data: {
       hospitalizationId: hospSimba.id,
       prescribedById: adminUser.id,
       generalRecommendations:
-        'Paciente cardiopata (CMH). Taxa de fluidoterapia restrita (manutenção conservadora) para evitar sobrecarga volêmica e edema pulmonar.',
+        'Paciente cardiopata (CMH). Taxa de fluidoterapia restrita (manutenção conservadora) para evitar sobrecarga volêmica e edema pulmonar. ATENÇÃO: Alérgico a Quetamina!',
       isActive: true,
       validUntil: minutesFromNow(24 * 60),
-      items: {
-        create: [
-          {
-            itemType: PrescriptionItemType.MEDICATION,
-            title: 'Clopidogrel 75 mg (1/4 de comprimido)',
-            dosage: '18.75 mg / gato',
-            route: AdministrationRoute.ORAL,
-            scheduledTime: minutesFromNow(80), // Prioridade BAIXA
-            status: PrescriptionStatus.PENDING,
-            instructions: 'Antiagregante plaquetário — administrar em cápsula gelatinosa com pasta palatável.',
-          },
-          {
-            itemType: PrescriptionItemType.EXAM,
-            title: 'Ecocardiograma Doppler de Controle à Beira do Leito (T-FAST)',
-            dosage: null,
-            route: null,
-            scheduledTime: minutesFromNow(240),
-            status: PrescriptionStatus.PENDING,
-            instructions: 'Avaliar relação Átrio Esquerdo/Aorta (AE/Ao) e descartar linhas B pulmonares.',
-          },
-        ],
+    },
+  });
+
+  const itemSimbaRespOverdue = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescSimba.id,
+      itemType: PrescriptionItemType.VITAL_CHECK,
+      title: 'Controle de Frequência Respiratória em Repouso (Meta < 30 mpm)',
+      dosage: null,
+      route: null,
+      scheduledTime: minutesAgo(18), // ATRASADA -> Prioridade ALTA
+      status: PrescriptionStatus.PENDING,
+      instructions: 'Contar movimentos respiratórios na baia sem abrir a porta para não assustar o felino.',
+    },
+  });
+
+  const itemSimbaFurosemida = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescSimba.id,
+      itemType: PrescriptionItemType.MEDICATION,
+      title: 'Furosemida 10 mg/ml IV Bolus Lento',
+      dosage: '1 mg/kg (0.78 ml)',
+      route: AdministrationRoute.INTRAVENOUS,
+      scheduledTime: minutesFromNow(30), // Prioridade MÉDIA
+      status: PrescriptionStatus.PENDING,
+      instructions: 'Diurético de alça para controle de congestão pulmonar incipiente.',
+    },
+  });
+
+  await prisma.prescriptionItem.createMany({
+    data: [
+      {
+        prescriptionId: prescSimba.id,
+        itemType: PrescriptionItemType.MEDICATION,
+        title: 'Clopidogrel 75 mg (1/4 de comprimido)',
+        dosage: '18.75 mg / gato',
+        route: AdministrationRoute.ORAL,
+        scheduledTime: minutesFromNow(80), // Prioridade BAIXA
+        status: PrescriptionStatus.PENDING,
+        instructions: 'Antiagregante plaquetário — administrar em cápsula gelatinosa com pasta palatável.',
       },
+      {
+        prescriptionId: prescSimba.id,
+        itemType: PrescriptionItemType.MEDICATION,
+        title: 'Atenolol 25 mg (1/4 de comprimido)',
+        dosage: '6.25 mg / gato VO',
+        route: AdministrationRoute.ORAL,
+        scheduledTime: minutesFromNow(150),
+        status: PrescriptionStatus.PENDING,
+        instructions: 'Betabloqueador para redução da frequência cardíaca e do gradiente pressórico no trato de saída.',
+      },
+      {
+        prescriptionId: prescSimba.id,
+        itemType: PrescriptionItemType.EXAM,
+        title: 'Ecocardiograma Doppler de Controle à Beira do Leito (T-FAST)',
+        dosage: null,
+        route: null,
+        scheduledTime: minutesFromNow(240),
+        status: PrescriptionStatus.PENDING,
+        instructions: 'Avaliar relação Átrio Esquerdo/Aorta (AE/Ao) e descartar linhas B pulmonares.',
+      },
+    ],
+  });
+
+  const itemSimbaFurosemidaApplied = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescSimba.id,
+      itemType: PrescriptionItemType.MEDICATION,
+      title: 'Furosemida 1 mg/kg IV na Admissão',
+      dosage: '0.78 ml Furosemida 10 mg/ml',
+      route: AdministrationRoute.INTRAVENOUS,
+      scheduledTime: minutesAgo(160),
+      status: PrescriptionStatus.APPLIED,
+      instructions: 'Dose de ataque na admissão para controle de congestão venosa pulmonar.',
+    },
+  });
+
+  const itemSimbaCetaminaCancelled = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescSimba.id,
+      itemType: PrescriptionItemType.MEDICATION,
+      title: 'Cetamina 10% IV',
+      dosage: '2 mg/kg (0.16 ml)',
+      route: AdministrationRoute.INTRAVENOUS,
+      scheduledTime: minutesAgo(240),
+      status: PrescriptionStatus.CANCELLED,
+      instructions: 'Cancelado por contraindicação absoluta: paciente com alergia e histórico de taquicardia severa.',
     },
   });
 
   // --- Prescrição 8: Frida (Semi-Intensiva - Neurologia) - Prescrita por Dra. Madalena ---
-  await prisma.prescription.create({
+  const prescFrida = await prisma.prescription.create({
     data: {
       hospitalizationId: hospFrida.id,
       prescribedById: vetUser.id,
@@ -1303,28 +1662,93 @@ async function main() {
         'Atenção: ALÉRGICA A TRAMADOL. Realizar manejo vesical (manobra de Credé suave) a cada 6h e mudança de decúbito em colchão caixa de ovo.',
       isActive: true,
       validUntil: minutesFromNow(24 * 60),
-      items: {
-        create: [
-          {
-            itemType: PrescriptionItemType.MEDICATION,
-            title: 'Gabapentina 50 mg (Cápsula)',
-            dosage: '10 mg/kg (1 cápsula de 85 mg)',
-            route: AdministrationRoute.ORAL,
-            scheduledTime: minutesAgo(45), // ATRASADA -> Prioridade ALTA
-            status: PrescriptionStatus.PENDING,
-            instructions: 'Controle de dor neuropática pós-hemilaminectomia.',
-          },
-          {
-            itemType: PrescriptionItemType.PROCEDURE,
-            title: 'Fisioterapia Neurológica: Estímulo Proprioceptivo + Laserterapia',
-            dosage: null,
-            route: null,
-            scheduledTime: minutesFromNow(160),
-            status: PrescriptionStatus.PENDING,
-            instructions: 'Laser terapêutico na região T13-L1 e exercícios de estação assistida.',
-          },
-        ],
+    },
+  });
+
+  const itemFridaCrede = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescFrida.id,
+      itemType: PrescriptionItemType.PROCEDURE,
+      title: 'Esvaziamento Vesical por Compressão Manual Suave (Manobra de Credé)',
+      dosage: null,
+      route: null,
+      scheduledTime: minutesFromNow(25), // Prioridade MÉDIA
+      status: PrescriptionStatus.PENDING,
+      instructions: 'Comprimir suavemente bexiga urinária de cranial para caudal até esvaziamento completo.',
+    },
+  });
+
+  const itemFridaGabapentina = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescFrida.id,
+      itemType: PrescriptionItemType.MEDICATION,
+      title: 'Gabapentina 50 mg (Cápsula)',
+      dosage: '10 mg/kg (1 cápsula de 85 mg)',
+      route: AdministrationRoute.ORAL,
+      scheduledTime: minutesAgo(45), // ATRASADA -> Prioridade ALTA
+      status: PrescriptionStatus.PENDING,
+      instructions: 'Controle de dor neuropática pós-hemilaminectomia.',
+    },
+  });
+
+  await prisma.prescriptionItem.createMany({
+    data: [
+      {
+        prescriptionId: prescFrida.id,
+        itemType: PrescriptionItemType.PROCEDURE,
+        title: 'Fisioterapia Neurológica: Estímulo Proprioceptivo + Laserterapia',
+        dosage: null,
+        route: null,
+        scheduledTime: minutesFromNow(80), // Prioridade BAIXA
+        status: PrescriptionStatus.PENDING,
+        instructions: 'Laser terapêutico na região T13-L1 e exercícios de estação assistida.',
       },
+      {
+        prescriptionId: prescFrida.id,
+        itemType: PrescriptionItemType.PROCEDURE,
+        title: 'Mudança de Decúbito Lateral e Massagem em Coxins',
+        dosage: null,
+        route: null,
+        scheduledTime: minutesFromNow(160),
+        status: PrescriptionStatus.PENDING,
+        instructions: 'Mudar decúbito para prevenção de escaras e massagem suave de ativação reflexa.',
+      },
+      {
+        prescriptionId: prescFrida.id,
+        itemType: PrescriptionItemType.MEDICATION,
+        title: 'Dipirona 500 mg/ml IV Lento',
+        dosage: '25 mg/kg (0.43 ml)',
+        route: AdministrationRoute.INTRAVENOUS,
+        scheduledTime: minutesFromNow(220),
+        status: PrescriptionStatus.PENDING,
+        instructions: 'Antipirético e analgésico de suporte administrado em 2 minutos.',
+      },
+    ],
+  });
+
+  const itemFridaMetadonaApplied = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescFrida.id,
+      itemType: PrescriptionItemType.MEDICATION,
+      title: 'Cloridrato de Metadona 0.2 mg/kg SC',
+      dosage: '0.17 ml Metadona 10 mg/ml',
+      route: AdministrationRoute.SUBCUTANEOUS,
+      scheduledTime: minutesAgo(140),
+      status: PrescriptionStatus.APPLIED,
+      instructions: 'Analgesia espinhal de resgate aplicada com sucesso sem queixas de dor.',
+    },
+  });
+
+  const itemFridaTramadolCancelled = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescFrida.id,
+      itemType: PrescriptionItemType.MEDICATION,
+      title: 'Cloridrato de Tramadol 50 mg/ml SC',
+      dosage: '2 mg/kg (0.34 ml)',
+      route: AdministrationRoute.SUBCUTANEOUS,
+      scheduledTime: minutesAgo(260),
+      status: PrescriptionStatus.CANCELLED,
+      instructions: 'Cancelado devido a histórico severo de êmese e disforia induzidos por tramadol.',
     },
   });
 
@@ -1340,7 +1764,7 @@ async function main() {
     },
   });
 
-  await prisma.prescription.create({
+  const prescLuna = await prisma.prescription.create({
     data: {
       hospitalizationId: hospLuna.id,
       prescribedById: vetUser.id,
@@ -1348,28 +1772,93 @@ async function main() {
         'Manter fluidoterapia IV balanceada conforme reposição de perdas. Estimular ingestão voluntária com sachê Renal morno.',
       isActive: true,
       validUntil: minutesFromNow(24 * 60),
-      items: {
-        create: [
-          {
-            itemType: PrescriptionItemType.MEDICATION,
-            title: 'Hidróxido de Alumínio (Quelante de Fósforo)',
-            dosage: '30 mg/kg (1.1 ml)',
-            route: AdministrationRoute.ORAL,
-            scheduledTime: minutesFromNow(50), // Prioridade MÉDIA
-            status: PrescriptionStatus.PENDING,
-            instructions: 'Administrar misturado ao alimento úmido renal.',
-          },
-          {
-            itemType: PrescriptionItemType.EXAM,
-            title: 'Painel Bioquímico Renal Seriado (Ureia, Creatinina, Fósforo, Potássio)',
-            dosage: null,
-            route: null,
-            scheduledTime: minutesFromNow(300),
-            status: PrescriptionStatus.PENDING,
-            instructions: 'Comparar com creatinina basal de admissão (4.8 mg/dL -> último controle 2.9 mg/dL).',
-          },
-        ],
+    },
+  });
+
+  const itemLunaBombaOverdue = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescLuna.id,
+      itemType: PrescriptionItemType.PROCEDURE,
+      title: 'Checagem de Bomba de Infusão e Taxa de Fluidoterapia (12 ml/h)',
+      dosage: null,
+      route: null,
+      scheduledTime: minutesAgo(25), // ATRASADA -> Prioridade ALTA
+      status: PrescriptionStatus.PENDING,
+      instructions: 'Conferir volume infundido acumulado, ausência de oclusão e turgor cutâneo.',
+    },
+  });
+
+  const itemLunaHidroxido = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescLuna.id,
+      itemType: PrescriptionItemType.MEDICATION,
+      title: 'Hidróxido de Alumínio (Quelante de Fósforo)',
+      dosage: '30 mg/kg (1.1 ml)',
+      route: AdministrationRoute.ORAL,
+      scheduledTime: minutesFromNow(40), // Prioridade MÉDIA
+      status: PrescriptionStatus.PENDING,
+      instructions: 'Administrar misturado ao alimento úmido renal.',
+    },
+  });
+
+  await prisma.prescriptionItem.createMany({
+    data: [
+      {
+        prescriptionId: prescLuna.id,
+        itemType: PrescriptionItemType.MEDICATION,
+        title: 'Enrofloxacino 5% Diluído em SF 0.9% IV Lento',
+        dosage: '5 mg/kg (0.36 ml)',
+        route: AdministrationRoute.INTRAVENOUS,
+        scheduledTime: minutesFromNow(90), // Prioridade BAIXA
+        status: PrescriptionStatus.PENDING,
+        instructions: 'Tratamento de pielonefrite ascendente. Infundir diluído em 10ml de SF ao longo de 20 min.',
       },
+      {
+        prescriptionId: prescLuna.id,
+        itemType: PrescriptionItemType.VITAL_CHECK,
+        title: 'Aferição de Pressão Arterial Doppler em Cauda (Controle de Nefropatia)',
+        dosage: null,
+        route: null,
+        scheduledTime: minutesFromNow(150),
+        status: PrescriptionStatus.PENDING,
+        instructions: 'Manguito neonatal #2 na base da cauda; registrar 5 aferições consecutivas.',
+      },
+      {
+        prescriptionId: prescLuna.id,
+        itemType: PrescriptionItemType.EXAM,
+        title: 'Painel Bioquímico Renal Seriado (Ureia, Creatinina, Fósforo, Potássio)',
+        dosage: null,
+        route: null,
+        scheduledTime: minutesFromNow(280),
+        status: PrescriptionStatus.PENDING,
+        instructions: 'Comparar com creatinina basal de admissão (4.8 mg/dL -> último controle 2.9 mg/dL).',
+      },
+    ],
+  });
+
+  const itemLunaMirtazapinaApplied = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescLuna.id,
+      itemType: PrescriptionItemType.MEDICATION,
+      title: 'Mirtazapina 2 mg Pomada Transdérmica Auricular',
+      dosage: '1 tira de 3.8 cm (2 mg)',
+      route: AdministrationRoute.ORAL,
+      scheduledTime: minutesAgo(150),
+      status: PrescriptionStatus.APPLIED,
+      instructions: 'Aplicar na face interna do pavilhão auricular alternando as orelhas para estímulo de apetite.',
+    },
+  });
+
+  const itemLunaOndansetronaApplied = await prisma.prescriptionItem.create({
+    data: {
+      prescriptionId: prescLuna.id,
+      itemType: PrescriptionItemType.MEDICATION,
+      title: 'Ondansetrona 2 mg/ml IV Lento',
+      dosage: '0.5 mg/kg (0.9 ml)',
+      route: AdministrationRoute.INTRAVENOUS,
+      scheduledTime: minutesAgo(210),
+      status: PrescriptionStatus.APPLIED,
+      instructions: 'Antiemético para alívio de náusea urêmica antes da refeição.',
     },
   });
 
@@ -1573,6 +2062,29 @@ async function main() {
       },
       {
         hospitalizationId: hospMel.id,
+        prescriptionItemId: itemMelSedacaoApplied.id,
+        userId: vetUser.id,
+        eventType: EventType.MEDICATION_APPLICATION,
+        title: 'Execução de item: Sedação Pré-Sondagem (Midazolam + Cetamina IV)',
+        description: 'Paciente sedada adequadamente sem intercorrências hemodinâmicas.',
+        recordedAt: todayAgo(180),
+      },
+      {
+        hospitalizationId: hospMel.id,
+        prescriptionItemId: itemMelCefalexinaCancelled.id,
+        userId: vetUser.id,
+        eventType: EventType.OBSERVATION,
+        title: 'Item suspenso: Cefalexina Suspensão Oral 250 mg/5ml',
+        description:
+          'Justificativa médica: Tutor informou histórico de reação alérgica cutânea a cefalexina durante triagem. Antibioticoterapia suspensa temporariamente.',
+        metrics: {
+          action: 'CANCEL_PRESCRIPTION_ITEM',
+          justification: 'Histórico de alergia a cefalexina',
+        },
+        recordedAt: todayAgo(240),
+      },
+      {
+        hospitalizationId: hospMel.id,
         userId: vetUser.id,
         eventType: EventType.OBSERVATION,
         title: 'Admissão Hospitalar (Check-in) - Gatil Especial',
@@ -1607,12 +2119,35 @@ async function main() {
       },
       {
         hospitalizationId: hospApollo.id,
+        prescriptionItemId: itemApolloCefazolinaApplied.id,
+        userId: vetUser.id,
+        eventType: EventType.MEDICATION_APPLICATION,
+        title: 'Execução de item: Cefazolina Sódica 30 mg/kg IV',
+        description: 'Infundida lentamente em acesso venoso periférico cefálico sem hipotensão.',
+        recordedAt: todayAgo(120),
+      },
+      {
+        hospitalizationId: hospApollo.id,
         userId: vetRafael.id,
         eventType: EventType.PROCEDURE,
         title: 'Cirurgia de Descompressão Gástrica e Gastropexia Incisional',
         description:
           'Reposicionamento gástrico bem-sucedido (rotação de 180° sem necrose esplênica ou gástrica). Realizada gastropexia incisional direita firme e lavagem cavitária.',
         recordedAt: todayAgo(190),
+      },
+      {
+        hospitalizationId: hospApollo.id,
+        prescriptionItemId: itemApolloCarprofenoCancelled.id,
+        userId: adminUser.id,
+        eventType: EventType.OBSERVATION,
+        title: 'Item suspenso: Carprofeno 4.4 mg/kg IV',
+        description:
+          'Justificativa médica: Suspensão de AINE para proteção gástrica após episódio agudo de vólvulo gástrico.',
+        metrics: {
+          action: 'CANCEL_PRESCRIPTION_ITEM',
+          justification: 'Proteção de mucosa gástrica pós-DVG',
+        },
+        recordedAt: todayAgo(260),
       },
       {
         hospitalizationId: hospApollo.id,
@@ -1649,11 +2184,34 @@ async function main() {
       },
       {
         hospitalizationId: hospBob.id,
+        prescriptionItemId: itemBobCefalotinaApplied.id,
+        userId: vetRafael.id,
+        eventType: EventType.MEDICATION_APPLICATION,
+        title: 'Execução de item: Cefalotina 1g IV Profilaxia Ortopédica',
+        description: 'Dose profilática intra e pós-operatória administrada sem sinais de hipersensibilidade.',
+        recordedAt: todayAgo(150),
+      },
+      {
+        hospitalizationId: hospBob.id,
         userId: recUser.id,
         eventType: EventType.FEEDING,
         title: 'Alimentação Assistida (Ração Úmida Recovery) Antes do Jejum',
         description: 'Ingeriu 100% da porção ofertada com ótimo apetite antes do início do jejum para radiografia de controle sob sedação.',
         recordedAt: daysAgo(1, 2),
+      },
+      {
+        hospitalizationId: hospBob.id,
+        prescriptionItemId: itemBobAmoxicilinaCancelled.id,
+        userId: vetRafael.id,
+        eventType: EventType.OBSERVATION,
+        title: 'Item suspenso: Amoxicilina + Clavulanato de Potássio 250 mg',
+        description:
+          'Justificativa médica: Alerta de alergia a derivados de penicilina checado. Tratamento mantido com cefalosporinas.',
+        metrics: {
+          action: 'CANCEL_PRESCRIPTION_ITEM',
+          justification: 'Alerta de alergia a penicilina',
+        },
+        recordedAt: daysAgo(1, 4),
       },
       {
         hospitalizationId: hospBob.id,
@@ -1690,6 +2248,38 @@ async function main() {
       },
       {
         hospitalizationId: hospAmora.id,
+        prescriptionItemId: itemAmoraDexametasonaApplied.id,
+        userId: vetPaxe.id,
+        eventType: EventType.MEDICATION_APPLICATION,
+        title: 'Execução de item: Dexametasona Fosfato Dissódico 2 mg/ml IV',
+        description: 'Administração IV em bolus lento para alívio imediato do edema de palato e mucosa laríngea.',
+        recordedAt: todayAgo(110),
+      },
+      {
+        hospitalizationId: hospAmora.id,
+        prescriptionItemId: itemAmoraCompressasApplied.id,
+        userId: recFernanda.id,
+        eventType: EventType.PROCEDURE,
+        title: 'Execução de item: Compressas Frias em Coxins e Região Inguinal',
+        description: 'Temperatura corporal caiu de 40.4 °C para 38.9 °C em 40 minutos com resfriamento ativo.',
+        recordedAt: todayAgo(180),
+      },
+      {
+        hospitalizationId: hospAmora.id,
+        prescriptionItemId: itemAmoraEnrofloxacinoCancelled.id,
+        userId: vetPaxe.id,
+        eventType: EventType.OBSERVATION,
+        title: 'Item suspenso: Enrofloxacino 5% SC',
+        description:
+          'Justificativa médica: Sem sinais clínicos ou laboratoriais de infecção bacteriana; episódio puramente obstrutivo e térmico.',
+        metrics: {
+          action: 'CANCEL_PRESCRIPTION_ITEM',
+          justification: 'Uso racional de antimicrobianos',
+        },
+        recordedAt: todayAgo(220),
+      },
+      {
+        hospitalizationId: hospAmora.id,
         userId: vetPaxe.id,
         eventType: EventType.PROCEDURE,
         title: 'Oxigenoterapia em Gaiola Climatizada + Resfriamento Gradual',
@@ -1720,6 +2310,29 @@ async function main() {
           notes: 'Coxins pélvicos aquecidos e rosados.',
         },
         recordedAt: todayAgo(110),
+      },
+      {
+        hospitalizationId: hospSimba.id,
+        prescriptionItemId: itemSimbaFurosemidaApplied.id,
+        userId: adminUser.id,
+        eventType: EventType.MEDICATION_APPLICATION,
+        title: 'Execução de item: Furosemida 1 mg/kg IV na Admissão',
+        description: 'Diurético de alça administrado para prevenir descompensação de edema pulmonar.',
+        recordedAt: todayAgo(160),
+      },
+      {
+        hospitalizationId: hospSimba.id,
+        prescriptionItemId: itemSimbaCetaminaCancelled.id,
+        userId: adminUser.id,
+        eventType: EventType.OBSERVATION,
+        title: 'Item suspenso: Cetamina 10% IV',
+        description:
+          'Justificativa médica: Contraindicado por histórico de alergia e taquicardia severa. Monitorização eletrocardiográfica atenta.',
+        metrics: {
+          action: 'CANCEL_PRESCRIPTION_ITEM',
+          justification: 'Histórico de alergia grave a cetamina',
+        },
+        recordedAt: todayAgo(240),
       },
       {
         hospitalizationId: hospSimba.id,
@@ -1762,6 +2375,29 @@ async function main() {
         description: 'Urina límpida sem odor fétido (90 ml). Prevenção de atonia detrusora e cistite de retenção.',
         recordedAt: todayAgo(140),
       },
+      {
+        hospitalizationId: hospFrida.id,
+        prescriptionItemId: itemFridaMetadonaApplied.id,
+        userId: vetUser.id,
+        eventType: EventType.MEDICATION_APPLICATION,
+        title: 'Execução de item: Cloridrato de Metadona 0.2 mg/kg SC',
+        description: 'Analgesia profunda administrada sem sedação excessiva ou alterações pupilares.',
+        recordedAt: todayAgo(140),
+      },
+      {
+        hospitalizationId: hospFrida.id,
+        prescriptionItemId: itemFridaTramadolCancelled.id,
+        userId: vetUser.id,
+        eventType: EventType.OBSERVATION,
+        title: 'Item suspenso: Cloridrato de Tramadol 50 mg/ml SC',
+        description:
+          'Justificativa médica: Alergia a tramadol confirmada pelo tutor (disforia, náusea intensa e agitação psicomotora).',
+        metrics: {
+          action: 'CANCEL_PRESCRIPTION_ITEM',
+          justification: 'Alergia a tramadol com disforia',
+        },
+        recordedAt: todayAgo(260),
+      },
     ],
   });
 
@@ -1787,6 +2423,24 @@ async function main() {
           notes: 'Pressão arterial controlada sem proteinúria significativa.',
         },
         recordedAt: todayAgo(95),
+      },
+      {
+        hospitalizationId: hospLuna.id,
+        prescriptionItemId: itemLunaMirtazapinaApplied.id,
+        userId: vetUser.id,
+        eventType: EventType.MEDICATION_APPLICATION,
+        title: 'Execução de item: Mirtazapina 2 mg Pomada Transdérmica Auricular',
+        description: 'Aplicada com luva na face interna da orelha direita para estímulo de apetite.',
+        recordedAt: todayAgo(150),
+      },
+      {
+        hospitalizationId: hospLuna.id,
+        prescriptionItemId: itemLunaOndansetronaApplied.id,
+        userId: vetUser.id,
+        eventType: EventType.MEDICATION_APPLICATION,
+        title: 'Execução de item: Ondansetrona 2 mg/ml IV Lento',
+        description: 'Antiemético administrado em 3 minutos para controle de gastrite urêmica.',
+        recordedAt: todayAgo(210),
       },
       {
         hospitalizationId: hospLuna.id,
